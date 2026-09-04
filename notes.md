@@ -1,0 +1,3 @@
+# Project Notes
+Here's some initial note content. Yay!
+Hopefully this will be more intersting later...
