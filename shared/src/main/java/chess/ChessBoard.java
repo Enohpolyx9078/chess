@@ -75,14 +75,38 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        this.board[0] = buildHomeRow(ChessGame.TeamColor.BLACK);
-        this.board[1] = buildPawnRow(ChessGame.TeamColor.BLACK);
+        this.board[0] = buildHomeRow(ChessGame.TeamColor.WHITE);
+        this.board[1] = buildPawnRow(ChessGame.TeamColor.WHITE);
         this.board[2] = new ChessPiece[8];
         this.board[3] = new ChessPiece[8];
         this.board[4] = new ChessPiece[8];
         this.board[5] = new ChessPiece[8];
-        this.board[6] = buildPawnRow(ChessGame.TeamColor.WHITE);
-        this.board[7] = buildHomeRow(ChessGame.TeamColor.WHITE);
+        this.board[6] = buildPawnRow(ChessGame.TeamColor.BLACK);
+        this.board[7] = buildHomeRow(ChessGame.TeamColor.BLACK);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder('\n');
+        for (ChessPiece[] row : board) {
+            for (ChessPiece p : row) {
+                if (p == null) {
+                    sb.append(" -- ");
+                    continue;
+                }
+                String color = (p.getTeamColor() == ChessGame.TeamColor.WHITE) ? "W" : "B";
+                switch (p.getPieceType()) {
+                    case ChessPiece.PieceType.PAWN -> sb.append(" %sP ".formatted(color));
+                    case ChessPiece.PieceType.ROOK -> sb.append(" %sR ".formatted(color));
+                    case ChessPiece.PieceType.KNIGHT -> sb.append(" %sH ".formatted(color));
+                    case ChessPiece.PieceType.BISHOP -> sb.append(" %sB ".formatted(color));
+                    case ChessPiece.PieceType.QUEEN -> sb.append(" %sQ ".formatted(color));
+                    case ChessPiece.PieceType.KING -> sb.append(" %sK ".formatted(color));
+                }
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
     }
 
     @Override
