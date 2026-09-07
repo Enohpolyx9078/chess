@@ -8,8 +8,10 @@ package chess;
  */
 public class ChessBoard {
 
+    private ChessPiece[][] board = new ChessPiece[8][8];
+
     public ChessBoard() {
-        
+        resetBoard();
     }
 
     /**
@@ -20,6 +22,28 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         throw new RuntimeException("Not implemented");
+    }
+
+
+    private ChessPiece[] buildHomeRow(ChessGame.TeamColor color) {
+        return new ChessPiece[] {
+                new ChessPiece(color, ChessPiece.PieceType.ROOK),
+                new ChessPiece(color, ChessPiece.PieceType.KNIGHT),
+                new ChessPiece(color, ChessPiece.PieceType.BISHOP),
+                new ChessPiece(color, ChessPiece.PieceType.QUEEN),
+                new ChessPiece(color, ChessPiece.PieceType.KING),
+                new ChessPiece(color, ChessPiece.PieceType.BISHOP),
+                new ChessPiece(color, ChessPiece.PieceType.KNIGHT),
+                new ChessPiece(color, ChessPiece.PieceType.ROOK),
+        };
+    }
+
+    private ChessPiece[] buildPawnRow(ChessGame.TeamColor color) {
+        final ChessPiece[] row = new ChessPiece[8];
+        for (int i = 0; i < 8; i++) {
+            row[i] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+        }
+        return row;
     }
 
     /**
@@ -38,6 +62,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        this.board[0] = buildHomeRow(ChessGame.TeamColor.BLACK);
+        this.board[1] = buildPawnRow(ChessGame.TeamColor.BLACK);
     }
 }
