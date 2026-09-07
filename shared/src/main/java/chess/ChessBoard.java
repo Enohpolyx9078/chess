@@ -64,5 +64,11 @@ public class ChessBoard {
     public void resetBoard() {
         this.board[0] = buildHomeRow(ChessGame.TeamColor.BLACK);
         this.board[1] = buildPawnRow(ChessGame.TeamColor.BLACK);
+        this.board[2] = new ChessPiece[8];
+        this.board[3] = new ChessPiece[8];
+        this.board[4] = new ChessPiece[8];
+        this.board[5] = new ChessPiece[8];
+        this.board[6] = buildPawnRow(ChessGame.TeamColor.WHITE);
+        this.board[7] = buildHomeRow(ChessGame.TeamColor.WHITE);
     }
 }
