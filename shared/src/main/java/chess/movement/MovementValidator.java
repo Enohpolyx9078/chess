@@ -1,7 +1,10 @@
 package chess.movement;
 
-import chess.*;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.ChessBoard;
 
 public interface MovementValidator {
-    boolean isValid(ChessMove move, ChessPosition p, ChessGame.TeamColor color);
+    boolean isValid(ChessBoard b, ChessMove move, ChessPosition p, ChessGame.TeamColor color);
 }

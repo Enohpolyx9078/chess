@@ -11,14 +11,19 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private final int size = 8;
+    private final ChessPiece[][] board = new ChessPiece[size][size];
 
     public ChessBoard() {
         // Create a new (empty) chess board
     }
 
-    private int[] interpretChessPosition(ChessPosition position) {
+    public static int[] interpretChessPosition(ChessPosition position) {
         return new int[] {position.getRow() - 1, position.getColumn() - 1};
+    }
+
+    public int getSize() {
+        return size;
     }
 
     /**
@@ -49,8 +54,8 @@ public class ChessBoard {
     }
 
     private ChessPiece[] buildPawnRow(ChessGame.TeamColor color) {
-        final ChessPiece[] row = new ChessPiece[8];
-        for (int i = 0; i < 8; i++) {
+        final ChessPiece[] row = new ChessPiece[size];
+        for (int i = 0; i < size; i++) {
             row[i] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
         }
         return row;
@@ -77,17 +82,17 @@ public class ChessBoard {
     public void resetBoard() {
         this.board[0] = buildHomeRow(ChessGame.TeamColor.WHITE);
         this.board[1] = buildPawnRow(ChessGame.TeamColor.WHITE);
-        this.board[2] = new ChessPiece[8];
-        this.board[3] = new ChessPiece[8];
-        this.board[4] = new ChessPiece[8];
-        this.board[5] = new ChessPiece[8];
+        this.board[2] = new ChessPiece[size];
+        this.board[3] = new ChessPiece[size];
+        this.board[4] = new ChessPiece[size];
+        this.board[5] = new ChessPiece[size];
         this.board[6] = buildPawnRow(ChessGame.TeamColor.BLACK);
         this.board[7] = buildHomeRow(ChessGame.TeamColor.BLACK);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder('\n');
+        final StringBuilder sb = new StringBuilder("\\n");
         for (ChessPiece[] row : board) {
             for (ChessPiece p : row) {
                 if (p == null) {
