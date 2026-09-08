@@ -7,6 +7,8 @@ import chess.ChessBoard;
 import java.util.Collection;
 
 public abstract class MoveStrategy {
+    // Child classes should have a Collection<List<Integer>> offsets parameter
+    // The child objects in the List should look like {int rowMove, int colMove}
     protected MovementValidator v;
 
     public MoveStrategy(MovementValidator v) {
