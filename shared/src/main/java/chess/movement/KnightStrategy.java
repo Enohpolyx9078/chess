@@ -12,7 +12,7 @@ import java.util.List;
 public class KnightStrategy extends MoveStrategy {
     private final int[][] offsets = {
             {2, 1}, {2, -1}, {1, 2}, {1, -2},
-            {-2, 1}, {-2, -2}, {-1, 2}, {-1, -2}
+            {-2, 1}, {-2, -1}, {-1, 2}, {-1, -2}
     };
 
     public KnightStrategy(MovementValidator v) {
@@ -23,7 +23,7 @@ public class KnightStrategy extends MoveStrategy {
         final int[] posData = ChessBoard.interpretChessPosition(p);
         final int curRow = posData[0];
         final int curCol = posData[1];
-        final ChessPosition end = new ChessPosition(curRow + offset[0], curCol + offset[1]);
+        final ChessPosition end = new ChessPosition(curRow + offset[0] + 1, curCol + offset[1] + 1);
         return new ChessMove(p, end, null);
     }
 
@@ -35,6 +35,7 @@ public class KnightStrategy extends MoveStrategy {
         List<ChessMove> validMoves = new ArrayList<>();
         for (int[] offset : offsets) {
             ChessMove target = deriveTarget(p, offset);
+            System.out.println("Target: " + target.toString());
             if (v.isValid(b, target, color)) {
                 validMoves.add(target);
             }
