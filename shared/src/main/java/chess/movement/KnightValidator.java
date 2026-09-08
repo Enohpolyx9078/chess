@@ -21,10 +21,6 @@ public class KnightValidator implements MovementValidator {
         }
         // Check capturing
         ChessPiece targetPiece = b.getPiece(move.getStartPosition());
-        if (targetPiece == null || targetPiece.getTeamColor() == color) {
-            return false;
-        }
-
-        return true;
+        return targetPiece != null && targetPiece.getTeamColor() != color;
     }
 }

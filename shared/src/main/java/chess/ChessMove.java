@@ -46,6 +46,14 @@ public class ChessMove {
     }
 
     @Override
+    public String toString() {
+        return "({%d, %d} -> {%d, %d})".formatted(
+                this.startPosition.getRow(), this.startPosition.getColumn(),
+                this.endPosition.getRow(), this.endPosition.getColumn()
+        );
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
