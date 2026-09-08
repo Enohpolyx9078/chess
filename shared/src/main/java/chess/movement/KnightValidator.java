@@ -8,10 +8,6 @@ import chess.ChessPiece;
 
 public class KnightValidator implements MovementValidator {
 
-    public KnightValidator () {
-
-    }
-
     @Override
     public boolean isValid(ChessBoard b, ChessMove move, ChessPosition p, ChessGame.TeamColor color) {
         boolean valid = true;
