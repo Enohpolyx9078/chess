@@ -16,5 +16,5 @@ public abstract class MoveStrategy {
         this.v = v;
     }
 
-    abstract Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color);
+    public abstract Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color);
 }

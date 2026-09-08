@@ -28,7 +28,7 @@ public class KnightStrategy extends MoveStrategy {
     }
 
     @Override
-    Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color) {
+    public Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color) {
         // get a list of ChessMoves for any move that is valid
         // for each offset, derive the target move
         // if the target move is valid, add it to the final collection
