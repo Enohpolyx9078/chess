@@ -35,7 +35,6 @@ public class KnightStrategy extends MoveStrategy {
         List<ChessMove> validMoves = new ArrayList<>();
         for (int[] offset : offsets) {
             ChessMove target = deriveTarget(p, offset);
-            System.out.println("Target: " + target.toString());
             if (v.isValid(b, target, color)) {
                 validMoves.add(target);
             }
