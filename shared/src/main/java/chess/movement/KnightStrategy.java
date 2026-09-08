@@ -5,6 +5,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,15 +19,26 @@ public class KnightStrategy extends MoveStrategy {
         super(v);
     }
 
-    private ChessPosition deriveTarget(ChessPosition p, int[] offset) {
+    private ChessMove deriveTarget(ChessPosition p, int[] offset) {
         final int[] posData = ChessBoard.interpretChessPosition(p);
         final int curRow = posData[0];
         final int curCol = posData[1];
-        return new ChessPosition(curRow + offset[0], curCol + offset[1]);
+        final ChessPosition end = new ChessPosition(curRow + offset[0], curCol + offset[1]);
+        return new ChessMove(p, end, null);
     }
 
     @Override
     Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color) {
-        return List.of();
+        // get a list of ChessMoves for any move that is valid
+        // for each offset, derive the target move
+        // if the target move is valid, add it to the final collection
+        List<ChessMove> validMoves = new ArrayList<>();
+        for (int[] offset : offsets) {
+            ChessMove target = deriveTarget(p, offset);
+            if (v.isValid(b, target, color)) {
+                validMoves.add(target);
+            }
+        }
+        return validMoves;
     }
 }

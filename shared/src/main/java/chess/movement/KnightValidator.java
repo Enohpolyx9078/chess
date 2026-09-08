@@ -9,11 +9,11 @@ import chess.ChessPiece;
 public class KnightValidator implements MovementValidator {
 
     @Override
-    public boolean isValid(ChessBoard b, ChessMove move, ChessPosition p, ChessGame.TeamColor color) {
+    public boolean isValid(ChessBoard b, ChessMove move, ChessGame.TeamColor color) {
         boolean valid = true;
 
-        // Check if the requested move is valid given p and color
-        final int[] posData = ChessBoard.interpretChessPosition(p);
+        // Check if the requested move is valid given move and color
+        final int[] posData = ChessBoard.interpretChessPosition(move.getEndPosition());
         final int targetRow = posData[0];
         final int targetCol = posData[1];
 
@@ -22,7 +22,7 @@ public class KnightValidator implements MovementValidator {
             return false;
         }
         // Check capturing
-        ChessPiece targetPiece = b.getPiece(p);
+        ChessPiece targetPiece = b.getPiece(move.getStartPosition());
         if (targetPiece == null || targetPiece.getTeamColor() == color) {
             return false;
         }
