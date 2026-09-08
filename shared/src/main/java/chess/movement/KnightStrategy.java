@@ -1,10 +1,10 @@
 package chess.movement;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,8 +18,15 @@ public class KnightStrategy extends MoveStrategy {
         super(v);
     }
 
+    private ChessPosition deriveTarget(ChessPosition p, int[] offset) {
+        final int[] posData = ChessBoard.interpretChessPosition(p);
+        final int curRow = posData[0];
+        final int curCol = posData[1];
+        return new ChessPosition(curRow + offset[0], curCol + offset[1]);
+    }
+
     @Override
-    Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b) {
+    Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color) {
         return List.of();
     }
 }
