@@ -21,7 +21,7 @@ public abstract class MoveStrategy {
         this.offsets = offsets;
     }
 
-    private ChessMove deriveTarget(ChessPosition p, int[] offset) {
+    protected ChessMove deriveTarget(ChessPosition p, int[] offset) {
         final int[] posData = ChessBoard.interpretChessPosition(p);
         final int curRow = posData[0];
         final int curCol = posData[1];

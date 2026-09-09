@@ -21,6 +21,13 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
+    // Copy constructor
+    public ChessMove(ChessMove other, ChessPiece.PieceType promotionPiece) {
+        this.startPosition = other.startPosition;
+        this.endPosition = other.endPosition;
+        this.promotionPiece = promotionPiece;
+    }
+
     /**
      * @return ChessPosition of starting location
      */
@@ -47,9 +54,10 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "({%d, %d} -> {%d, %d})".formatted(
+        return "({%d, %d} -> {%d, %d} Promotion: %s)".formatted(
                 this.startPosition.getRow(), this.startPosition.getColumn(),
-                this.endPosition.getRow(), this.endPosition.getColumn()
+                this.endPosition.getRow(), this.endPosition.getColumn(),
+                this.promotionPiece
         );
     }
 
