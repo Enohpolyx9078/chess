@@ -37,7 +37,12 @@ public class ChessPiece {
                 //TODO
                 break;
             case ROOK:
-                //TODO
+                //TODO check unbounded movement
+                // For each potential spot:
+                //  Check if any piece exists between the target and the start
+                //    If there is, the move is not valid
+                //  Check if the target is a valid capture
+                // Check if the target is out-of-bounds
                 break;
             default:
                 //TODO PAWN
