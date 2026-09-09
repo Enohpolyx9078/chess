@@ -9,10 +9,10 @@ import java.util.List;
 
 public class PawnStrategy extends MoveStrategy{
     public static final int[][] offsetsWhite = {
-            {1, 0}, {1, -1}, {1, 1},
+            {1, 0}, {1, -1}, {1, 1}, {2, 1}
     };
     public static final int[][] offsetsBlack = {
-            {-1, 0}, {-1, -1}, {-1, 1},
+            {-1, 0}, {-1, -1}, {-1, 1}, {-2, 1}
     };
 
     public PawnStrategy(MovementValidator v, ChessGame.TeamColor color) {
@@ -22,7 +22,7 @@ public class PawnStrategy extends MoveStrategy{
     private List<ChessMove> addPromotions(ChessMove move) {
         List<ChessMove> moves = new ArrayList<>();
         for (ChessPiece.PieceType t : ChessPiece.PieceType.values()) {
-            if (t == ChessPiece.PieceType.PAWN) {
+            if (t == ChessPiece.PieceType.PAWN || t == ChessPiece.PieceType.KING) {
                 continue;
             }
             moves.add(new ChessMove(move, t));

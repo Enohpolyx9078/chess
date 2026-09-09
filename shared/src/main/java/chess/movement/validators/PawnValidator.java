@@ -13,6 +13,8 @@ public class PawnValidator implements MovementValidator{
             return false;
         }
 
+        //TODO handle allowing the first move to be forward two
+
         ChessPiece targetPiece = b.getPiece(move.getEndPosition());
         if (move.getStartPosition().getColumn() == move.getEndPosition().getColumn()) {
             // check that forward moves aren't blocked
