@@ -1,10 +1,8 @@
 package chess;
 
-import chess.movement.KingStrategy;
-import chess.movement.KnightStrategy;
-import chess.movement.RookStrategy;
+import chess.movement.*;
 import chess.movement.validators.GenericValidator;
-import chess.movement.MoveStrategy;
+import chess.movement.validators.PawnValidator;
 import chess.movement.validators.RookValidator;
 
 import java.util.Collection;
@@ -26,23 +24,23 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
         switch (type) {
-            case BISHOP:
-                //TODO
-                break;
-            case KING:
-                this.moveStrategy = new KingStrategy(new GenericValidator());
-                break;
-            case KNIGHT:
-                this.moveStrategy = new KnightStrategy(new GenericValidator());
-                break;
-            case QUEEN:
-                //TODO
-                break;
-            case ROOK:
-                this.moveStrategy = new RookStrategy(new RookValidator());
-                break;
+//            case BISHOP:
+//                //TODO
+//                break;
+//            case KING:
+//                this.moveStrategy = new KingStrategy(new GenericValidator());
+//                break;
+//            case KNIGHT:
+//                this.moveStrategy = new KnightStrategy(new GenericValidator());
+//                break;
+//            case QUEEN:
+//                //TODO
+//                break;
+//            case ROOK:
+//                this.moveStrategy = new RookStrategy(new RookValidator());
+//                break;
             default:
-                //TODO PAWN
+                this.moveStrategy = new PawnStrategy(new PawnValidator(), pieceColor);
         }
     }
 

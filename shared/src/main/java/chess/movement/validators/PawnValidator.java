@@ -3,6 +3,7 @@ package chess.movement.validators;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 
 public class PawnValidator implements MovementValidator{
     @Override
@@ -12,8 +13,16 @@ public class PawnValidator implements MovementValidator{
             return false;
         }
 
-        //TODO check if diagonal moves are captures
-
-        return true;
+        ChessPiece targetPiece = b.getPiece(move.getEndPosition());
+        if (move.getStartPosition().getColumn() == move.getEndPosition().getColumn()) {
+            // check that forward moves aren't blocked
+            return targetPiece == null;
+        } else {
+            // check if diagonal moves are captures
+            if (targetPiece != null) {
+                return targetPiece.getTeamColor() != color;
+            }
+            return false;
+        }
     }
 }
