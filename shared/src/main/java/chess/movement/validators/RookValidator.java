@@ -41,7 +41,7 @@ public class RookValidator implements MovementValidator{
         }
 
         for (int i = 1; i < shift; i++) {
-            ChessPosition intermediate = getTarget.apply(new int[]{startRow, startCol, i});
+            ChessPosition intermediate = getTarget.apply(new int[]{startRow + 1, startCol + 1, i});
             if (intermediate.getRow() < 0 || intermediate.getColumn() < 0
                 || intermediate.getRow() > b.getSize() || intermediate.getColumn() > b.getSize()) {
                 break;
