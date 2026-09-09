@@ -23,8 +23,23 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
         switch (type) {
-            default:
+            case BISHOP:
+                //TODO
+                break;
+            case KING:
+                //TODO
+                break;
+            case KNIGHT:
                 this.moveStrategy = new KnightStrategy(new KnightValidator());
+                break;
+            case QUEEN:
+                //TODO
+                break;
+            case ROOK:
+                //TODO
+                break;
+            default:
+                //TODO PAWN
         }
     }
 
