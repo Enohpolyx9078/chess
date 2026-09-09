@@ -1,7 +1,7 @@
 package chess;
 
 import chess.movement.KnightStrategy;
-import chess.movement.KnightValidator;
+import chess.movement.GenericValidator;
 import chess.movement.MoveStrategy;
 
 import java.util.Collection;
@@ -30,7 +30,7 @@ public class ChessPiece {
                 //TODO
                 break;
             case KNIGHT:
-                this.moveStrategy = new KnightStrategy(new KnightValidator());
+                this.moveStrategy = new KnightStrategy(new GenericValidator());
                 break;
             case QUEEN:
                 //TODO
