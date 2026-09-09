@@ -4,6 +4,7 @@ import chess.ChessPosition;
 import chess.ChessMove;
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.movement.validators.MovementValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,13 +1,6 @@
 package chess.movement;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import chess.movement.validators.MovementValidator;
 
 public class KnightStrategy extends MoveStrategy {
     private static final int[][] offsets = {

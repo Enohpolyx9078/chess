@@ -2,7 +2,7 @@ package chess;
 
 import chess.movement.KingStrategy;
 import chess.movement.KnightStrategy;
-import chess.movement.GenericValidator;
+import chess.movement.validators.GenericValidator;
 import chess.movement.MoveStrategy;
 
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class ChessPiece {
                 //  Check if any piece exists between the target and the start
                 //    If there is, the move is not valid
                 //  Check if the target is a valid capture
-                // Check if the target is out-of-bounds
+                //  Check if the target is out-of-bounds
                 break;
             default:
                 //TODO PAWN

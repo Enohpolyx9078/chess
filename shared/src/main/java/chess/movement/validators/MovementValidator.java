@@ -1,8 +1,7 @@
-package chess.movement;
+package chess.movement.validators;
 
 import chess.ChessGame;
 import chess.ChessMove;
-import chess.ChessPosition;
 import chess.ChessBoard;
 
 public interface MovementValidator {
