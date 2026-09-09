@@ -2,8 +2,10 @@ package chess;
 
 import chess.movement.KingStrategy;
 import chess.movement.KnightStrategy;
+import chess.movement.RookStrategy;
 import chess.movement.validators.GenericValidator;
 import chess.movement.MoveStrategy;
+import chess.movement.validators.RookValidator;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -24,28 +26,24 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
         switch (type) {
-            case BISHOP:
-                //TODO
-                break;
-            case KING:
-                this.moveStrategy = new KingStrategy(new GenericValidator());
-                break;
-            case KNIGHT:
-                this.moveStrategy = new KnightStrategy(new GenericValidator());
-                break;
-            case QUEEN:
-                //TODO
-                break;
-            case ROOK:
-                //TODO check unbounded movement
-                // For each potential spot:
-                //  Check if any piece exists between the target and the start
-                //    If there is, the move is not valid
-                //  Check if the target is a valid capture
-                //  Check if the target is out-of-bounds
-                break;
+//            case BISHOP:
+//                //TODO
+//                break;
+//            case KING:
+//                this.moveStrategy = new KingStrategy(new GenericValidator());
+//                break;
+//            case KNIGHT:
+//                this.moveStrategy = new KnightStrategy(new GenericValidator());
+//                break;
+//            case QUEEN:
+//                //TODO
+//                break;
+//            case ROOK:
+//                this.moveStrategy = new RookStrategy(new RookValidator());
+//                break;
             default:
                 //TODO PAWN
+                this.moveStrategy = new RookStrategy(new RookValidator());
         }
     }
 
