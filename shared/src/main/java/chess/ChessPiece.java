@@ -1,5 +1,6 @@
 package chess;
 
+import chess.movement.KingStrategy;
 import chess.movement.KnightStrategy;
 import chess.movement.GenericValidator;
 import chess.movement.MoveStrategy;
@@ -27,7 +28,7 @@ public class ChessPiece {
                 //TODO
                 break;
             case KING:
-                //TODO
+                this.moveStrategy = new KingStrategy(new GenericValidator());
                 break;
             case KNIGHT:
                 this.moveStrategy = new KnightStrategy(new GenericValidator());
