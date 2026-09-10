@@ -24,8 +24,7 @@ public class BishopValidator implements MovementValidator{
         final int targetCol = targetData[1];
 
         int shift = targetRow - startRow;
-        return MovementValidator.checkTraversal(
-                b, startRow, startCol, shift,
+        return MovementValidator.checkTraversal(b, startRow, startCol, shift,
                 MovementValidator.describeDiagonal(startRow, startCol, targetRow, targetCol)
         );
     }
