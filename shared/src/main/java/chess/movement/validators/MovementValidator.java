@@ -24,6 +24,21 @@ public interface MovementValidator {
         return true;
     }
 
+    // Generates steps in a diagonal path
+    static Function<int[], ChessPosition> describeDiagonal(int startRow, int startCol, int targetRow, int targetCol) {
+        Function<int[], ChessPosition> getTarget;
+        String horizontal = (startCol > targetCol) ? "left" : "right";
+        String vertical = (startRow > targetRow) ? "down" : "up";
+        String dir = horizontal + "-" + vertical;
+
+        return switch (dir) {
+            case "left-down" -> (nums) -> new ChessPosition(nums[0] - nums[2], nums[1] - nums[2]);
+            case "left-up" -> (nums) -> new ChessPosition(nums[0] + nums[2], nums[1] - nums[2]);
+            case "right-down" -> (nums) -> new ChessPosition(nums[0] - nums[2], nums[1] + nums[2]);
+            default -> (nums) -> new ChessPosition(nums[0] + nums[2], nums[1] + nums[2]);
+        };
+    }
+
     // Looks between the start and target for obstacles
     // The function passed in describes the path to traverse
     static boolean checkTraversal(ChessBoard b, int startRow, int startCol, int distance, Function<int[], ChessPosition> getTarget) {

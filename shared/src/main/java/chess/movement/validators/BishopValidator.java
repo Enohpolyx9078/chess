@@ -23,20 +23,10 @@ public class BishopValidator implements MovementValidator{
         final int targetRow = targetData[0];
         final int targetCol = targetData[1];
 
-        Function<int[], ChessPosition> getTarget;
         int shift = targetRow - startRow;
-
-        String horizontal = (startCol > targetCol) ? "left" : "right";
-        String vertical = (startRow > targetRow) ? "down" : "up";
-        String dir = horizontal + "-" + vertical;
-
-        getTarget = switch (dir) {
-            case "left-down" -> (nums) -> new ChessPosition(nums[0] - nums[2], nums[1] - nums[2]);
-            case "left-up" -> (nums) -> new ChessPosition(nums[0] + nums[2], nums[1] - nums[2]);
-            case "right-down" -> (nums) -> new ChessPosition(nums[0] - nums[2], nums[1] + nums[2]);
-            default -> (nums) -> new ChessPosition(nums[0] + nums[2], nums[1] + nums[2]);
-        };
-
-        return MovementValidator.checkTraversal(b, startRow, startCol, shift, getTarget);
+        return MovementValidator.checkTraversal(
+                b, startRow, startCol, shift,
+                MovementValidator.describeDiagonal(startRow, startCol, targetRow, targetCol)
+        );
     }
 }
