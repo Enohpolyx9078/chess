@@ -24,22 +24,23 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
         switch (type) {
-//            case BISHOP:
-//                //TODO
-//                break;
-//            case KING:
-//                this.moveStrategy = new KingStrategy(new GenericValidator());
-//                break;
-//            case KNIGHT:
-//                this.moveStrategy = new KnightStrategy(new GenericValidator());
-//                break;
-//            case QUEEN:
-//                //TODO
-//                break;
-//            case ROOK:
-//                this.moveStrategy = new RookStrategy(new RookValidator());
-//                break;
+            case BISHOP:
+                //TODO
+                break;
+            case KING:
+                this.moveStrategy = new KingStrategy(new GenericValidator());
+                break;
+            case KNIGHT:
+                this.moveStrategy = new KnightStrategy(new GenericValidator());
+                break;
+            case QUEEN:
+                //TODO
+                break;
+            case ROOK:
+                this.moveStrategy = new RookStrategy(new RookValidator());
+                break;
             default:
+                // PAWN
                 this.moveStrategy = new PawnStrategy(new PawnValidator(), pieceColor);
         }
     }
