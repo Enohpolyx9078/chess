@@ -1,9 +1,8 @@
 package chess.movement.validators;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessBoard;
-import chess.ChessPiece;
+import chess.*;
+
+import java.util.function.Function;
 
 public interface MovementValidator {
     // Performs the basic checks of out-of-bounds and overlapping your own team
@@ -21,6 +20,23 @@ public interface MovementValidator {
         boolean targetOccupied = targetPiece != null;
         if (targetOccupied) {
             return targetPiece.getTeamColor() != color;
+        }
+        return true;
+    }
+
+    // Looks between the start and target for obstacles
+    // The function passed in describes the path to traverse
+    static boolean checkTraversal(ChessBoard b, int startRow, int startCol, int distance, Function<int[], ChessPosition> getTarget) {
+        for (int i = 1; i < Math.abs(distance); i++) {
+            ChessPosition intermediate = getTarget.apply(new int[]{startRow + 1, startCol + 1, i});
+            if (intermediate.getRow() < 0 || intermediate.getColumn() < 0
+                    || intermediate.getRow() > b.getSize() || intermediate.getColumn() > b.getSize()) {
+                continue;
+            }
+            ChessPiece targetPiece = b.getPiece(intermediate);
+            if (targetPiece != null) {
+                return false;
+            }
         }
         return true;
     }

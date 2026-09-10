@@ -40,18 +40,6 @@ public class RookValidator implements MovementValidator{
             }
         }
 
-        for (int i = 1; i < Math.abs(shift); i++) {
-            ChessPosition intermediate = getTarget.apply(new int[]{startRow + 1, startCol + 1, i});
-            if (intermediate.getRow() < 0 || intermediate.getColumn() < 0
-                || intermediate.getRow() > b.getSize() || intermediate.getColumn() > b.getSize()) {
-                continue;
-            }
-            ChessPiece targetPiece = b.getPiece(intermediate);
-            if (targetPiece != null) {
-                return false;
-            }
-        }
-
-        return true;
+        return MovementValidator.checkTraversal(b, startRow, startCol, shift, getTarget);
     }
 }
