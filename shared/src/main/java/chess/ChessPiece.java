@@ -1,6 +1,7 @@
 package chess;
 
 import chess.movement.*;
+import chess.movement.validators.BishopValidator;
 import chess.movement.validators.GenericValidator;
 import chess.movement.validators.PawnValidator;
 import chess.movement.validators.RookValidator;
@@ -25,7 +26,7 @@ public class ChessPiece {
         this.type = type;
         switch (type) {
             case BISHOP:
-                //TODO
+                this.moveStrategy = new BishopStrategy(new BishopValidator());
                 break;
             case KING:
                 this.moveStrategy = new KingStrategy(new GenericValidator());
