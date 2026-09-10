@@ -1,10 +1,7 @@
 package chess;
 
 import chess.movement.*;
-import chess.movement.validators.BishopValidator;
-import chess.movement.validators.GenericValidator;
-import chess.movement.validators.PawnValidator;
-import chess.movement.validators.RookValidator;
+import chess.movement.validators.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -35,7 +32,7 @@ public class ChessPiece {
                 this.moveStrategy = new KnightStrategy(new GenericValidator());
                 break;
             case QUEEN:
-                //TODO
+                this.moveStrategy = new QueenStrategy(new QueenValidator());
                 break;
             case ROOK:
                 this.moveStrategy = new RookStrategy(new RookValidator());
