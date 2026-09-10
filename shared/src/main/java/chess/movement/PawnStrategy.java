@@ -8,15 +8,15 @@ import java.util.Collection;
 import java.util.List;
 
 public class PawnStrategy extends MoveStrategy{
-    public static final int[][] offsetsWhite = {
+    public static final int[][] OFFSETS_WHITE = {
             {1, 0}, {1, -1}, {1, 1}, {2, 0}
     };
-    public static final int[][] offsetsBlack = {
+    public static final int[][] OFFSETS_BLACK = {
             {-1, 0}, {-1, -1}, {-1, 1}, {-2, 0}
     };
 
     public PawnStrategy(MovementValidator v, ChessGame.TeamColor color) {
-        super(v, (color == ChessGame.TeamColor.BLACK) ? offsetsBlack : offsetsWhite);
+        super(v, (color == ChessGame.TeamColor.BLACK) ? OFFSETS_BLACK : OFFSETS_WHITE);
     }
 
     private List<ChessMove> addPromotions(ChessMove move) {

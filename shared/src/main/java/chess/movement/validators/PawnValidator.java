@@ -10,7 +10,7 @@ public class PawnValidator implements MovementValidator{
             return false;
         }
 
-        //TODO handle allowing the first move to be forward two
+        // handle allowing the first move to be forward two
         // If the start row is 2 or 7 && both spaces are clear
         int startRow = move.getEndPosition().getRow();
         int targetRow = move.getStartPosition().getRow();

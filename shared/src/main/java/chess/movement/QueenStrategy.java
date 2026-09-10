@@ -3,7 +3,7 @@ package chess.movement;
 import chess.movement.validators.MovementValidator;
 
 public class QueenStrategy extends MoveStrategy{
-    private static final int[][] offsets = {
+    private static final int[][] OFFSETS = {
             {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0},
             {-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0},
             {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7},
@@ -14,6 +14,6 @@ public class QueenStrategy extends MoveStrategy{
             {-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}
     };
     public QueenStrategy(MovementValidator v) {
-        super(v, offsets);
+        super(v, OFFSETS);
     }
 }
