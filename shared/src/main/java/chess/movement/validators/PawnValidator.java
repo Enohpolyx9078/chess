@@ -1,9 +1,6 @@
 package chess.movement.validators;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
+import chess.*;
 
 public class PawnValidator implements MovementValidator{
     @Override
@@ -14,6 +11,20 @@ public class PawnValidator implements MovementValidator{
         }
 
         //TODO handle allowing the first move to be forward two
+        // If the start row is 2 or 7 && both spaces are clear
+        int startRow = move.getEndPosition().getRow();
+        int targetRow = move.getStartPosition().getRow();
+        if (Math.abs(startRow - targetRow) > 1) {
+            ChessPosition intermediate = new ChessPosition(
+                    (targetRow - startRow < 0) ? startRow - 1 : startRow + 1,
+                    move.getStartPosition().getColumn());
+            if (b.getPiece(intermediate) != null) {
+                return false;
+            }
+            if (b.getPiece(move.getEndPosition()) != null) {
+                return false;
+            }
+        }
 
         ChessPiece targetPiece = b.getPiece(move.getEndPosition());
         if (move.getStartPosition().getColumn() == move.getEndPosition().getColumn()) {

@@ -9,10 +9,10 @@ import java.util.List;
 
 public class PawnStrategy extends MoveStrategy{
     public static final int[][] offsetsWhite = {
-            {1, 0}, {1, -1}, {1, 1}, {2, 1}
+            {1, 0}, {1, -1}, {1, 1}, {2, 0}
     };
     public static final int[][] offsetsBlack = {
-            {-1, 0}, {-1, -1}, {-1, 1}, {-2, 1}
+            {-1, 0}, {-1, -1}, {-1, 1}, {-2, 0}
     };
 
     public PawnStrategy(MovementValidator v, ChessGame.TeamColor color) {
@@ -35,8 +35,12 @@ public class PawnStrategy extends MoveStrategy{
         // get a list of ChessMoves for any move that is valid
         // for each offset, derive the target move
         // if the target move is valid, add it to the final collection
+        final int startRow = (color == ChessGame.TeamColor.BLACK) ? 7 : 2;
         List<ChessMove> validMoves = new ArrayList<>();
         for (int[] offset : offsets) {
+            if (Math.abs(offset[0]) == 2 && p.getRow() != startRow) {
+                continue;
+            }
             ChessMove target = deriveTarget(p, offset);
             if (v.isValid(b, target, color)) {
                 validMoves.add(target);
