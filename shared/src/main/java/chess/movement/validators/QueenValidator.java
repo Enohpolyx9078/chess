@@ -20,16 +20,16 @@ public class QueenValidator implements MovementValidator{
         final int targetRow = targetData[0];
         final int targetCol = targetData[1];
 
-        int diagonalShift = targetRow - startRow;
-        if (!MovementValidator.checkTraversal(
-                b, startRow, startCol, diagonalShift,
-                MovementValidator.describeDiagonal(startRow, startCol, targetRow, targetCol)
-        )) {
-            return false;
+        if (startRow != targetRow && startCol != targetCol) {
+            int diagonalShift = targetRow - startRow;
+            return MovementValidator.checkTraversal(b, startRow, startCol, diagonalShift,
+                    MovementValidator.describeDiagonal(startRow, startCol, targetRow, targetCol)
+            );
+        } else {
+            int straightShift = (startRow == targetRow) ? (targetCol - startCol) : (targetRow - startRow);
+            return MovementValidator.checkTraversal(b, startRow, startCol, straightShift,
+                    MovementValidator.describeStraight(startRow, startCol, targetRow, targetCol)
+            );
         }
-        int straightShift = (startRow == targetRow) ? (targetCol - startCol) : (targetRow - startRow);
-        return MovementValidator.checkTraversal(b, startRow, startCol, straightShift,
-                MovementValidator.describeStraight(startRow, startCol, targetRow, targetCol)
-        );
     }
 }
