@@ -24,9 +24,23 @@ public interface MovementValidator {
         return true;
     }
 
+    //Generates steps in a straight path
+    static Function<int[], ChessPosition> describeStraight(int startRow, int startCol, int targetRow, int targetCol) {
+        String traversal = (startRow == targetRow) ? "horizontal" : "vertical";
+        int shift = (traversal.equals("horizontal")) ? (targetCol - startCol) : (targetRow - startRow);
+        String offset = (shift < 0) ? "negative" : "positive";
+        String direction = traversal + "-" + offset;
+
+        return switch (direction) {
+            case "horizontal-negative" -> (nums) -> new ChessPosition(nums[0], nums[1] - nums[2]);
+            case "horizontal-positive" -> (nums) -> new ChessPosition(nums[0], nums[1] + nums[2]);
+            case "vertical-negative" -> (nums) -> new ChessPosition(nums[0] - nums[2], nums[1]);
+            default -> (nums) -> new ChessPosition(nums[0] + nums[2], nums[1]);
+        };
+    }
+
     // Generates steps in a diagonal path
     static Function<int[], ChessPosition> describeDiagonal(int startRow, int startCol, int targetRow, int targetCol) {
-        Function<int[], ChessPosition> getTarget;
         String horizontal = (startCol > targetCol) ? "left" : "right";
         String vertical = (startRow > targetRow) ? "down" : "up";
         String dir = horizontal + "-" + vertical;
