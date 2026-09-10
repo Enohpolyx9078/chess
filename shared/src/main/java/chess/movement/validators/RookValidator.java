@@ -20,25 +20,18 @@ public class RookValidator implements MovementValidator{
         final int targetCol = targetData[1];
 
         Function<int[], ChessPosition> getTarget;
-        int shift;
 
-        if (startRow == targetRow) {
-            // moving horizontally
-            shift = targetCol - startCol;
-            if (shift < 0) {
-                getTarget = (nums) -> new ChessPosition(nums[0], nums[1] - nums[2]);
-            } else {
-                getTarget = (nums) -> new ChessPosition(nums[0], nums[1] + nums[2]);
-            }
-        } else {
-            // moving vertically
-            shift = targetRow - startRow;
-            if (shift < 0) {
-                getTarget = (nums) -> new ChessPosition(nums[0] - nums[2], nums[1]);
-            } else {
-                getTarget = (nums) -> new ChessPosition(nums[0] + nums[2], nums[1]);
-            }
-        }
+        String traversal = (startRow == targetRow) ? "horizontal" : "vertical";
+        int shift = (traversal.equals("horizontal")) ? (targetCol - startCol) : (targetRow - startRow);
+        String offset = (shift < 0) ? "negative" : "positive";
+        String direction = traversal + "-" + offset;
+
+        getTarget = switch (direction) {
+            case "horizontal-negative" -> (nums) -> new ChessPosition(nums[0], nums[1] - nums[2]);
+            case "horizontal-positive" -> (nums) -> new ChessPosition(nums[0], nums[1] + nums[2]);
+            case "vertical-negative" -> (nums) -> new ChessPosition(nums[0] - nums[2], nums[1]);
+            default -> (nums) -> new ChessPosition(nums[0] + nums[2], nums[1]);
+        };
 
         return MovementValidator.checkTraversal(b, startRow, startCol, shift, getTarget);
     }
