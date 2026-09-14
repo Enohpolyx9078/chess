@@ -1,5 +1,8 @@
 package chess;
 
+import chess.rules.EndGameEnforcer;
+import chess.rules.Enforcer;
+
 import java.util.Collection;
 
 /**
@@ -11,11 +14,13 @@ import java.util.Collection;
 public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard currentBoard;
+    private final Enforcer enforcer;
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
-        currentBoard = new ChessBoard();
-        currentBoard.resetBoard();
+        this.enforcer = new EndGameEnforcer();
+        this.currentBoard = new ChessBoard();
+        this.currentBoard.resetBoard();
     }
 
     /**
@@ -70,7 +75,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return enforcer.isInCheck(teamColor, this.currentBoard);
     }
 
     /**
@@ -80,7 +85,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return enforcer.isInCheckmate(teamColor, this.currentBoard);
     }
 
     /**
@@ -91,7 +96,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return enforcer.isInStalemate(teamColor, this.currentBoard);
     }
 
     /**
