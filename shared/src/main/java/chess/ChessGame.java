@@ -3,6 +3,7 @@ package chess;
 import chess.rules.EndGameEnforcer;
 import chess.rules.Enforcer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -70,7 +71,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        //TODO A move is valid if it is a "piece move" for the piece at the input location
+        // and making that move would not leave the team’s king in danger of check.
+        final ChessPiece checkPiece = this.currentBoard.getPiece(startPosition);
+        if (checkPiece != null) {
+            final Collection<ChessMove> valid = new ArrayList<>();
+            final Collection<ChessMove> moves = checkPiece.pieceMoves(this.currentBoard, startPosition);
+            // for each move in this piece's move
+            for (ChessMove m : moves) {
+                //    if the move does NOT result in check
+                //        add this move to valid
+            }
+        }
     }
 
     /**
