@@ -62,6 +62,9 @@ public class EndGameEnforcer implements Enforcer {
         for (ChessPosition pos : opposingTeam) {
             final ChessPiece p = board.getPiece(pos);
             final Collection<ChessMove> moves = p.pieceMoves(board, pos);
+            if (moves.isEmpty()) {
+                throw new RuntimeException("Could not find opposing team");
+            }
             for (ChessMove m : moves) {
                 // if a valid move lands on the king
                 if (m.getEndPosition() == kingPos) {
