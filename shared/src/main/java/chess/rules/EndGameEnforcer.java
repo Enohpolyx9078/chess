@@ -28,15 +28,22 @@ public class EndGameEnforcer implements Enforcer {
         throw new RuntimeException("Could not find king");
     }
 
-    private static boolean kingIsTrapped(ChessGame.TeamColor color, ChessBoard board) {
-        //TODO check if every space the king can to move would put it in check
-        // find the position of color's king
+    private boolean kingIsTrapped(ChessGame.TeamColor color, ChessBoard board) {
+        // check if every space the king can to move would put it in check
+        final ChessPosition kingPos = findKing(color, board);
+        final ChessPiece kingPiece = board.getPiece(kingPos);
+        final Collection<ChessMove> moves = kingPiece.pieceMoves(board, kingPos);
         // for each space that's a move for the king
-        //    create a hypothetical board where this move happened
-        //    if !isInCheck(color, hypothetical)
-        //        return false
-        // return true
-        throw new RuntimeException("Not Implemented");
+        for (ChessMove m : moves) {
+            // create a hypothetical board where this move happened
+            final ChessBoard hypothetical = new ChessBoard(board);
+            hypothetical.addPiece(m.getStartPosition(), null);
+            hypothetical.addPiece(m.getEndPosition(), kingPiece);
+            if (!isInCheck(color, hypothetical)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static List<ChessPosition> getOpposingTeam(ChessGame.TeamColor color, ChessBoard board) {
