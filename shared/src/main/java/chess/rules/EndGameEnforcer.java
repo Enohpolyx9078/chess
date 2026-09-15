@@ -1,11 +1,9 @@
 package chess.rules;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class EndGameEnforcer implements Enforcer {
@@ -41,14 +39,15 @@ public class EndGameEnforcer implements Enforcer {
         throw new RuntimeException("Not Implemented");
     }
 
-    private static List<ChessPiece> getOpposingTeam(ChessGame.TeamColor color, ChessBoard board) {
-        final List<ChessPiece> opposingTeam = new ArrayList<>();
+    private static List<ChessPosition> getOpposingTeam(ChessGame.TeamColor color, ChessBoard board) {
+        final List<ChessPosition> opposingTeam = new ArrayList<>();
         final int size = board.getSize();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                final ChessPiece checkPiece = board.getPiece(new ChessPosition(i, j));
+                final ChessPosition checkPos = new ChessPosition(i, j);
+                final ChessPiece checkPiece = board.getPiece(checkPos);
                 if (checkPiece != null && checkPiece.getTeamColor() != color) {
-                    opposingTeam.add(checkPiece);
+                    opposingTeam.add(checkPos);
                 }
             }
         }
@@ -57,13 +56,20 @@ public class EndGameEnforcer implements Enforcer {
 
     @Override
     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
-        //TODO check if color is in check
         final ChessPosition kingPos = findKing(color, board);
+        final List<ChessPosition> opposingTeam = getOpposingTeam(color, board);
         // for each piece on the opposing team
-        //    if a valid move lands on the king
-        //        return true
-        // return false
-        throw new RuntimeException("Not Implemented");
+        for (ChessPosition pos : opposingTeam) {
+            final ChessPiece p = board.getPiece(pos);
+            final Collection<ChessMove> moves = p.pieceMoves(board, pos);
+            for (ChessMove m : moves) {
+                // if a valid move lands on the king
+                if (m.getEndPosition() == kingPos) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
