@@ -18,6 +18,17 @@ public class ChessBoard {
         // Create a new (empty) chess board
     }
 
+    // copy constructor
+    public ChessBoard(ChessBoard other) {
+        final int otherSize = other.getSize();
+        for (int i = 0; i < otherSize; i++) {
+            for (int j = 0; j < otherSize; j++) {
+                final ChessPosition checkPos = new ChessPosition(i, j);
+                this.addPiece(checkPos, other.getPiece(checkPos));
+            }
+        }
+    }
+
     public static int[] interpretChessPosition(ChessPosition position) {
         return new int[] {position.getRow() - 1, position.getColumn() - 1};
     }
