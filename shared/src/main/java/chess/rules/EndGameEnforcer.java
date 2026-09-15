@@ -5,11 +5,12 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EndGameEnforcer implements Enforcer {
     private static ChessPosition findKing(ChessGame.TeamColor color, ChessBoard board) {
-        // find the king's position and return it
         final int size = board.getSize();
-
         // for each space on the board
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -40,10 +41,24 @@ public class EndGameEnforcer implements Enforcer {
         throw new RuntimeException("Not Implemented");
     }
 
+    private static List<ChessPiece> getOpposingTeam(ChessGame.TeamColor color, ChessBoard board) {
+        final List<ChessPiece> opposingTeam = new ArrayList<>();
+        final int size = board.getSize();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                final ChessPiece checkPiece = board.getPiece(new ChessPosition(i, j));
+                if (checkPiece != null && checkPiece.getTeamColor() != color) {
+                    opposingTeam.add(checkPiece);
+                }
+            }
+        }
+        return opposingTeam;
+    }
+
     @Override
     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
         //TODO check if color is in check
-        // find the position of color's king
+        final ChessPosition kingPos = findKing(color, board);
         // for each piece on the opposing team
         //    if a valid move lands on the king
         //        return true
