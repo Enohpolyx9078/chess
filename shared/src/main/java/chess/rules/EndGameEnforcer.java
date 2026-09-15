@@ -84,19 +84,13 @@ public class EndGameEnforcer implements Enforcer {
 
     @Override
     public boolean isInCheckmate(ChessGame.TeamColor color, ChessBoard board) {
-        //TODO find the position of color's king
         // if every place the king could move to is in check && the king is in check
-        //    return true
-        // return false
-        throw new RuntimeException("Not Implemented");
+        return (kingIsTrapped(color, board) && isInCheck(color, board));
     }
 
     @Override
     public boolean isInStalemate(ChessGame.TeamColor color, ChessBoard board) {
-        //TODO find the position of color's king
         // if every place the king could move to is in check && the king is NOT in check
-        //    return true
-        // return false
-        throw new RuntimeException("Not Implemented");
+        return (kingIsTrapped(color, board) && !isInCheck(color, board));
     }
 }
