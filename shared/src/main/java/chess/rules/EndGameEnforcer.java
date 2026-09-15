@@ -2,17 +2,31 @@ package chess.rules;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
 import chess.ChessPosition;
 
 public class EndGameEnforcer implements Enforcer {
     private static ChessPosition findKing(ChessGame.TeamColor color, ChessBoard board) {
-        //TODO find the king's position and return it
+        // find the king's position and return it
+        final int size = board.getSize();
+
         // for each space on the board
-        //    if the space is not null
-        //        if the piece is color && piece is the the king
-        //            return the current position
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                final ChessPosition checkPos = new ChessPosition(i, j);
+                final ChessPiece checkPiece = board.getPiece(checkPos);
+                if (checkPiece != null) {
+                    if (
+                            checkPiece.getTeamColor() == color
+                                    && checkPiece.getPieceType() == ChessPiece.PieceType.KING
+                    ) {
+                        return checkPos;
+                    }
+                }
+            }
+        }
         // throw missing king error
-        throw new RuntimeException("Not Implemented");
+        throw new RuntimeException("Could not find king");
     }
 
     private static boolean kingIsTrapped(ChessGame.TeamColor color, ChessBoard board) {
@@ -27,7 +41,7 @@ public class EndGameEnforcer implements Enforcer {
     }
 
     @Override
-     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
+    public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
         //TODO check if color is in check
         // find the position of color's king
         // for each piece on the opposing team
