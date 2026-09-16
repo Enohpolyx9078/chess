@@ -20,10 +20,11 @@ public class ChessBoard {
 
     // copy constructor
     public ChessBoard(ChessBoard other) {
+        System.out.println("[DEBUG] Copying board...");
         final int otherSize = other.getSize();
         for (int i = 0; i < otherSize; i++) {
             for (int j = 0; j < otherSize; j++) {
-                final ChessPosition checkPos = new ChessPosition(i, j);
+                final ChessPosition checkPos = new ChessPosition(i + 1, j + 1);
                 this.addPiece(checkPos, other.getPiece(checkPos));
             }
         }

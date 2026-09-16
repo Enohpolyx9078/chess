@@ -12,7 +12,7 @@ public class EndGameEnforcer implements Enforcer {
         // for each space on the board
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                final ChessPosition checkPos = new ChessPosition(i, j);
+                final ChessPosition checkPos = new ChessPosition(i + 1, j + 1);
                 final ChessPiece checkPiece = board.getPiece(checkPos);
                 if (checkPiece != null) {
                     if (
@@ -51,7 +51,7 @@ public class EndGameEnforcer implements Enforcer {
         final int size = board.getSize();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                final ChessPosition checkPos = new ChessPosition(i, j);
+                final ChessPosition checkPos = new ChessPosition(i + 1, j + 1);
                 final ChessPiece checkPiece = board.getPiece(checkPos);
                 if (checkPiece != null && checkPiece.getTeamColor() != color) {
                     opposingTeam.add(checkPos);
@@ -63,6 +63,9 @@ public class EndGameEnforcer implements Enforcer {
 
     @Override
     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
+        System.out.println("[DEBUG] Assessing check");
+        System.out.println(board.toString());
+
         final ChessPosition kingPos = findKing(color, board);
         final List<ChessPosition> opposingTeam = getOpposingTeam(color, board);
         // for each piece on the opposing team

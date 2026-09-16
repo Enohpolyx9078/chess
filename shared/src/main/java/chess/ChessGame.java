@@ -71,6 +71,8 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         // A move is valid if it is a "piece move" for the piece at the input location
         // and making that move would not leave the team’s king in danger of check
+        System.out.println("[DEBUG] Getting valid moves");
+
         final ChessPiece checkPiece = currentBoard.getPiece(startPosition);
         Collection<ChessMove> valid = null;
         if (checkPiece != null) {
@@ -78,6 +80,8 @@ public class ChessGame {
             final Collection<ChessMove> moves = checkPiece.pieceMoves(currentBoard, startPosition);
             // for each move in this piece's move
             for (ChessMove m : moves) {
+                System.out.println("Checking move: " + m.toString());
+
                 final ChessBoard hypothetical = new ChessBoard(currentBoard);
                 hypothetical.addPiece(m.getStartPosition(), null);
                 hypothetical.addPiece(m.getEndPosition(), checkPiece);
@@ -97,6 +101,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        System.out.println("[DEBUG] makeMove: " + move.toString());
+        System.out.println(currentBoard.toString());
+
         final Collection<ChessMove> valid = validMoves(move.getStartPosition());
         final ChessPiece selected = currentBoard.getPiece(move.getStartPosition());
         if (valid != null && !valid.contains(move) && selected.getTeamColor() == getTeamTurn()) {
