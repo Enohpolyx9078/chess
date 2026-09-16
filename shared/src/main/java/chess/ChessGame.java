@@ -29,7 +29,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return this.teamTurn;
+        return teamTurn;
     }
 
     /**
@@ -38,7 +38,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        this.teamTurn = team;
+        teamTurn = team;
     }
 
     @Override
@@ -71,18 +71,25 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //TODO A move is valid if it is a "piece move" for the piece at the input location
-        // and making that move would not leave the team’s king in danger of check.
-        final ChessPiece checkPiece = this.currentBoard.getPiece(startPosition);
+        // A move is valid if it is a "piece move" for the piece at the input location
+        // and making that move would not leave the team’s king in danger of check
+        final ChessPiece checkPiece = currentBoard.getPiece(startPosition);
+        Collection<ChessMove> valid = null;
         if (checkPiece != null) {
-            final Collection<ChessMove> valid = new ArrayList<>();
-            final Collection<ChessMove> moves = checkPiece.pieceMoves(this.currentBoard, startPosition);
+            valid = new ArrayList<>();
+            final Collection<ChessMove> moves = checkPiece.pieceMoves(currentBoard, startPosition);
             // for each move in this piece's move
             for (ChessMove m : moves) {
-                //    if the move does NOT result in check
-                //        add this move to valid
+                final ChessBoard hypothetical = new ChessBoard(currentBoard);
+                hypothetical.addPiece(m.getStartPosition(), null);
+                hypothetical.addPiece(m.getEndPosition(), checkPiece);
+                // if the move does NOT result in check
+                if (!enforcer.isInCheck(checkPiece.getTeamColor(), hypothetical)) {
+                    valid.add(m);
+                }
             }
         }
+        return valid;
     }
 
     /**
