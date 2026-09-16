@@ -63,18 +63,15 @@ public class EndGameEnforcer implements Enforcer {
 
     @Override
     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
-        System.out.println("[DEBUG] Assessing check");
-        System.out.println(board.toString());
-
         final ChessPosition kingPos = findKing(color, board);
         final List<ChessPosition> opposingTeam = getOpposingTeam(color, board);
+        if (opposingTeam.isEmpty()) {
+            throw new RuntimeException("Could not find opposing team");
+        }
         // for each piece on the opposing team
         for (ChessPosition pos : opposingTeam) {
             final ChessPiece p = board.getPiece(pos);
             final Collection<ChessMove> moves = p.pieceMoves(board, pos);
-            if (moves.isEmpty()) {
-                throw new RuntimeException("Could not find opposing team");
-            }
             for (ChessMove m : moves) {
                 // if a valid move lands on the king
                 if (m.getEndPosition() == kingPos) {
