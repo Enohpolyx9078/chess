@@ -8,6 +8,9 @@ import java.util.List;
 
 public class EndGameEnforcer implements Enforcer {
     private static ChessPosition findKing(ChessGame.TeamColor color, ChessBoard board) {
+       System.out.println("Looking for " + color.name() + " King");
+       System.out.print(board);
+
         final int size = board.getSize();
         // for each space on the board
         for (int i = 0; i < size; i++) {
@@ -24,8 +27,7 @@ public class EndGameEnforcer implements Enforcer {
                 }
             }
         }
-        // throw missing king error
-        throw new RuntimeException("Could not find king");
+        return null;
     }
 
     private static List<ChessPosition> getOpposingTeam(ChessGame.TeamColor color, ChessBoard board) {
@@ -73,10 +75,10 @@ public class EndGameEnforcer implements Enforcer {
     @Override
     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) {
         final ChessPosition kingPos = findKing(color, board);
-        final List<ChessPosition> opposingTeam = getOpposingTeam(color, board);
-        if (opposingTeam.isEmpty()) {
-            throw new RuntimeException("Could not find opposing team");
+        if (kingPos == null) {
+            return true;
         }
+        final List<ChessPosition> opposingTeam = getOpposingTeam(color, board);
         // for each piece on the opposing team
         for (ChessPosition pos : opposingTeam) {
             final ChessPiece p = board.getPiece(pos);
