@@ -45,12 +45,12 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return getTeamTurn() == chessGame.getTeamTurn() && Objects.equals(currentBoard, chessGame.currentBoard) && Objects.equals(enforcer, chessGame.enforcer);
+        return getTeamTurn() == chessGame.getTeamTurn() && Objects.equals(currentBoard, chessGame.currentBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTeamTurn(), currentBoard, enforcer);
+        return Objects.hash(getTeamTurn(), currentBoard);
     }
 
     /**
@@ -99,7 +99,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         final Collection<ChessMove> valid = validMoves(move.getStartPosition());
         final ChessPiece selected = currentBoard.getPiece(move.getStartPosition());
-        if (valid != null && !valid.contains(move) && selected.getTeamColor() == getTeamTurn()) {
+        if (valid != null && valid.contains(move) && selected.getTeamColor() == getTeamTurn()) {
             // set the end space to selected or promotion piece, if it's not null
             final ChessPiece.PieceType type = move.getPromotionPiece();
             currentBoard.addPiece(
