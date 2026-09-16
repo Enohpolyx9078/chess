@@ -45,11 +45,11 @@ public class ChessPosition {
             return false;
         }
         ChessPosition that = (ChessPosition) o;
-        return getRow() == that.getRow() && col == that.col;
+        return getRow() == that.getRow() && getColumn() == that.getColumn();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRow(), col);
+        return Objects.hash(getRow(), getColumn());
     }
 }
