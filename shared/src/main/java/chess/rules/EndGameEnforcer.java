@@ -28,24 +28,6 @@ public class EndGameEnforcer implements Enforcer {
         throw new RuntimeException("Could not find king");
     }
 
-    private boolean kingIsTrapped(ChessGame.TeamColor color, ChessBoard board) {
-        // check if every space the king can to move would put it in check
-        final ChessPosition kingPos = findKing(color, board);
-        final ChessPiece kingPiece = board.getPiece(kingPos);
-        final Collection<ChessMove> moves = kingPiece.pieceMoves(board, kingPos);
-        // for each space that's a move for the king
-        for (ChessMove m : moves) {
-            // create a hypothetical board where this move happened
-            final ChessBoard hypothetical = new ChessBoard(board);
-            hypothetical.addPiece(m.getStartPosition(), null);
-            hypothetical.addPiece(m.getEndPosition(), kingPiece);
-            if (!isInCheck(color, hypothetical)) {
-                return false;
-            }
-        }
-        return !moves.isEmpty() || isInCheck(color, board);
-    }
-
     private static List<ChessPosition> getOpposingTeam(ChessGame.TeamColor color, ChessBoard board) {
         final List<ChessPosition> opposingTeam = new ArrayList<>();
         final int size = board.getSize();
@@ -59,6 +41,33 @@ public class EndGameEnforcer implements Enforcer {
             }
         }
         return opposingTeam;
+    }
+
+    private boolean kingIsTrapped(ChessGame.TeamColor color, ChessBoard board) {
+        // check if every space any of color's pieces can to move would leave them in check
+        final Collection<ChessMove> moves = new ArrayList<>();
+
+        final List<ChessPosition> team = getOpposingTeam(
+                (color == ChessGame.TeamColor.BLACK) ?
+                        ChessGame.TeamColor.WHITE :
+                        ChessGame.TeamColor.BLACK,
+                board
+        );
+        for (ChessPosition pos : team) {
+            final ChessPiece teamPiece = board.getPiece(pos);
+            moves.addAll(teamPiece.pieceMoves(board, pos));
+            // for each space that's a move for the king
+            for (ChessMove m : moves) {
+                // create a hypothetical board where this move happened
+                final ChessBoard hypothetical = new ChessBoard(board);
+                hypothetical.addPiece(m.getStartPosition(), null);
+                hypothetical.addPiece(m.getEndPosition(), teamPiece);
+                if (!isInCheck(color, hypothetical)) {
+                    return false;
+                }
+            }
+        }
+        return !moves.isEmpty() || isInCheck(color, board);
     }
 
     @Override
@@ -85,14 +94,14 @@ public class EndGameEnforcer implements Enforcer {
     @Override
     public boolean isInCheckmate(ChessGame.TeamColor color, ChessBoard board) {
         // if every place the king could move to is in check && the king is in check
+        System.out.println("Checking " + color.name());
+        System.out.println("    King is trapped: " + kingIsTrapped(color, board) + " Is in check: " + isInCheck(color, board));
         return (kingIsTrapped(color, board) && isInCheck(color, board));
     }
 
     @Override
     public boolean isInStalemate(ChessGame.TeamColor color, ChessBoard board) {
         // if every place the king could move to is in check && the king is NOT in check
-        System.out.println("Checking " + color.name());
-        System.out.println("    King is trapped: " + kingIsTrapped(color, board) + " Is in check: " + isInCheck(color, board));
         return (kingIsTrapped(color, board) && !isInCheck(color, board));
     }
 }
