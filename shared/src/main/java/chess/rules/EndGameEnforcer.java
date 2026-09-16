@@ -8,9 +8,6 @@ import java.util.List;
 
 public class EndGameEnforcer implements Enforcer {
     private static ChessPosition findKing(ChessGame.TeamColor color, ChessBoard board) {
-       System.out.println("Looking for " + color.name() + " King");
-       System.out.print(board);
-
         final int size = board.getSize();
         // for each space on the board
         for (int i = 0; i < size; i++) {
@@ -47,7 +44,7 @@ public class EndGameEnforcer implements Enforcer {
 
     private boolean kingIsTrapped(ChessGame.TeamColor color, ChessBoard board) {
         // check if every space any of color's pieces can to move would leave them in check
-        final Collection<ChessMove> moves = new ArrayList<>();
+        final Collection<ChessMove> allMoves = new ArrayList<>();
 
         final List<ChessPosition> team = getOpposingTeam(
                 (color == ChessGame.TeamColor.BLACK) ?
@@ -57,7 +54,8 @@ public class EndGameEnforcer implements Enforcer {
         );
         for (ChessPosition pos : team) {
             final ChessPiece teamPiece = board.getPiece(pos);
-            moves.addAll(teamPiece.pieceMoves(board, pos));
+            final Collection<ChessMove> moves = teamPiece.pieceMoves(board, pos);
+            allMoves.addAll(moves);
             // for each space that's a move for the king
             for (ChessMove m : moves) {
                 // create a hypothetical board where this move happened
@@ -69,7 +67,7 @@ public class EndGameEnforcer implements Enforcer {
                 }
             }
         }
-        return !moves.isEmpty() || isInCheck(color, board);
+        return !allMoves.isEmpty() || isInCheck(color, board);
     }
 
     @Override
@@ -96,8 +94,6 @@ public class EndGameEnforcer implements Enforcer {
     @Override
     public boolean isInCheckmate(ChessGame.TeamColor color, ChessBoard board) {
         // if every place the king could move to is in check && the king is in check
-        System.out.println("Checking " + color.name());
-        System.out.println("    King is trapped: " + kingIsTrapped(color, board) + " Is in check: " + isInCheck(color, board));
         return (kingIsTrapped(color, board) && isInCheck(color, board));
     }
 
