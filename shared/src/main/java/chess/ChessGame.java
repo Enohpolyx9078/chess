@@ -3,9 +3,7 @@ package chess;
 import chess.rules.EndGameEnforcer;
 import chess.rules.Enforcer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -76,7 +74,7 @@ public class ChessGame {
         final ChessPiece checkPiece = currentBoard.getPiece(startPosition);
         Collection<ChessMove> valid = null;
         if (checkPiece != null) {
-            valid = new ArrayList<>();
+            valid = new HashSet<>();
             final Collection<ChessMove> moves = checkPiece.pieceMoves(currentBoard, startPosition);
             // for each move in this piece's move
             for (ChessMove m : moves) {
@@ -99,7 +97,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        //TODO get the valid moves for the piece at start position
+        // check if move is in there
+        //
     }
 
     /**
