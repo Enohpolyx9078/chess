@@ -103,7 +103,7 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("\\n");
+        final StringBuilder sb = new StringBuilder("\n");
         for (ChessPiece[] row : board) {
             for (ChessPiece p : row) {
                 if (p == null) {
