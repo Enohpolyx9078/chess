@@ -19,6 +19,7 @@ public class EndGameEnforcer implements Enforcer {
                             checkPiece.getTeamColor() == color
                                     && checkPiece.getPieceType() == ChessPiece.PieceType.KING
                     ) {
+                        System.out.println("King pos: " + checkPos);
                         return checkPos;
                     }
                 }
@@ -71,10 +72,13 @@ public class EndGameEnforcer implements Enforcer {
         // for each piece on the opposing team
         for (ChessPosition pos : opposingTeam) {
             final ChessPiece p = board.getPiece(pos);
+            System.out.println("Checking Piece: " + p);
             final Collection<ChessMove> moves = p.pieceMoves(board, pos);
             for (ChessMove m : moves) {
+                System.out.println("Checking move: " + m);
                 // if a valid move lands on the king
-                if (m.getEndPosition() == kingPos) {
+                System.out.println(m.getEndPosition() + " == " + kingPos + " ? " + (m.getEndPosition() == kingPos));
+                if (m.getEndPosition().equals(kingPos)) {
                     return true;
                 }
             }
