@@ -3,33 +3,22 @@ package chess.movement.validators;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 
-public class QueenValidator implements MovementValidator{
+import java.util.function.Function;
+
+public class QueenValidator implements MoveValidator{
     @Override
-    public boolean isValid(ChessBoard b, ChessMove move, ChessGame.TeamColor color) {
-        // Check out-of-bounds and self-capturing
-        if (!MovementValidator.checkBasic(b, move, color)) {
-            return false;
-        }
+    public boolean isValid(ChessBoard board, ChessMove move, ChessGame.TeamColor color) {
+        final MoveValidator.Direction dir = MoveValidator.getDirection(move);
+        final Function<int[], ChessPosition> movement =
+                switch(dir) {
+                    case HORIZONTAL -> MoveValidator.describeHorizontal(move);
+                    case VERTICAL -> MoveValidator.describeVertical(move);
+                    case DIAGONAL -> MoveValidator.describeDiagonal(move);
+                };
 
-        // Check if any piece exists between the target and the start
-        final int[] startData = ChessBoard.interpretChessPosition(move.getStartPosition());
-        final int startRow = startData[0];
-        final int startCol = startData[1];
-        final int[] targetData = ChessBoard.interpretChessPosition(move.getEndPosition());
-        final int targetRow = targetData[0];
-        final int targetCol = targetData[1];
-
-        if (startRow != targetRow && startCol != targetCol) {
-            int diagonalShift = targetRow - startRow;
-            return MovementValidator.checkTraversal(b, startRow, startCol, diagonalShift,
-                    MovementValidator.describeDiagonal(startRow, startCol, targetRow, targetCol)
-            );
-        } else {
-            int straightShift = (startRow == targetRow) ? (targetCol - startCol) : (targetRow - startRow);
-            return MovementValidator.checkTraversal(b, startRow, startCol, straightShift,
-                    MovementValidator.describeStraight(startRow, startCol, targetRow, targetCol)
-            );
-        }
+        return MoveValidator.isGenericallyValid(board, move, color) &&
+                MoveValidator.doesNotJump(board, move, movement);
     }
 }

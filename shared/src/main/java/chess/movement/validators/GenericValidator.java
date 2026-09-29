@@ -1,16 +1,12 @@
 package chess.movement.validators;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
-import chess.ChessBoard;
-import chess.ChessPiece;
 
-// This validator only check if the move is out-of-bounds
-// or if it results in a valid capture
-public class GenericValidator implements MovementValidator {
-
+public class GenericValidator implements MoveValidator {
     @Override
-    public boolean isValid(ChessBoard b, ChessMove move, ChessGame.TeamColor color) {
-        return MovementValidator.checkBasic(b, move, color);
+    public boolean isValid(ChessBoard board, ChessMove move, ChessGame.TeamColor color) {
+        return MoveValidator.isGenericallyValid(board, move, color);
     }
 }

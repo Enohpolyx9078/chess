@@ -2,40 +2,34 @@ package chess.movement.validators;
 
 import chess.*;
 
-public class PawnValidator implements MovementValidator{
+public class PawnValidator implements MoveValidator{
+    private boolean isFirstTurn(ChessBoard board, ChessMove move, ChessGame.TeamColor color) {
+        final int startRow = move.getStartPosition().getRow();
+        return (color == ChessGame.TeamColor.WHITE) ?
+                startRow == 2 :
+                startRow == board.getSize() - 1;
+    }
+
+    private boolean isAttack(ChessMove move) {
+        final ChessPosition start = move.getStartPosition();
+        final ChessPosition end = move.getEndPosition();
+        return (start.getRow() != end.getRow() &&
+                start.getColumn() != end.getColumn());
+    }
+
     @Override
-    public boolean isValid(ChessBoard b, ChessMove move, ChessGame.TeamColor color) {
-        // Check out-of-bounds and self-capturing
-        if (!MovementValidator.checkBasic(b, move, color)) {
-            return false;
-        }
-
-        // handle allowing the first move to be forward two
-        // If the start row is 2 or 7 && both spaces are clear
-        int startRow = move.getEndPosition().getRow();
-        int targetRow = move.getStartPosition().getRow();
-        if (Math.abs(startRow - targetRow) > 1) {
-            ChessPosition intermediate = new ChessPosition(
-                    (targetRow - startRow < 0) ? startRow - 1 : startRow + 1,
-                    move.getStartPosition().getColumn());
-            if (b.getPiece(intermediate) != null) {
-                return false;
+    public boolean isValid(ChessBoard board, ChessMove move, ChessGame.TeamColor color) {
+        if (MoveValidator.isGenericallyValid(board, move, color)) {
+            final ChessPiece target = board.getPiece(move.getEndPosition());
+            if (Math.abs(MoveValidator.getDistance(move)) == 2 ) {
+                return isFirstTurn(board, move, color) &&
+                        MoveValidator.doesNotJump(board, move, MoveValidator.describeVertical(move)) &&
+                        target == null;
+            } else if (isAttack(move)) {
+                return (target != null && target.getTeamColor() != color);
             }
-            if (b.getPiece(move.getEndPosition()) != null) {
-                return false;
-            }
+            return target == null;
         }
-
-        ChessPiece targetPiece = b.getPiece(move.getEndPosition());
-        if (move.getStartPosition().getColumn() == move.getEndPosition().getColumn()) {
-            // check that forward moves aren't blocked
-            return targetPiece == null;
-        } else {
-            // check if diagonal moves are captures
-            if (targetPiece != null) {
-                return targetPiece.getTeamColor() != color;
-            }
-            return false;
-        }
+        return false;
     }
 }
