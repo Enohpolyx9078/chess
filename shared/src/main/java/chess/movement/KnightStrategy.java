@@ -1,14 +1,12 @@
 package chess.movement;
 
-import chess.movement.validators.MovementValidator;
-
+import chess.movement.validators.MoveValidator;
 public class KnightStrategy extends MoveStrategy {
-    private static final int[][] OFFSETS = {
-            {2, 1}, {2, -1}, {1, 2}, {1, -2},
-            {-2, 1}, {-2, -1}, {-1, 2}, {-1, -2}
+    private static final int[][] offsets = {
+            {2, -1}, {2, 1}, {1, -2}, {1, 2},
+            {-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}
     };
-
-    public KnightStrategy(MovementValidator v) {
-        super(v, OFFSETS);
+    public KnightStrategy(MoveValidator v) {
+        super(offsets, v);
     }
 }

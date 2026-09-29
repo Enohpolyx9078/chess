@@ -1,61 +1,59 @@
 package chess.movement;
 
 import chess.*;
-import chess.movement.validators.MovementValidator;
+import chess.movement.validators.MoveValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-public class PawnStrategy extends MoveStrategy{
-    public static final int[][] OFFSETS_WHITE = {
+public class PawnStrategy extends MoveStrategy {
+    private static final int[][] whiteOffsets = {
             {1, 0}, {1, -1}, {1, 1}, {2, 0}
     };
-    public static final int[][] OFFSETS_BLACK = {
+    private static final int[][] blackOffsets = {
             {-1, 0}, {-1, -1}, {-1, 1}, {-2, 0}
     };
 
-    public PawnStrategy(MovementValidator v, ChessGame.TeamColor color) {
-        super(v, (color == ChessGame.TeamColor.BLACK) ? OFFSETS_BLACK : OFFSETS_WHITE);
+    private final int[][] offsets;
+    private final MoveValidator v;
+
+    public PawnStrategy(ChessGame.TeamColor color, MoveValidator v) {
+        this.offsets = (color == ChessGame.TeamColor.WHITE) ?
+                whiteOffsets : blackOffsets;
+        this.v = v;
     }
 
-    private List<ChessMove> addPromotions(ChessMove move) {
-        List<ChessMove> moves = new ArrayList<>();
-        for (ChessPiece.PieceType t : ChessPiece.PieceType.values()) {
-            if (t == ChessPiece.PieceType.PAWN || t == ChessPiece.PieceType.KING) {
+    private boolean isPromotion(ChessBoard board, ChessMove move, ChessGame.TeamColor color) {
+        final int endRow = move.getEndPosition().getRow();
+        return (color == ChessGame.TeamColor.WHITE) ?
+                endRow == board.getSize() :
+                endRow == 1;
+    }
+
+    private Collection<ChessMove> getPromotions(ChessMove move) {
+        final Collection<ChessMove> promos = new ArrayList<>();
+        for (ChessPiece.PieceType type : ChessPiece.PieceType.values()) {
+            if (type == ChessPiece.PieceType.KING || type == ChessPiece.PieceType.PAWN) {
                 continue;
             }
-            moves.add(new ChessMove(move, t));
+            promos.add(new ChessMove(move, type));
         }
-        return moves;
+        return promos;
     }
 
     @Override
-    public Collection<ChessMove> getValidMoves(ChessPosition p, ChessBoard b, ChessGame.TeamColor color) {
-        // get a list of ChessMoves for any move that is valid
-        // for each offset, derive the target move
-        // if the target move is valid, add it to the final collection
-        final int startRow = (color == ChessGame.TeamColor.BLACK) ? 7 : 2;
-        List<ChessMove> validMoves = new ArrayList<>();
+    public Collection<ChessMove> getValidMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color) {
+        final Collection<ChessMove> valid = new ArrayList<>();
         for (int[] offset : offsets) {
-            if (Math.abs(offset[0]) == 2 && p.getRow() != startRow) {
-                continue;
-            }
-            ChessMove target = deriveTarget(p, offset);
-            if (v.isValid(b, target, color)) {
-                validMoves.add(target);
-            }
-        }
-        if (!validMoves.isEmpty()) {
-            int targetRow = validMoves.getFirst().getEndPosition().getRow();
-            if (targetRow == 1 || targetRow == b.getSize()) {
-                List<ChessMove> promotions = new ArrayList<>();
-                for (ChessMove move : validMoves) {
-                    promotions.addAll(addPromotions(move));
+            final ChessMove move = deriveTarget(myPosition, offset);
+            if (v.isValid(board, move, color)) {
+                if (isPromotion(board, move, color)) {
+                    valid.addAll(getPromotions(move));
+                } else {
+                    valid.add(move);
                 }
-                return promotions;
             }
         }
-        return validMoves;
+        return valid;
     }
 }

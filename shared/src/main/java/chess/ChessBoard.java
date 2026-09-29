@@ -91,14 +91,13 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        this.board[0] = buildHomeRow(ChessGame.TeamColor.WHITE);
-        this.board[1] = buildPawnRow(ChessGame.TeamColor.WHITE);
-        this.board[2] = new ChessPiece[size];
-        this.board[3] = new ChessPiece[size];
-        this.board[4] = new ChessPiece[size];
-        this.board[5] = new ChessPiece[size];
-        this.board[6] = buildPawnRow(ChessGame.TeamColor.BLACK);
-        this.board[7] = buildHomeRow(ChessGame.TeamColor.BLACK);
+        board[0] = buildHomeRow(ChessGame.TeamColor.WHITE);
+        board[1] = buildPawnRow(ChessGame.TeamColor.WHITE);
+        for (int i = 2; i < size - 2; i++) {
+            board[i] = new ChessPiece[size];
+        }
+        board[size - 2] = buildPawnRow(ChessGame.TeamColor.BLACK);
+        board[size - 1] = buildHomeRow(ChessGame.TeamColor.BLACK);
     }
 
     @Override

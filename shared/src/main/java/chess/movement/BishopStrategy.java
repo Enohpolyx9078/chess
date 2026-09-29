@@ -1,15 +1,15 @@
 package chess.movement;
 
-import chess.movement.validators.MovementValidator;
+import chess.movement.validators.MoveValidator;
 
 public class BishopStrategy extends MoveStrategy{
-    private final static int[][] OFFSETS = {
+    private static final int[][] offsets = {
             {1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7},
-            {-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7},
             {1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7},
+            {-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7},
             {-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}
     };
-    public BishopStrategy(MovementValidator v) {
-        super(v, OFFSETS);
+    public BishopStrategy(MoveValidator v) {
+        super(offsets, v);
     }
 }

@@ -13,39 +13,23 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-
-    private final ChessGame.TeamColor pieceColor;
-    private final ChessPiece.PieceType type;
-    private final MoveStrategy moveStrategy;
+    private final ChessGame.TeamColor teamColor;
+    private final PieceType pieceType;
+    private final MoveStrategy strategy;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.pieceColor = pieceColor;
-        this.type = type;
-        switch (type) {
-            case BISHOP:
-                this.moveStrategy = new BishopStrategy(new BishopValidator());
-                break;
-            case KING:
-                this.moveStrategy = new KingStrategy(new GenericValidator());
-                break;
-            case KNIGHT:
-                this.moveStrategy = new KnightStrategy(new GenericValidator());
-                break;
-            case QUEEN:
-                this.moveStrategy = new QueenStrategy(new QueenValidator());
-                break;
-            case ROOK:
-                this.moveStrategy = new RookStrategy(new RookValidator());
-                break;
-            default:
-                // PAWN
-                this.moveStrategy = new PawnStrategy(new PawnValidator(), pieceColor);
-        }
-    }
+        this.teamColor = pieceColor;
+        this.pieceType = type;
 
-    @Override
-    public String toString() {
-        return pieceColor.name() + "-" + type.name();
+        // assign strategy based on type
+        strategy = switch (pieceType) {
+            case BISHOP -> new BishopStrategy(new BishopValidator());
+            case KING -> new KingStrategy(new GenericValidator());
+            case KNIGHT -> new KnightStrategy(new GenericValidator());
+            case PAWN -> new PawnStrategy(teamColor, new PawnValidator());
+            case QUEEN -> new QueenStrategy(new QueenValidator());
+            case ROOK -> new RookStrategy(new RookValidator());
+        };
     }
 
     @Override
@@ -54,12 +38,12 @@ public class ChessPiece {
             return false;
         }
         ChessPiece that = (ChessPiece) o;
-        return pieceColor == that.pieceColor && type == that.type;
+        return getTeamColor() == that.getTeamColor() && getPieceType() == that.getPieceType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pieceColor, type);
+        return Objects.hash(getTeamColor(), getPieceType());
     }
 
     /**
@@ -78,14 +62,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return this.pieceColor;
+        return this.teamColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return this.type;
+        return this.pieceType;
     }
 
     /**
@@ -96,6 +80,6 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return moveStrategy.getValidMoves(myPosition, board, this.pieceColor);
+        return strategy.getValidMoves(board, myPosition, teamColor);
     }
 }
