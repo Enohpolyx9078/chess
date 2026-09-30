@@ -3,7 +3,6 @@ package service;
 import dataaccess.*;
 import model.GameRequest;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
