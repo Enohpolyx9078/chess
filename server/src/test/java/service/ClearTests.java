@@ -1,12 +1,24 @@
 package service;
 
 import dataaccess.*;
+import model.GameRequest;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClearTests {
+    @Test
+    public void clearAuthTest() {
+        AuthDAO authAccess = new MemoryAuthDAO();
+        authAccess.clear();
+        UserData register = new UserData("enohpolyx", "123ABC", "a@example.com");
+        authAccess.createAuth(register);
+        assertEquals(1, authAccess.getSize());
+        authAccess.clear();
+        assertEquals(0, authAccess.getSize());
+    }
+
     @Test
     public void clearUsersTest() throws AlreadyTakenException {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
@@ -19,12 +31,13 @@ public class ClearTests {
     }
 
     @Test
-    public void clearAuthTest() {
-        UserData register = new UserData("enohpolyx", "123ABC", "a@example.com");
-        AuthDAO authAccess = new MemoryAuthDAO();
-        authAccess.createAuth(register);
-        assertEquals(1, authAccess.getSize());
-        authAccess.clear();
-        assertEquals(0, authAccess.getSize());
+    public void clearGameTest() {
+        GameRequest game = new GameRequest("First Game");
+        GameDAO gameAccess = new MemoryGameDAO();
+        GameService service = new GameService();
+        service.createGame(game);
+        assertEquals(1, gameAccess.getSize());
+        gameAccess.clear();
+        assertEquals(0, gameAccess.getSize());
     }
 }
