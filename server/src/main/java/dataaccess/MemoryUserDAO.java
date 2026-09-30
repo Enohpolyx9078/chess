@@ -2,21 +2,23 @@ package dataaccess;
 
 import model.UserData;
 
+import java.util.HashMap;
+import java.util.Locale;
+
 public class MemoryUserDAO implements UserDAO{
+    private static final HashMap<String, UserData> users = new HashMap<>();
+
     @Override
     public UserData getUser(String username) {
-        //TODO
-        return null;
+        return users.get(username.toLowerCase());
     }
 
     @Override
     public void createUser(UserData user) {
-        //TODO store the user data in all lowercase
-    }
-
-    @Override
-    public String createAuth(UserData user) {
-        //TODO
-        return null;
+        UserData record = new UserData(
+                user.username().toLowerCase(),
+                user.password(),
+                user.email().toLowerCase());
+        users.put(record.username(), record);
     }
 }
