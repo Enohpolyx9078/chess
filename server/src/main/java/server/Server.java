@@ -38,7 +38,7 @@ public class Server {
      * </ul>
      */
     private void clearHandler(@NotNull Context context) {
-        //TODO call clear application on a clear service
+        clearService.clearApplication();
         setResponse(context, 200, "{}");
     }
 
