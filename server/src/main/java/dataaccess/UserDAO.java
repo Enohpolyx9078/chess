@@ -6,4 +6,5 @@ public interface UserDAO {
     UserData getUser(String username);
     void createUser(UserData user);
     void clear();
+    int getSize();
 }
