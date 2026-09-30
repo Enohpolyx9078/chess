@@ -11,7 +11,7 @@ public class MemoryUserDAO implements UserDAO{
 
     @Override
     public void createUser(UserData user) {
-        //TODO
+        //TODO store the user data in all lowercase
     }
 
     @Override

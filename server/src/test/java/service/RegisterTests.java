@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RegisterTests {
     @Test
     public void registerSuccess() throws AlreadyTakenException {
-        UserData register = new UserData("MandyCandy", "123", "a@example.com");
-        UserData resp = new UserData("mandycandy", "123", "a@example.com");
+        UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
+        UserData resp = new UserData("mandycandy", "123ABC", "a@example.com");
         UserService service = new UserService();
         UserDAO dataAccess = new MemoryUserDAO();
         service.register(register);
