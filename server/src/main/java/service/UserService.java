@@ -1,13 +1,18 @@
 package service;
 
 import dataaccess.AlreadyTakenException;
+import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
 import model.RegisterResult;
 import model.UserData;
 
 public class UserService {
-    public RegisterResult register(UserData userData) throws AlreadyTakenException {
-        RegisterResult result;
-        //TODO call to the DAO layer to register
-        return result;
+    private static final UserDAO userDAO = new MemoryUserDAO();
+    public RegisterResult register(UserData user) throws AlreadyTakenException {
+        if (userDAO.getUser(user.username()) != null) {
+            throw new AlreadyTakenException("Username already taken");
+        }
+        userDAO.createUser(user);
+        return new RegisterResult(user.username(), userDAO.createAuth(user));
     }
 }

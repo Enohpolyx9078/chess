@@ -10,14 +10,13 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public boolean createUser(UserData user) {
+    public void createUser(UserData user) {
         //TODO
-        return false;
     }
 
     @Override
-    public boolean createAuth(UserData user) {
+    public String createAuth(UserData user) {
         //TODO
-        return false;
+        return null;
     }
 }
