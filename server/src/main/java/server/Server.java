@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
 import service.UserService;
 
-import java.util.Map;
-
 public class Server {
 
     private final Javalin javalin;
