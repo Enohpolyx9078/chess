@@ -1,4 +1,4 @@
-package java.service;
+package service;
 
 import dataaccess.AlreadyTakenException;
 import dataaccess.MemoryUserDAO;
@@ -22,7 +22,7 @@ public class RegisterTests {
 
     @Test
     public void usernameTakenTest() throws AlreadyTakenException {
-        UserData register = new UserData("enohpolyx", "123", "a@example.com");
+        UserData register = new UserData("oglee", "123", "a@example.com");
         UserService service = new UserService();
         service.register(register);
         assertThrows(AlreadyTakenException.class, () -> service.register(register));
