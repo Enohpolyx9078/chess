@@ -3,6 +3,9 @@ package server;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
+import com.google.gson.Gson;
+
+import java.util.Map;
 
 public class Server {
 
@@ -23,7 +26,12 @@ public class Server {
         // success 200 -> username, authToken
         // bad request 400 -> message "Error: bad request"
         // already taken 403 -> message "Error: already taken"
-        // internal error 500 -> message "Error: $error"
+        try {
+            //TODO RegisterRequest body = getBodyObject(context, RegisterRequest.class);
+        } catch (RuntimeException e) {
+            context.status(400);
+            context.json("{\"message\":\"Error: bad request\"}");
+        }
     }
 
     private void notFound(@NotNull Context context) {
@@ -31,7 +39,18 @@ public class Server {
     }
 
     private void exceptionHandler(Exception e, @NotNull Context context) {
-        //TODO
+        //TODO internal error 500 -> message "Error: $error"
+    }
+
+    // method from the MasteryLS docs
+    private static <T> T getBodyObject(Context context, Class<T> clazz) {
+        var bodyObject = new Gson().fromJson(context.body(), clazz);
+
+        if (bodyObject == null) {
+            throw new RuntimeException("missing required body");
+        }
+
+        return bodyObject;
     }
 
     public int run(int desiredPort) {
