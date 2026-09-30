@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.JsonSyntaxException;
-import dataaccess.AlreadyTakenException;
+import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.RegisterResult;
@@ -11,9 +11,12 @@ import com.google.gson.Gson;
 import service.UserService;
 
 public class Server {
-
     private final Javalin javalin;
-    private static final UserService userService = new UserService();
+
+    private static final UserDAO userDAO = new MemoryUserDAO();
+    private static final AuthDAO authDAO = new MemoryAuthDAO();
+
+    private static final UserService userService = new UserService(userDAO, authDAO);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))

@@ -5,8 +5,13 @@ import model.RegisterResult;
 import model.UserData;
 
 public class UserService {
-    private static final UserDAO userDAO = new MemoryUserDAO();
-    private static final AuthDAO authDAO = new MemoryAuthDAO();
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
+
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
     public RegisterResult register(UserData user) throws AlreadyTakenException {
         if (userDAO.getUser(user.username()) != null) {
