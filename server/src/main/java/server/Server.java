@@ -1,7 +1,9 @@
 package server;
 
+import com.google.gson.JsonSyntaxException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import model.UserData;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
 
@@ -27,8 +29,8 @@ public class Server {
         // bad request 400 -> message "Error: bad request"
         // already taken 403 -> message "Error: already taken"
         try {
-            //TODO RegisterRequest body = getBodyObject(context, RegisterRequest.class);
-        } catch (RuntimeException e) {
+            UserData registerRequest = getBodyObject(context, UserData.class);
+        } catch (JsonSyntaxException e) {
             context.status(400);
             context.json("{\"message\":\"Error: bad request\"}");
         }
@@ -47,7 +49,7 @@ public class Server {
         var bodyObject = new Gson().fromJson(context.body(), clazz);
 
         if (bodyObject == null) {
-            throw new RuntimeException("missing required body");
+            throw new JsonSyntaxException("missing required body");
         }
 
         return bodyObject;
