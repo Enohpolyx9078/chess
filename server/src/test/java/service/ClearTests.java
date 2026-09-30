@@ -59,9 +59,7 @@ public class ClearTests {
         assertEquals(1, userDAO.getSize());
         assertEquals(1, authDAO.getSize());
         assertEquals(1, gameDAO.getSize());
-        userDAO.clear();
-        authDAO.clear();
-        gameDAO.clear();
+        clearService.clearApplication();
         assertEquals(0, userDAO.getSize());
         assertEquals(0, authDAO.getSize());
         assertEquals(0, gameDAO.getSize());
