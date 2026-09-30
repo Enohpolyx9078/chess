@@ -24,11 +24,15 @@ public class Server {
                 .error(404, this::notFound);
     }
 
+    /**
+     * Registers a new user
+     * <ul>
+     *     <li>[200] <code>{"username":,"authToken":}</code></li>
+     *     <li>[400] <code>{"message": "Error: bad request"}</code></li>
+     *     <li>[403] <code>{"message": "Error: already taken"}</code></li>
+     * </ul>
+     */
     private void registerHandler(@NotNull Context context) {
-        //TODO register a new user
-        // success 200 -> username, authToken
-        // bad request 400 -> message "Error: bad request"
-        // already taken 403 -> message "Error: already taken"
         try {
             UserData registerRequest = getBodyObject(context, UserData.class);
             RegisterResult result = userService.register(registerRequest);
