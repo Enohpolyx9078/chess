@@ -20,4 +20,9 @@ public class MemoryUserDAO implements UserDAO{
                 user.email().toLowerCase());
         users.put(record.username(), record);
     }
+
+    @Override
+    public void clear() {
+        //TODO
+    }
 }

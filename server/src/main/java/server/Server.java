@@ -8,21 +8,38 @@ import model.RegisterResult;
 import model.UserData;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
-import service.UserService;
+import service.*;
 
 public class Server {
     private final Javalin javalin;
 
     private static final UserDAO userDAO = new MemoryUserDAO();
     private static final AuthDAO authDAO = new MemoryAuthDAO();
+    private static final GameDAO gameDAO = new MemoryGameDAO();
 
     private static final UserService userService = new UserService(userDAO, authDAO);
+    private static final ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", this::registerHandler)
+                .delete("/db", this::clearHandler)
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
+    }
+
+    /**
+     * Clears all data from the application
+     * <p>
+     *     <b>For testing only</b>
+     * </p>
+     * <ul>
+     *     <li>[200] <code>{}</code></li>
+     * </ul>
+     */
+    private void clearHandler(@NotNull Context context) {
+        //TODO call clear application on a clear service
+        setResponse(context, 200, "{}");
     }
 
     /**

@@ -14,4 +14,9 @@ public class MemoryAuthDAO implements AuthDAO{
         tokens.put(user.username().toLowerCase(), token);
         return token;
     }
+
+    @Override
+    public void clear() {
+        //TODO
+    }
 }
