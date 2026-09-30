@@ -8,4 +8,16 @@ public class MemoryUserDAO implements UserDAO{
         //TODO
         return null;
     }
+
+    @Override
+    public boolean createUser(UserData user) {
+        //TODO
+        return false;
+    }
+
+    @Override
+    public boolean createAuth(UserData user) {
+        //TODO
+        return false;
+    }
 }
