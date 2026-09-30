@@ -5,7 +5,6 @@ import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
 import model.UserData;
 import org.junit.jupiter.api.Test;
-import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
