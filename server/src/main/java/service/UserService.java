@@ -13,6 +13,6 @@ public class UserService {
             throw new AlreadyTakenException("Username already taken");
         }
         userDAO.createUser(user);
-        return new RegisterResult(user.username(), userDAO.createAuth(user));
+        return new RegisterResult(user.username().toLowerCase(), userDAO.createAuth(user));
     }
 }

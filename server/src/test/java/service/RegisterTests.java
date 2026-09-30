@@ -11,16 +11,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterTests {
     @Test
-    public void registerSuccess() {
-        UserData register = new UserData("mandycandy", "123", "a@example.com");
+    public void registerSuccess() throws AlreadyTakenException {
+        UserData register = new UserData("MandyCandy", "123", "a@example.com");
+        UserData resp = new UserData("mandycandy", "123", "a@example.com");
         UserService service = new UserService();
         UserDAO dataAccess = new MemoryUserDAO();
         service.register(register);
-        assertEquals(register, dataAccess.getUser(register.username()));
+        assertEquals(resp, dataAccess.getUser(register.username()));
     }
 
     @Test
-    public void usernameTakenTest() {
+    public void usernameTakenTest() throws AlreadyTakenException {
         UserData register = new UserData("enohpolyx", "123", "a@example.com");
         UserService service = new UserService();
         service.register(register);
@@ -28,7 +29,7 @@ public class RegisterTests {
     }
 
     @Test
-    public void caseInsensitiveTest() {
+    public void caseInsensitiveTest() throws AlreadyTakenException {
         UserData register = new UserData("enohpolyx", "123", "a@example.com");
         UserData register2 = new UserData("ENOHPOLYX", "123", "a@example.com");
         UserService service = new UserService();
