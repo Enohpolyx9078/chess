@@ -12,8 +12,7 @@ public class RegisterTests {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
         UserData resp = new UserData("mandycandy", "123ABC", "a@example.com");
         UserDAO userAccess = new MemoryUserDAO();
-        AuthDAO authAccess = new MemoryAuthDAO();
-        UserService service = new UserService(userAccess, authAccess);
+        UserService service = new UserService();
         service.register(register);
         assertEquals(resp, userAccess.getUser(register.username()));
     }
@@ -21,9 +20,7 @@ public class RegisterTests {
     @Test
     public void usernameTakenTest() throws AlreadyTakenException {
         UserData register = new UserData("oglee", "123", "a@example.com");
-        UserDAO userAccess = new MemoryUserDAO();
-        AuthDAO authAccess = new MemoryAuthDAO();
-        UserService service = new UserService(userAccess, authAccess);
+        UserService service = new UserService();
         service.register(register);
         assertThrows(AlreadyTakenException.class, () -> service.register(register));
     }
@@ -32,9 +29,7 @@ public class RegisterTests {
     public void caseInsensitiveTest() throws AlreadyTakenException {
         UserData register = new UserData("enohpolyx", "123", "a@example.com");
         UserData register2 = new UserData("ENOHPOLYX", "123", "a@example.com");
-        UserDAO userAccess = new MemoryUserDAO();
-        AuthDAO authAccess = new MemoryAuthDAO();
-        UserService service = new UserService(userAccess, authAccess);
+        UserService service = new UserService();
         service.register(register);
         assertThrows(AlreadyTakenException.class, () -> service.register(register2));
     }

@@ -13,12 +13,8 @@ import service.*;
 public class Server {
     private final Javalin javalin;
 
-    private static final UserDAO userDAO = new MemoryUserDAO();
-    private static final AuthDAO authDAO = new MemoryAuthDAO();
-    private static final GameDAO gameDAO = new MemoryGameDAO();
-
-    private static final UserService userService = new UserService(userDAO, authDAO);
-    private static final ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
+    private static final UserService userService = new UserService();
+    private static final ClearService clearService = new ClearService();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
