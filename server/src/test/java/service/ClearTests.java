@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.GameRequest;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,5 +40,30 @@ public class ClearTests {
         assertEquals(1, gameAccess.getSize());
         gameAccess.clear();
         assertEquals(0, gameAccess.getSize());
+    }
+
+    @Test
+    public void clearAllTest() throws AlreadyTakenException {
+        ClearService clearService = new ClearService();
+        UserService userService = new UserService();
+        GameService gameService = new GameService();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
+        UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
+        userService.register(register);
+        gameService.createGame(new GameRequest("New Game"));
+        assertEquals(1, userDAO.getSize());
+        assertEquals(1, authDAO.getSize());
+        assertEquals(1, gameDAO.getSize());
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
+        assertEquals(0, userDAO.getSize());
+        assertEquals(0, authDAO.getSize());
+        assertEquals(0, gameDAO.getSize());
     }
 }
