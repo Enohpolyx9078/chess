@@ -15,6 +15,6 @@ public class UserService {
             throw new AlreadyTakenException("Username already taken");
         }
         userDAO.createUser(user);
-        return new RegisterResult(user.username().toLowerCase(), authDAO.createAuth(user));
+        return new RegisterResult(user.username(), authDAO.createAuth(user));
     }
 }
