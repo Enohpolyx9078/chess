@@ -24,9 +24,31 @@ public class Server {
                 .post("/user", this::registerHandler)
                 .post("/session", this::loginHandler)
                 .delete("/session", this::logoutHandler)
+                .post("/game", this::createGameHandler)
                 .delete("/db", this::clearHandler)
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
+        javalin.before("/game", context -> {
+            if (!AuthService.isAuthorized(context.header("authorization"))) {
+                throw new UnauthorizedException("Missing or invalid token");
+            }
+        });
+    }
+
+    /**
+     * Creates a new game with the given name
+     * <ul>
+     *     <li>[200] <code>{"gameID":,}</code></li>
+     *     <li>[400] <code>{"message": "Error: bad request"}</code></li>
+     *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
+     * </ul>
+     */
+    private void createGameHandler(@NotNull Context context) {
+        try {
+            //TODO
+        } catch (JsonSyntaxException _) {
+            setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
+        }
     }
 
     /**
@@ -35,7 +57,6 @@ public class Server {
      *     <li>[200] <code>{}</code></li>
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
-     *
      */
     private void logoutHandler(@NotNull Context context) {
         try {
@@ -53,7 +74,6 @@ public class Server {
      *     <li>[400] <code>{"message": "Error: bad request"}</code></li>
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
-     *
      */
     private void loginHandler(@NotNull Context context) {
         try {
@@ -106,11 +126,15 @@ public class Server {
     }
 
     private void exceptionHandler(Exception e, @NotNull Context context) {
+        if (e instanceof UnauthorizedException) {
+            setResponse(context, 401, "{\"message\":\"Error: unauthorized\"}");
+        } else {
         setResponse(context,
                 500,
                 new Gson().toJson(
                         Map.of("message", String.format("Error: %s", e.getMessage()))
                 ));
+        }
     }
 
     private static void setResponse(Context context, Integer code, String json) {
