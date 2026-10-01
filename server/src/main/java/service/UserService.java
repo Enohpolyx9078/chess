@@ -11,7 +11,7 @@ public class UserService {
 
     public UserService() {}
 
-    public static LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
+    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
         UserData user = userDAO.getUser(loginRequest.username());
         //TODO check the password (eventually the password hash)
         if (user == null) {

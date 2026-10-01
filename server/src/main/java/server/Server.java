@@ -38,7 +38,7 @@ public class Server {
     private void loginHandler(@NotNull Context context) {
         try {
             LoginRequest loginRequest = getBodyObject(context, LoginRequest.class);
-            LoginResult result = UserService.login(loginRequest);
+            LoginResult result = userService.login(loginRequest);
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
         } catch (UnauthorizedException _) {
