@@ -1,14 +1,14 @@
 package dataaccess;
 
-import model.GameData;
 import model.GameRequest;
 import model.GameResult;
+import model.SingleGameResponse;
 
 import java.util.List;
 
 public interface GameDAO {
     GameResult createGame(GameRequest request);
-    List<GameData> listGames();
+    List<SingleGameResponse> listGames();
     void clear();
     int getSize();
 }

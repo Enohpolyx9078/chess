@@ -4,7 +4,9 @@ import chess.ChessGame;
 import model.GameData;
 import model.GameRequest;
 import model.GameResult;
+import model.SingleGameResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +36,10 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public List<GameData> listGames() {
-        //TODO
-        return List.of();
+    public List<SingleGameResponse> listGames() {
+        List<SingleGameResponse> gamesList = new ArrayList<>();
+        GAMES.forEach((Integer _, GameData game) -> gamesList.add(new SingleGameResponse(game)));
+        return gamesList;
     }
 
     @Override
