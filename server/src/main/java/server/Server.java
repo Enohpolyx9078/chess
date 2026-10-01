@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import io.javalin.*;
@@ -51,7 +52,10 @@ public class Server {
      */
     private void listGamesHandler(@NotNull Context context) {
         ListGamesResponse response = GAME_SERVICE.listGames();
-        setResponse(context, 200, new Gson().toJson(response));
+        Gson gson = new GsonBuilder() // some help with GsonBuilder syntax from Master Google
+                .serializeNulls()
+                .create();
+        setResponse(context, 200, gson.toJson(response));
     }
 
     /**
