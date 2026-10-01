@@ -21,9 +21,19 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", this::registerHandler)
                 .post("/session", this::loginHandler)
+                .delete("/session", this::logoutHandler)
                 .delete("/db", this::clearHandler)
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
+    }
+
+    private void logoutHandler(@NotNull Context context) throws UnauthorizedException {
+        try {
+            userService.logout(context.header("authorization"));
+            setResponse(context, 200, "{}");
+        } catch (UnauthorizedException _) {
+            setResponse(context, 401, "{\"message\":\"Error: unauthorized\"}");
+        }
     }
 
     /**

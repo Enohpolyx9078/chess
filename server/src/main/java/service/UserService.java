@@ -36,4 +36,10 @@ public class UserService {
         userDAO.createUser(user);
         return new LoginResult(user.username(), authDAO.createAuth(user));
     }
+
+    public void logout(String authToken) throws UnauthorizedException{
+        //TODO check if the authToken exists
+        // If it doesn't throw Unauthorized
+        // Otherwise, delete the authToken
+    }
 }
