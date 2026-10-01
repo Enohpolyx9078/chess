@@ -43,6 +43,12 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
+    public GameData getGame(Integer key) {
+        //TODO get the came provided by key
+        return null;
+    }
+
+    @Override
     public void clear() {
         GAMES.clear();
     }

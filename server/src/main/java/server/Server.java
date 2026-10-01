@@ -27,6 +27,7 @@ public class Server {
                 .delete("/session", this::logoutHandler)
                 .post("/game", this::createGameHandler)
                 .get("/game", this::listGamesHandler)
+                .put("/game", this::joinGameHandler)
                 .delete("/db", this::clearHandler)
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
@@ -41,6 +42,20 @@ public class Server {
                 throw new UnauthorizedException("Missing or invalid token");
             }
         });
+    }
+    /**
+     * Joins a game as the provided color
+     * <ul>
+     *     <li>[200] <code>{}</code></li>
+     *     <li>[400] <code>{"message": "Error: bad request"}</code></li>
+     *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
+     *     <li>[403] <code>{"message": "Error: already taken"}</code></li>
+     * </ul>
+     */
+    private void joinGameHandler(@NotNull Context context) throws NotFoundException, AlreadyTakenException {
+        JoinGameRequest request = getBodyObject(context, JoinGameRequest.class);
+        GAME_SERVICE.joinGame(request);
+        setResponse(context, 200, "{}");
     }
 
     /**
@@ -120,14 +135,10 @@ public class Server {
      *     <li>[403] <code>{"message": "Error: already taken"}</code></li>
      * </ul>
      */
-    private void registerHandler(@NotNull Context context) {
-        try {
-            UserData registerRequest = getBodyObject(context, UserData.class);
-            LoginResult result = USER_SERVICE.register(registerRequest);
-            setResponse(context, 200, new Gson().toJson(result));
-        } catch (AlreadyTakenException _) {
-            setResponse(context, 403, "{\"message\":\"Error: already taken\"}");
-        }
+    private void registerHandler(@NotNull Context context) throws AlreadyTakenException {
+        UserData registerRequest = getBodyObject(context, UserData.class);
+        LoginResult result = USER_SERVICE.register(registerRequest);
+        setResponse(context, 200, new Gson().toJson(result));
     }
 
     private void notFound(@NotNull Context context) {
@@ -137,8 +148,10 @@ public class Server {
     private void exceptionHandler(Exception e, @NotNull Context context) {
         if (e instanceof UnauthorizedException) {
             setResponse(context, 401, "{\"message\":\"Error: unauthorized\"}");
-        } else if (e instanceof JsonSyntaxException) {
+        } else if (e instanceof JsonSyntaxException || e instanceof NotFoundException) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
+        } else if (e instanceof AlreadyTakenException) {
+            setResponse(context, 403, "{\"message\":\"Error: already taken\"}");
         } else {
         setResponse(context,
                 500,
