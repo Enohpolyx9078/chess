@@ -38,8 +38,10 @@ public class UserService {
     }
 
     public void logout(String authToken) throws UnauthorizedException{
-        //TODO check if the authToken exists
-        // If it doesn't throw Unauthorized
-        // Otherwise, delete the authToken
+        AuthData data = authDAO.getAuth(authToken);
+        if (data == null) {
+            throw new UnauthorizedException("Token is invalid");
+        }
+        authDAO.deleteAuth(authToken);
     }
 }
