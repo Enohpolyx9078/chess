@@ -27,7 +27,7 @@ public class Server {
                 .error(404, this::notFound);
     }
 
-    private void logoutHandler(@NotNull Context context) throws UnauthorizedException {
+    private void logoutHandler(@NotNull Context context) {
         try {
             userService.logout(context.header("authorization"));
             setResponse(context, 200, "{}");
