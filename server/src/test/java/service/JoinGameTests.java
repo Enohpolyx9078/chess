@@ -1,0 +1,66 @@
+package service;
+
+import dataaccess.AlreadyTakenException;
+import dataaccess.GameDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.NotFoundException;
+import model.GameRequest;
+import model.JoinGameRequest;
+import model.UserData;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class JoinGameTests {
+    ClearService clearService = new ClearService();
+    GameService gameService = new GameService();
+    UserService userService = new UserService();
+    GameDAO gameDAO = new MemoryGameDAO();
+
+    @Test
+    public void normalJoinTest() throws AlreadyTakenException, NotFoundException {
+        clearService.clearApplication();
+        UserData user = new UserData("username", "password", "email");
+        String authOne = userService.register(user).authToken();
+        Integer gameId = gameService.createGame(
+                new GameRequest("First")
+        ).gameID();
+
+        assertNull(gameDAO.getGame(gameId).whiteUsername());
+
+        JoinGameRequest reqOne = new JoinGameRequest(gameId, "WHITE", authOne);
+        gameService.joinGame(reqOne);
+
+        assertEquals(user.username().toLowerCase(), gameDAO.getGame(gameId).whiteUsername());
+    }
+
+    @Test
+    public void gameDoesNotExistTest() throws NotFoundException, AlreadyTakenException {
+        clearService.clearApplication();
+        assertThrows(NotFoundException.class,
+                () -> gameService.joinGame(
+                        new JoinGameRequest(0, "WHITE", "ABC123")));
+    }
+
+    @Test
+    public void colorIsTakenTest() throws AlreadyTakenException, NotFoundException {
+        clearService.clearApplication();
+        String authOne = userService.register(
+                new UserData("username", "password", "email")
+        ).authToken();
+        String authTwo = userService.register(
+                new UserData("username", "password", "email")
+        ).authToken();
+
+        Integer gameId = gameService.createGame(
+                new GameRequest("First")
+        ).gameID();
+
+        JoinGameRequest reqOne = new JoinGameRequest(gameId, "WHITE", authOne);
+        JoinGameRequest reqTwo = new JoinGameRequest(gameId, "WHITE", authTwo);
+
+        gameService.joinGame(reqOne);
+        assertThrows(AlreadyTakenException.class,
+                () -> gameService.joinGame(reqTwo));
+    }
+}
