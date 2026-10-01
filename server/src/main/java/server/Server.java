@@ -29,6 +29,14 @@ public class Server {
                 .error(404, this::notFound);
     }
 
+    /**
+     * Attempts to log out the user with the given auth token
+     * <ul>
+     *     <li>[200] <code>{}</code></li>
+     *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
+     * </ul>
+     *
+     */
     private void logoutHandler(@NotNull Context context) {
         try {
             userService.logout(context.header("authorization"));
