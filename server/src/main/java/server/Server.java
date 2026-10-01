@@ -50,13 +50,9 @@ public class Server {
      * </ul>
      */
     private void createGameHandler(@NotNull Context context) {
-        try {
             GameRequest request = getBodyObject(context, GameRequest.class);
             GameResult result = GAME_SERVICE.createGame(request);
             setResponse(context, 200, new Gson().toJson(result));
-        } catch (JsonSyntaxException _) {
-            setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
-        }
     }
 
     /**
@@ -79,16 +75,10 @@ public class Server {
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
      */
-    private void loginHandler(@NotNull Context context) {
-        try {
+    private void loginHandler(@NotNull Context context) throws UnauthorizedException {
             LoginRequest loginRequest = getBodyObject(context, LoginRequest.class);
             LoginResult result = USER_SERVICE.login(loginRequest);
             setResponse(context, 200, new Gson().toJson(result));
-        } catch (JsonSyntaxException _) {
-            setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
-        } catch (UnauthorizedException _) {
-            setResponse(context, 401, "{\"message\":\"Error: unauthorized\"}");
-        }
     }
 
     /**
@@ -118,8 +108,6 @@ public class Server {
             UserData registerRequest = getBodyObject(context, UserData.class);
             LoginResult result = USER_SERVICE.register(registerRequest);
             setResponse(context, 200, new Gson().toJson(result));
-        } catch (JsonSyntaxException _) {
-            setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
         } catch (AlreadyTakenException _) {
             setResponse(context, 403, "{\"message\":\"Error: already taken\"}");
         }
@@ -132,6 +120,8 @@ public class Server {
     private void exceptionHandler(Exception e, @NotNull Context context) {
         if (e instanceof UnauthorizedException) {
             setResponse(context, 401, "{\"message\":\"Error: unauthorized\"}");
+        } else if (e instanceof JsonSyntaxException) {
+            setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
         } else {
         setResponse(context,
                 500,
