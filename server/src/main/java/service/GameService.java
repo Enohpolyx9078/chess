@@ -10,7 +10,7 @@ public class GameService {
 
     public GameService() {}
 
-    GameResult createGame(GameRequest request) {
+    public GameResult createGame(GameRequest request) {
         return gameDAO.createGame(request);
     }
 }

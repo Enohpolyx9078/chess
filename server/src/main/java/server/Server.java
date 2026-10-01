@@ -4,9 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import model.LoginRequest;
-import model.LoginResult;
-import model.UserData;
+import model.*;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
 import service.*;
@@ -18,6 +16,7 @@ public class Server {
 
     private static final UserService userService = new UserService();
     private static final ClearService clearService = new ClearService();
+    private static final GameService gameService = new GameService();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -45,7 +44,9 @@ public class Server {
      */
     private void createGameHandler(@NotNull Context context) {
         try {
-            //TODO
+            GameRequest request = getBodyObject(context, GameRequest.class);
+            GameResult result = gameService.createGame(request);
+            setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
         }
