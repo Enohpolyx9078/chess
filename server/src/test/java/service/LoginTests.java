@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoginTests {
     ClearService clearService = new ClearService();
     UserService service = new UserService();
-    UserDAO userDAO = new MemoryUserDAO();
     AuthDAO authDAO = new MemoryAuthDAO();
 
     @Test

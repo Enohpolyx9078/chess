@@ -1,9 +1,12 @@
 package service;
 
 import dataaccess.*;
+import model.AuthData;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
+
+import java.util.Objects;
 
 public class UserService {
     private static final UserDAO userDAO = new MemoryUserDAO();
@@ -13,13 +16,17 @@ public class UserService {
 
     public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
         UserData user = userDAO.getUser(loginRequest.username());
-        //TODO check the password (eventually the password hash)
         if (user == null) {
             throw new UnauthorizedException("Username and password do not match");
         }
-        authDAO.createAuth(user);
-        //TODO return a loginResult
-        return null;
+
+        // Eventually we'll replace this with checking password hashes
+        if (!Objects.equals(user.password(), loginRequest.password())) {
+            throw new UnauthorizedException("Username and password do not match");
+        }
+
+        String authToken = authDAO.createAuth(user);
+        return new LoginResult(loginRequest.username(), authToken);
     }
 
     public LoginResult register(UserData user) throws AlreadyTakenException {
