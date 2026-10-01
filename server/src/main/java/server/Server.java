@@ -45,9 +45,6 @@ public class Server {
     private void createGameHandler(@NotNull Context context) {
         try {
             GameRequest request = getBodyObject(context, GameRequest.class);
-
-            System.out.println("[DEBUG] gameName: " + request.gameName());
-
             GameResult result = gameService.createGame(request);
             setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
