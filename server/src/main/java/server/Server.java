@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
+import io.javalin.http.HandlerType;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
@@ -29,6 +30,12 @@ public class Server {
                 .error(404, this::notFound);
         javalin.before("/game", context -> {
             if (!AuthService.isAuthorized(context.header("authorization"))) {
+                throw new UnauthorizedException("Missing or invalid token");
+            }
+        });
+        javalin.before("/session", context -> {
+            if (context.method() == HandlerType.DELETE &&
+                    !AuthService.isAuthorized(context.header("authorization"))) {
                 throw new UnauthorizedException("Missing or invalid token");
             }
         });
@@ -60,12 +67,8 @@ public class Server {
      * </ul>
      */
     private void logoutHandler(@NotNull Context context) {
-        try {
             userService.logout(context.header("authorization"));
             setResponse(context, 200, "{}");
-        } catch (UnauthorizedException _) {
-            setResponse(context, 401, "{\"message\":\"Error: unauthorized\"}");
-        }
     }
 
     /**

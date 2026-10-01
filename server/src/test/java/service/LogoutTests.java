@@ -3,7 +3,6 @@ package service;
 import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
 import dataaccess.MemoryAuthDAO;
-import dataaccess.UnauthorizedException;
 import model.LoginResult;
 import model.UserData;
 import org.junit.jupiter.api.Test;
@@ -15,15 +14,13 @@ public class LogoutTests {
     UserService service = new UserService();
     AuthDAO authDAO = new MemoryAuthDAO();
     @Test
-    public void badTokenTest() throws UnauthorizedException {
+    public void badTokenTest() {
         clearService.clearApplication();
-        assertThrows(
-                UnauthorizedException.class,
-                () -> service.logout("Bad Token"));
+        assertDoesNotThrow(() -> service.logout("Bad Token"));
     }
 
     @Test
-    public void goodTokenTest() throws UnauthorizedException, AlreadyTakenException {
+    public void goodTokenTest() throws AlreadyTakenException {
         clearService.clearApplication();
         UserData user = new UserData("name", "password", "email@example.com");
         LoginResult result = service.register(user);

@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.*;
-import model.AuthData;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
@@ -37,11 +36,7 @@ public class UserService {
         return new LoginResult(user.username(), authDAO.createAuth(user));
     }
 
-    public void logout(String authToken) throws UnauthorizedException{
-        AuthData data = authDAO.getAuth(authToken);
-        if (data == null) {
-            throw new UnauthorizedException("Token is invalid");
-        }
+    public void logout(String authToken) {
         authDAO.deleteAuth(authToken);
     }
 }
