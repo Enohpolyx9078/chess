@@ -92,7 +92,7 @@ public class Server {
     }
 
     private void notFound(@NotNull Context context) {
-        //TODO
+        setResponse(context, 404, String.format("{\"message\":\"Error: %s not found\"}", context.path()));
     }
 
     private void exceptionHandler(Exception e, @NotNull Context context) {
