@@ -4,7 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import model.RegisterResult;
+import model.LoginResult;
 import model.UserData;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
@@ -49,7 +49,7 @@ public class Server {
     private void registerHandler(@NotNull Context context) {
         try {
             UserData registerRequest = getBodyObject(context, UserData.class);
-            RegisterResult result = userService.register(registerRequest);
+            LoginResult result = userService.register(registerRequest);
             setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");

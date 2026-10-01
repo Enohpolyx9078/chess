@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.*;
-import model.RegisterResult;
+import model.LoginResult;
 import model.UserData;
 
 public class UserService {
@@ -10,11 +10,11 @@ public class UserService {
 
     public UserService() {}
 
-    public RegisterResult register(UserData user) throws AlreadyTakenException {
+    public LoginResult register(UserData user) throws AlreadyTakenException {
         if (userDAO.getUser(user.username()) != null) {
             throw new AlreadyTakenException("Username already taken");
         }
         userDAO.createUser(user);
-        return new RegisterResult(user.username(), authDAO.createAuth(user));
+        return new LoginResult(user.username(), authDAO.createAuth(user));
     }
 }
