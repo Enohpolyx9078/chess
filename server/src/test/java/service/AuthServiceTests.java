@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.AlreadyTakenException;
-import model.LoginResult;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
