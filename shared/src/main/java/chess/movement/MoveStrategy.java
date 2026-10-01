@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public abstract class MoveStrategy {
-    private final int[][] offsets;
+    private final int[][] OFFSETS;
     protected final MoveValidator v;
 
     protected MoveStrategy() {
-        offsets = new int[][]{};
+        OFFSETS = new int[][]{};
         v = new GenericValidator();
     }
 
     protected MoveStrategy(int[][] offsets, MoveValidator v) {
-        this.offsets = offsets;
+        this.OFFSETS = offsets;
         this.v = v;
     }
 
@@ -30,7 +30,7 @@ public abstract class MoveStrategy {
 
     public Collection<ChessMove> getValidMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color) {
         final Collection<ChessMove> valid = new ArrayList<>();
-        for (int[] offset : offsets) {
+        for (int[] offset : OFFSETS) {
             final ChessMove move = deriveTarget(myPosition, offset);
             if (v.isValid(board, move, color)) {
                 valid.add(move);

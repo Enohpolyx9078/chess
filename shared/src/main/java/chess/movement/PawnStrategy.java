@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PawnStrategy extends MoveStrategy {
-    private static final int[][] whiteOffsets = {
+    private static final int[][] WHITE_OFFSETS = {
             {1, 0}, {1, -1}, {1, 1}, {2, 0}
     };
-    private static final int[][] blackOffsets = {
+    private static final int[][] BLACK_OFFSETS = {
             {-1, 0}, {-1, -1}, {-1, 1}, {-2, 0}
     };
 
@@ -19,7 +19,7 @@ public class PawnStrategy extends MoveStrategy {
 
     public PawnStrategy(ChessGame.TeamColor color, MoveValidator v) {
         this.offsets = (color == ChessGame.TeamColor.WHITE) ?
-                whiteOffsets : blackOffsets;
+                WHITE_OFFSETS : BLACK_OFFSETS;
         this.v = v;
     }
 
