@@ -6,6 +6,7 @@ import model.GameRequest;
 import model.GameResult;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO{
@@ -30,6 +31,12 @@ public class MemoryGameDAO implements GameDAO{
                 new ChessGame());
         GAMES.put(gameId, data);
         return new GameResult(gameId);
+    }
+
+    @Override
+    public List<GameData> listGames() {
+        //TODO
+        return List.of();
     }
 
     @Override

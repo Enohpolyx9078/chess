@@ -25,6 +25,7 @@ public class Server {
                 .post("/session", this::loginHandler)
                 .delete("/session", this::logoutHandler)
                 .post("/game", this::createGameHandler)
+                .get("/game", this::listGamesHandler)
                 .delete("/db", this::clearHandler)
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
@@ -39,6 +40,18 @@ public class Server {
                 throw new UnauthorizedException("Missing or invalid token");
             }
         });
+    }
+
+    /**
+     * Lists all the games
+     * <ul>
+     *     <li>[200] <code>{"games":[{"gameId":,"whiteUsername":,"blackUsername":,"gameName":}]}</code></li>
+     *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
+     * </ul>
+     */
+    private void listGamesHandler(@NotNull Context context) {
+        ListGamesResponse response = GAME_SERVICE.listGames();
+        setResponse(context, 200, new Gson().toJson(response));
     }
 
     /**
