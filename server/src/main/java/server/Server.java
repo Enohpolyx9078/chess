@@ -39,6 +39,7 @@ public class Server {
         try {
             LoginRequest loginRequest = getBodyObject(context, LoginRequest.class);
             LoginResult result = userService.login(loginRequest);
+            setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
         } catch (UnauthorizedException _) {
