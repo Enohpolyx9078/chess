@@ -45,6 +45,9 @@ public class Server {
     private void createGameHandler(@NotNull Context context) {
         try {
             GameRequest request = getBodyObject(context, GameRequest.class);
+
+            System.out.println("[DEBUG] gameName: " + request.gameName());
+
             GameResult result = gameService.createGame(request);
             setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
@@ -145,13 +148,17 @@ public class Server {
 
     // method from the MasteryLS docs
     private static <T> T getBodyObject(Context context, Class<T> clazz) throws JsonSyntaxException {
-        var bodyObject = new Gson().fromJson(context.body(), clazz);
+        try {
+            var bodyObject = new Gson().fromJson(context.body(), clazz);
 
-        if (bodyObject == null) {
+            if (bodyObject == null) {
+                throw new JsonSyntaxException("missing required body");
+            }
+
+            return bodyObject;
+        } catch (RuntimeException _) {
             throw new JsonSyntaxException("missing required body");
         }
-
-        return bodyObject;
     }
 
     public int run(int desiredPort) {
