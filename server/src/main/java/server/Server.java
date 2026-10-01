@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
 import service.*;
 
+import java.util.Map;
+
 public class Server {
     private final Javalin javalin;
 
@@ -96,7 +98,11 @@ public class Server {
     }
 
     private void exceptionHandler(Exception e, @NotNull Context context) {
-        //TODO internal error 500 -> message "Error: $error"
+        setResponse(context,
+                500,
+                new Gson().toJson(
+                        Map.of("message", String.format("Error: %s", e.getMessage()))
+                ));
     }
 
     private static void setResponse(Context context, Integer code, String json) {
