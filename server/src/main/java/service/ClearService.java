@@ -3,9 +3,9 @@ package service;
 import dataaccess.*;
 
 public class ClearService {
-    private static final UserDAO userDAO = new MemoryUserDAO();
-    private static final AuthDAO authDAO = new MemoryAuthDAO();
-    private static final GameDAO gameDAO = new MemoryGameDAO();
+    private static final UserDAO USER_DAO = new MemoryUserDAO();
+    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
+    private static final GameDAO GAME_DAO = new MemoryGameDAO();
 
     public ClearService() {}
 
@@ -16,14 +16,14 @@ public class ClearService {
     }
 
     private void clearUsers() {
-        userDAO.clear();
+        USER_DAO.clear();
     }
 
     private void clearAuths() {
-        authDAO.clear();
+        AUTH_DAO.clear();
     }
 
     private void clearGames() {
-        gameDAO.clear();
+        GAME_DAO.clear();
     }
 }

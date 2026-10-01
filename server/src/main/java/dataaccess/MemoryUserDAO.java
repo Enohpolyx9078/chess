@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryUserDAO implements UserDAO{
-    private static final Map<String, UserData> users = new HashMap<>();
+    private static final Map<String, UserData> USERS = new HashMap<>();
 
     @Override
     public UserData getUser(String username) {
-        return users.get(username.toLowerCase());
+        return USERS.get(username.toLowerCase());
     }
 
     @Override
@@ -19,16 +19,16 @@ public class MemoryUserDAO implements UserDAO{
                 user.username().toLowerCase(),
                 user.password(),
                 user.email().toLowerCase());
-        users.put(record.username(), record);
+        USERS.put(record.username(), record);
     }
 
     @Override
     public void clear() {
-        users.clear();
+        USERS.clear();
     }
 
     @Override
     public int getSize() {
-        return users.size();
+        return USERS.size();
     }
 }

@@ -8,13 +8,13 @@ import model.UserData;
 import java.util.Objects;
 
 public class UserService {
-    private static final UserDAO userDAO = new MemoryUserDAO();
-    private static final AuthDAO authDAO = new MemoryAuthDAO();
+    private static final UserDAO USER_DAO = new MemoryUserDAO();
+    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
 
     public UserService() {}
 
     public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
-        UserData user = userDAO.getUser(loginRequest.username());
+        UserData user = USER_DAO.getUser(loginRequest.username());
         if (user == null) {
             throw new UnauthorizedException("Username and password do not match");
         }
@@ -24,19 +24,19 @@ public class UserService {
             throw new UnauthorizedException("Username and password do not match");
         }
 
-        String authToken = authDAO.createAuth(user);
+        String authToken = AUTH_DAO.createAuth(user);
         return new LoginResult(loginRequest.username(), authToken);
     }
 
     public LoginResult register(UserData user) throws AlreadyTakenException {
-        if (userDAO.getUser(user.username()) != null) {
+        if (USER_DAO.getUser(user.username()) != null) {
             throw new AlreadyTakenException("Username already taken");
         }
-        userDAO.createUser(user);
-        return new LoginResult(user.username(), authDAO.createAuth(user));
+        USER_DAO.createUser(user);
+        return new LoginResult(user.username(), AUTH_DAO.createAuth(user));
     }
 
     public void logout(String authToken) {
-        authDAO.deleteAuth(authToken);
+        AUTH_DAO.deleteAuth(authToken);
     }
 }

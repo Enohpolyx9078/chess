@@ -8,18 +8,18 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
-    private static final Map<String, String> tokens = new HashMap<>();
+    private static final Map<String, String> TOKENS = new HashMap<>();
 
     @Override
     public String createAuth(UserData user) {
         String token = UUID.randomUUID().toString();
-        tokens.put(token, user.username().toLowerCase());
+        TOKENS.put(token, user.username().toLowerCase());
         return token;
     }
 
     @Override
     public AuthData getAuth(String authToken) {
-        String username = tokens.get(authToken);
+        String username = TOKENS.get(authToken);
         if (username == null) {
             return null;
         }
@@ -28,16 +28,16 @@ public class MemoryAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuth(String authToken) {
-        tokens.remove(authToken);
+        TOKENS.remove(authToken);
     }
 
     @Override
     public void clear() {
-        tokens.clear();
+        TOKENS.clear();
     }
 
     @Override
     public int getSize() {
-        return tokens.size();
+        return TOKENS.size();
     }
 }

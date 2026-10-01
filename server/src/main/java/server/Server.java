@@ -15,9 +15,9 @@ import java.util.Map;
 public class Server {
     private final Javalin javalin;
 
-    private static final UserService userService = new UserService();
-    private static final ClearService clearService = new ClearService();
-    private static final GameService gameService = new GameService();
+    private static final UserService USER_SERVICE = new UserService();
+    private static final ClearService CLEAR_SERVICE = new ClearService();
+    private static final GameService GAME_SERVICE = new GameService();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -52,7 +52,7 @@ public class Server {
     private void createGameHandler(@NotNull Context context) {
         try {
             GameRequest request = getBodyObject(context, GameRequest.class);
-            GameResult result = gameService.createGame(request);
+            GameResult result = GAME_SERVICE.createGame(request);
             setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
@@ -67,7 +67,7 @@ public class Server {
      * </ul>
      */
     private void logoutHandler(@NotNull Context context) {
-            userService.logout(context.header("authorization"));
+            USER_SERVICE.logout(context.header("authorization"));
             setResponse(context, 200, "{}");
     }
 
@@ -82,7 +82,7 @@ public class Server {
     private void loginHandler(@NotNull Context context) {
         try {
             LoginRequest loginRequest = getBodyObject(context, LoginRequest.class);
-            LoginResult result = userService.login(loginRequest);
+            LoginResult result = USER_SERVICE.login(loginRequest);
             setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");
@@ -101,7 +101,7 @@ public class Server {
      * </ul>
      */
     private void clearHandler(@NotNull Context context) {
-        clearService.clearApplication();
+        CLEAR_SERVICE.clearApplication();
         setResponse(context, 200, "{}");
     }
 
@@ -116,7 +116,7 @@ public class Server {
     private void registerHandler(@NotNull Context context) {
         try {
             UserData registerRequest = getBodyObject(context, UserData.class);
-            LoginResult result = userService.register(registerRequest);
+            LoginResult result = USER_SERVICE.register(registerRequest);
             setResponse(context, 200, new Gson().toJson(result));
         } catch (JsonSyntaxException _) {
             setResponse(context, 400, "{\"message\":\"Error: bad request\"}");

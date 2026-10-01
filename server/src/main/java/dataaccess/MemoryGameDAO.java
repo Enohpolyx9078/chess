@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO{
-    private static final Map<Integer, GameData> games = new HashMap<>();
+    private static final Map<Integer, GameData> GAMES = new HashMap<>();
 
     private int getNextId() {
         int id = 1;
-        while (games.containsKey(id)) {
+        while (GAMES.containsKey(id)) {
             id++;
         }
         return id;
@@ -28,17 +28,17 @@ public class MemoryGameDAO implements GameDAO{
                 null,
                 request.gameName(),
                 new ChessGame());
-        games.put(gameId, data);
+        GAMES.put(gameId, data);
         return new GameResult(gameId);
     }
 
     @Override
     public void clear() {
-        games.clear();
+        GAMES.clear();
     }
 
     @Override
     public int getSize() {
-        return games.size();
+        return GAMES.size();
     }
 }
