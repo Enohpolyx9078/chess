@@ -29,13 +29,13 @@ public class Server {
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
         javalin.before("/game", context -> {
-            if (!AuthService.isAuthorized(context.header("authorization"))) {
+            if (!AuthUtility.isAuthorized(context.header("authorization"))) {
                 throw new UnauthorizedException("Missing or invalid token");
             }
         });
         javalin.before("/session", context -> {
             if (context.method() == HandlerType.DELETE &&
-                    !AuthService.isAuthorized(context.header("authorization"))) {
+                    !AuthUtility.isAuthorized(context.header("authorization"))) {
                 throw new UnauthorizedException("Missing or invalid token");
             }
         });

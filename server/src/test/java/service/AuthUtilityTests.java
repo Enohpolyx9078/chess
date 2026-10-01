@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AuthServiceTests {
+public class AuthUtilityTests {
     ClearService clearService = new ClearService();
     UserService userService = new UserService();
 
@@ -15,12 +15,18 @@ public class AuthServiceTests {
         clearService.clearApplication();
         UserData user = new UserData("name", "password", "email@example.com");
         String token = userService.register(user).authToken();
-        assertTrue(AuthService.isAuthorized(token));
+        assertTrue(AuthUtility.isAuthorized(token));
     }
 
     @Test
     public void authDoesNotExistTest() {
         clearService.clearApplication();
-        assertFalse(AuthService.isAuthorized("BadToken"));
+        assertFalse(AuthUtility.isAuthorized("BadToken"));
+    }
+
+    @Test
+    public void instantiationTest() {
+        assertThrows(UnsupportedOperationException.class,
+                AuthUtility::new);
     }
 }
