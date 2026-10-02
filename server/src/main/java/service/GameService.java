@@ -20,7 +20,7 @@ public class GameService {
         return GAME_DAO.createGame(request);
     }
 
-    public void joinGame(JoinGameRequest request) throws NotFoundException, AlreadyTakenException {
+    public void joinGame(JoinGameRequest request, String authToken) throws NotFoundException, AlreadyTakenException {
         GameData game = GAME_DAO.getGame(request.gameID());
         if (game == null) {
             throw new NotFoundException("Game not found");
@@ -30,7 +30,7 @@ public class GameService {
                 game.blackUsername()) != null) {
             throw new AlreadyTakenException("Requested color is already taken");
         }
-        String username = AUTH_DAO.getAuth(request.authToken()).username();
+        String username = AUTH_DAO.getAuth(authToken).username();
         GAME_DAO.addPlayer(game.gameID(), username, request.playerColor());
     }
 }

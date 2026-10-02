@@ -29,18 +29,18 @@ public class JoinGameTests {
 
         assertNull(gameDAO.getGame(gameId).whiteUsername());
 
-        JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE, authOne);
-        gameService.joinGame(reqOne);
+        JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE);
+        gameService.joinGame(reqOne, authOne);
 
         assertEquals(user.username().toLowerCase(), gameDAO.getGame(gameId).whiteUsername());
     }
 
     @Test
-    public void gameDoesNotExistTest() throws NotFoundException, AlreadyTakenException {
+    public void gameDoesNotExistTest() {
         clearService.clearApplication();
         assertThrows(NotFoundException.class,
                 () -> gameService.joinGame(
-                        new JoinGameRequest(0, ChessGame.TeamColor.WHITE, "ABC123")));
+                        new JoinGameRequest(0, ChessGame.TeamColor.WHITE), "ABC123"));
     }
 
     @Test
@@ -57,11 +57,11 @@ public class JoinGameTests {
                 new GameRequest("First")
         ).gameID();
 
-        JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE, authOne);
-        JoinGameRequest reqTwo = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE, authTwo);
+        JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE);
+        JoinGameRequest reqTwo = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE);
 
-        gameService.joinGame(reqOne);
+        gameService.joinGame(reqOne, authOne);
         assertThrows(AlreadyTakenException.class,
-                () -> gameService.joinGame(reqTwo));
+                () -> gameService.joinGame(reqTwo, authTwo));
     }
 }

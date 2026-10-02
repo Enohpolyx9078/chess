@@ -54,7 +54,7 @@ public class Server {
      */
     private void joinGameHandler(@NotNull Context context) throws NotFoundException, AlreadyTakenException {
         JoinGameRequest request = getBodyObject(context, JoinGameRequest.class);
-        GAME_SERVICE.joinGame(request);
+        GAME_SERVICE.joinGame(request, context.header("authorization"));
         setResponse(context, 200, "{}");
     }
 
