@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
 import dataaccess.GameDAO;
 import dataaccess.MemoryGameDAO;
@@ -28,7 +29,7 @@ public class JoinGameTests {
 
         assertNull(gameDAO.getGame(gameId).whiteUsername());
 
-        JoinGameRequest reqOne = new JoinGameRequest(gameId, "WHITE", authOne);
+        JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE, authOne);
         gameService.joinGame(reqOne);
 
         assertEquals(user.username().toLowerCase(), gameDAO.getGame(gameId).whiteUsername());
@@ -39,7 +40,7 @@ public class JoinGameTests {
         clearService.clearApplication();
         assertThrows(NotFoundException.class,
                 () -> gameService.joinGame(
-                        new JoinGameRequest(0, "WHITE", "ABC123")));
+                        new JoinGameRequest(0, ChessGame.TeamColor.WHITE, "ABC123")));
     }
 
     @Test
@@ -49,15 +50,15 @@ public class JoinGameTests {
                 new UserData("username", "password", "email")
         ).authToken();
         String authTwo = userService.register(
-                new UserData("username", "password", "email")
+                new UserData("second", "password", "email")
         ).authToken();
 
         Integer gameId = gameService.createGame(
                 new GameRequest("First")
         ).gameID();
 
-        JoinGameRequest reqOne = new JoinGameRequest(gameId, "WHITE", authOne);
-        JoinGameRequest reqTwo = new JoinGameRequest(gameId, "WHITE", authTwo);
+        JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE, authOne);
+        JoinGameRequest reqTwo = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE, authTwo);
 
         gameService.joinGame(reqOne);
         assertThrows(AlreadyTakenException.class,

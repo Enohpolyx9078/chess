@@ -1,15 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.GameData;
-import model.GameRequest;
-import model.GameResult;
-import model.SingleGameResponse;
+import model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO{
     private static final Map<Integer, GameData> GAMES = new HashMap<>();
@@ -44,8 +38,18 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public GameData getGame(Integer key) {
-        //TODO get the came provided by key
-        return null;
+        return GAMES.get(key);
+    }
+
+    @Override
+    public void addPlayer(Integer gameID, String username, ChessGame.TeamColor playerColor) {
+        GameData game = getGame(gameID);
+        if (game != null) {
+            GameData joined = (Objects.equals(playerColor, ChessGame.TeamColor.WHITE)) ?
+                    new GameData(game, username, game.blackUsername()) :
+                    new GameData(game, game.whiteUsername(), username);
+            GAMES.put(gameID, joined);
+        }
     }
 
     @Override

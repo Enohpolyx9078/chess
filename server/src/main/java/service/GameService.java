@@ -1,13 +1,14 @@
 package service;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.GameDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.NotFoundException;
+import chess.ChessGame;
+import dataaccess.*;
 import model.*;
+
+import java.util.Objects;
 
 public class GameService {
     private static final GameDAO GAME_DAO = new MemoryGameDAO();
+    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
 
     public GameService() {}
 
@@ -20,9 +21,16 @@ public class GameService {
     }
 
     public void joinGame(JoinGameRequest request) throws NotFoundException, AlreadyTakenException {
-        //TODO verify the specified game exists
-        //TODO verify the requested color is not taken
-        //TODO add the user as the requested color
         GameData game = GAME_DAO.getGame(request.gameID());
+        if (game == null) {
+            throw new NotFoundException("Game not found");
+        }
+        if (((Objects.equals(request.playerColor(), ChessGame.TeamColor.WHITE)) ?
+                game.whiteUsername() :
+                game.blackUsername()) != null) {
+            throw new AlreadyTakenException("Requested color is already taken");
+        }
+        String username = AUTH_DAO.getAuth(request.authToken()).username();
+        GAME_DAO.addPlayer(game.gameID(), username, request.playerColor());
     }
 }
