@@ -10,7 +10,7 @@ public class RegisterTests {
     @Test
     public void registerSuccess() throws AlreadyTakenException {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
-        UserData resp = new UserData("mandycandy", "123ABC", "a@example.com");
+        UserData resp = new UserData("MandyCandy", "123ABC", "a@example.com");
         UserDAO userAccess = new MemoryUserDAO();
         UserService service = new UserService();
         service.register(register);
@@ -23,14 +23,5 @@ public class RegisterTests {
         UserService service = new UserService();
         service.register(register);
         assertThrows(AlreadyTakenException.class, () -> service.register(register));
-    }
-
-    @Test
-    public void caseInsensitiveTest() throws AlreadyTakenException {
-        UserData register = new UserData("enohpolyx", "123", "a@example.com");
-        UserData register2 = new UserData("ENOHPOLYX", "123", "a@example.com");
-        UserService service = new UserService();
-        service.register(register);
-        assertThrows(AlreadyTakenException.class, () -> service.register(register2));
     }
 }

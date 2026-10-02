@@ -32,7 +32,7 @@ public class JoinGameTests {
         JoinGameRequest reqOne = new JoinGameRequest(gameId, ChessGame.TeamColor.WHITE);
         gameService.joinGame(reqOne, authOne);
 
-        assertEquals(user.username().toLowerCase(), gameDAO.getGame(gameId).whiteUsername());
+        assertEquals(user.username(), gameDAO.getGame(gameId).whiteUsername());
     }
 
     @Test

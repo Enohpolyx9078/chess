@@ -10,13 +10,13 @@ public class MemoryUserDAO implements UserDAO{
 
     @Override
     public UserData getUser(String username) {
-        return USERS.get(username.toLowerCase());
+        return USERS.get(username);
     }
 
     @Override
     public void createUser(UserData user) {
         UserData record = new UserData(
-                user.username().toLowerCase(),
+                user.username(),
                 user.password(),
                 user.email().toLowerCase());
         USERS.put(record.username(), record);
