@@ -153,7 +153,7 @@ public class Server {
         } else if (e instanceof AlreadyTakenException) {
             setResponse(context, 403, "{\"message\":\"Error: already taken\"}");
         } else {
-        setResponse(context,
+            setResponse(context,
                 500,
                 new Gson().toJson(
                         Map.of("message", String.format("Error: %s", e.getMessage()))
