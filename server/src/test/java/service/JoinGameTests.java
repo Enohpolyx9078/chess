@@ -3,7 +3,7 @@ package service;
 import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
 import dataaccess.GameDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.memory.MemoryGameDAO;
 import dataaccess.NotFoundException;
 import model.GameRequest;
 import model.JoinGameRequest;

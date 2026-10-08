@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.GameDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.memory.MemoryGameDAO;
 import model.GameRequest;
 import org.junit.jupiter.api.Test;
 

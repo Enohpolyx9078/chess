@@ -1,6 +1,9 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.memory.MemoryGameDAO;
+import dataaccess.memory.MemoryUserDAO;
 
 public class ClearService {
     private static final UserDAO USER_DAO = new MemoryUserDAO();

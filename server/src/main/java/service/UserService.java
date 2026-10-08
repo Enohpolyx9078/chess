@@ -1,6 +1,8 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.memory.MemoryUserDAO;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;

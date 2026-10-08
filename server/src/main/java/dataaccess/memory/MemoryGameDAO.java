@@ -1,11 +1,12 @@
-package dataaccess;
+package dataaccess.memory;
 
 import chess.ChessGame;
+import dataaccess.GameDAO;
 import model.*;
 
 import java.util.*;
 
-public class MemoryGameDAO implements GameDAO{
+public class MemoryGameDAO implements GameDAO {
     private static final Map<Integer, GameData> GAMES = new HashMap<>();
 
     private int getNextId() {

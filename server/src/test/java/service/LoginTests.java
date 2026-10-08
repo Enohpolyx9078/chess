@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.memory.MemoryAuthDAO;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
@@ -14,7 +15,7 @@ public class LoginTests {
     AuthDAO authDAO = new MemoryAuthDAO();
 
     @Test
-    public void badUsernameTest() throws UnauthorizedException {
+    public void badUsernameTest() {
         clearService.clearApplication();
         assertThrows(
                 UnauthorizedException.class,
@@ -22,7 +23,7 @@ public class LoginTests {
     }
 
     @Test
-    public void badPasswordTest() throws UnauthorizedException, AlreadyTakenException {
+    public void badPasswordTest() throws AlreadyTakenException {
         clearService.clearApplication();
         service.register(new UserData("enohpolyx", "ABC123", "a@example.com"));
         assertThrows(

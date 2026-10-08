@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
+import dataaccess.memory.MemoryAuthDAO;
 
 public final class AuthUtility {
     private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
