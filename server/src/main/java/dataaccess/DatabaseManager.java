@@ -16,6 +16,41 @@ public class DatabaseManager {
         loadPropertiesFromResources();
     }
 
+    static private void executeStatement(Connection conn, String statement) throws SQLException {
+        try (var prepared = conn.prepareStatement(statement)) {
+            prepared.executeUpdate();
+        }
+    }
+
+    static private void createTables(Connection conn) throws SQLException {
+        String createUserTable = """
+                    CREATE TABLE IF NOT EXISTS user (
+                        id INT NOT NULL AUTO_INCREMENT,
+                        username VARCHAR(255) NOT NULL UNIQUE,
+                        email VARCHAR(255) NOT NULL,
+                        password VARCHAR(255) NOT NULL,
+                        PRIMARY KEY (id)
+                    )""";
+        String createAuthTable = """
+                    CREATE TABLE IF NOT EXISTS auth (
+                        username VARCHAR(255) NOT NULL,
+                        token VARCHAR(255) NOT NULL
+                    )""";
+        String createGameTable = """
+                    CREATE TABLE IF NOT EXISTS game (
+                        gameID INT NOT NULL UNIQUE,
+                        whiteUsername VARCHAR(255),
+                        blackUsername VARCHAR(255),
+                        gameName VARCHAR(255),
+                        chessGame BLOB NOT NULL,
+                        PRIMARY KEY (gameID)
+                    )""";
+
+        executeStatement(conn, createUserTable);
+        executeStatement(conn, createAuthTable);
+        executeStatement(conn, createGameTable);
+    }
+
     /**
      * Creates the database if it does not already exist.
      */
@@ -24,6 +59,8 @@ public class DatabaseManager {
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
              var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
+            conn.setCatalog(databaseName);
+            createTables(conn);
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }
