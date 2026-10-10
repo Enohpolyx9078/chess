@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.memory.MemoryAuthDAO;
 import model.LoginResult;
 import model.UserData;
@@ -14,13 +15,13 @@ public class LogoutTests {
     UserService service = new UserService();
     AuthDAO authDAO = new MemoryAuthDAO();
     @Test
-    public void badTokenTest() {
+    public void badTokenTest() throws DataAccessException {
         clearService.clearApplication();
         assertDoesNotThrow(() -> service.logout("Bad Token"));
     }
 
     @Test
-    public void goodTokenTest() throws AlreadyTakenException {
+    public void goodTokenTest() throws DataAccessException {
         clearService.clearApplication();
         UserData user = new UserData("name", "password", "email@example.com");
         LoginResult result = service.register(user);

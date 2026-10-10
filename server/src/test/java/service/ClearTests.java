@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ClearTests {
     @Test
-    public void clearAuthTest() {
+    public void clearAuthTest() throws DataAccessException {
         AuthDAO authAccess = new MemoryAuthDAO();
         authAccess.clear();
         UserData register = new UserData("enohpolyx", "123ABC", "a@example.com");
@@ -23,7 +23,7 @@ public class ClearTests {
     }
 
     @Test
-    public void clearUsersTest() throws AlreadyTakenException {
+    public void clearUsersTest() throws DataAccessException {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
         UserDAO userAccess = new MemoryUserDAO();
         UserService service = new UserService();
@@ -34,7 +34,7 @@ public class ClearTests {
     }
 
     @Test
-    public void clearGameTest() {
+    public void clearGameTest() throws DataAccessException {
         GameRequest game = new GameRequest("First Game");
         GameDAO gameAccess = new MemoryGameDAO();
         GameService service = new GameService();
@@ -45,7 +45,7 @@ public class ClearTests {
     }
 
     @Test
-    public void clearAllTest() throws AlreadyTakenException {
+    public void clearAllTest() throws DataAccessException {
         ClearService clearService = new ClearService();
         UserService userService = new UserService();
         GameService gameService = new GameService();

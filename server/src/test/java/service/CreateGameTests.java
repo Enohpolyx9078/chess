@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.memory.MemoryGameDAO;
 import model.GameRequest;
@@ -13,7 +14,7 @@ public class CreateGameTests {
     GameDAO gameDAO = new MemoryGameDAO();
 
     @Test
-    public void normalCreateTest() {
+    public void normalCreateTest() throws DataAccessException {
         clearService.clearApplication();
         assertEquals(0, gameDAO.getSize());
         service.createGame(new GameRequest("First Game"));
@@ -21,7 +22,7 @@ public class CreateGameTests {
     }
 
     @Test
-    public void noDuplicateIdsTest() {
+    public void noDuplicateIdsTest() throws DataAccessException {
         clearService.clearApplication();
         int first = service.createGame(new GameRequest("First Game")).gameID();
         int second = service.createGame(new GameRequest("First Game")).gameID();

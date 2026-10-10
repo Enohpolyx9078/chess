@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AlreadyTakenException;
+import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ public class AuthUtilityTests {
     UserService userService = new UserService();
 
     @Test
-    public void authExistsTest() throws AlreadyTakenException {
+    public void authExistsTest() throws DataAccessException {
         clearService.clearApplication();
         UserData user = new UserData("name", "password", "email@example.com");
         String token = userService.register(user).authToken();
@@ -19,7 +20,7 @@ public class AuthUtilityTests {
     }
 
     @Test
-    public void authDoesNotExistTest() {
+    public void authDoesNotExistTest() throws DataAccessException {
         clearService.clearApplication();
         assertFalse(AuthUtility.isAuthorized("BadToken"));
     }

@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.GameRequest;
 import model.ListGamesResponse;
 import model.SingleGameResponse;
@@ -15,7 +16,7 @@ public class ListGamesTests {
     GameService service = new GameService();
 
     @Test
-    public void listTwoGamesTest() {
+    public void listTwoGamesTest() throws DataAccessException {
         clearService.clearApplication();
         GameRequest first = new GameRequest("First");
         GameRequest second = new GameRequest("Second");

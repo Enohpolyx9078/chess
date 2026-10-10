@@ -15,7 +15,7 @@ public class LoginTests {
     AuthDAO authDAO = new MemoryAuthDAO();
 
     @Test
-    public void badUsernameTest() {
+    public void badUsernameTest() throws DataAccessException {
         clearService.clearApplication();
         assertThrows(
                 UnauthorizedException.class,
@@ -23,7 +23,7 @@ public class LoginTests {
     }
 
     @Test
-    public void badPasswordTest() throws AlreadyTakenException {
+    public void badPasswordTest() throws DataAccessException {
         clearService.clearApplication();
         service.register(new UserData("enohpolyx", "ABC123", "a@example.com"));
         assertThrows(
@@ -32,7 +32,7 @@ public class LoginTests {
     }
 
     @Test
-    public void normalLoginTest() throws UnauthorizedException, AlreadyTakenException {
+    public void normalLoginTest() throws DataAccessException {
         clearService.clearApplication();
         UserData user = new UserData("mandycandy", "ABC123", "a@example.com");
         service.register(user);

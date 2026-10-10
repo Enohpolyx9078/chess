@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.memory.MemoryGameDAO;
 import dataaccess.NotFoundException;
@@ -19,7 +20,7 @@ public class JoinGameTests {
     GameDAO gameDAO = new MemoryGameDAO();
 
     @Test
-    public void normalJoinTest() throws AlreadyTakenException, NotFoundException {
+    public void normalJoinTest() throws DataAccessException {
         clearService.clearApplication();
         UserData user = new UserData("username", "password", "email");
         String authOne = userService.register(user).authToken();
@@ -36,7 +37,7 @@ public class JoinGameTests {
     }
 
     @Test
-    public void gameDoesNotExistTest() {
+    public void gameDoesNotExistTest() throws DataAccessException {
         clearService.clearApplication();
         assertThrows(NotFoundException.class,
                 () -> gameService.joinGame(
@@ -44,7 +45,7 @@ public class JoinGameTests {
     }
 
     @Test
-    public void colorIsTakenTest() throws AlreadyTakenException, NotFoundException {
+    public void colorIsTakenTest() throws DataAccessException {
         clearService.clearApplication();
         String authOne = userService.register(
                 new UserData("username", "password", "email")
