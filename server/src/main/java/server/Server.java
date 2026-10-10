@@ -122,7 +122,7 @@ public class Server {
      *     <li>[200] <code>{}</code></li>
      * </ul>
      */
-    private void clearHandler(@NotNull Context context) {
+    private void clearHandler(@NotNull Context context) throws DataAccessException {
         CLEAR_SERVICE.clearApplication();
         setResponse(context, 200, "{}");
     }

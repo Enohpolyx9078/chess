@@ -12,19 +12,19 @@ public class ClearService {
 
     public ClearService() {}
 
-    public void clearApplication() {
+    public void clearApplication() throws DataAccessException {
         clearUsers();
         clearAuths();
         clearGames();
     }
 
-    private void clearUsers() { USER_DAO.clear(); }
+    private void clearUsers() throws DataAccessException { USER_DAO.clear(); }
 
-    private void clearAuths() {
+    private void clearAuths() throws DataAccessException {
         AUTH_DAO.clear();
     }
 
-    private void clearGames() {
+    private void clearGames() throws DataAccessException {
         GAME_DAO.clear();
     }
 }
