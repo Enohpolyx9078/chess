@@ -1,6 +1,7 @@
 package dataaccess.sql;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 import model.GameRequest;
@@ -31,8 +32,8 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        SQLUtility.clearTable("game");
     }
 
     @Override

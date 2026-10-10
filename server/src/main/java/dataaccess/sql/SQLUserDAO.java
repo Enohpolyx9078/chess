@@ -1,5 +1,6 @@
 package dataaccess.sql;
 
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
 
@@ -15,8 +16,8 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        SQLUtility.clearTable("user");
     }
 
     @Override

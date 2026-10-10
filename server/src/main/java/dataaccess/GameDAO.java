@@ -10,6 +10,6 @@ public interface GameDAO {
     List<SingleGameResponse> listGames();
     GameData getGame(Integer integer);
     void addPlayer(Integer gameID, String username, ChessGame.TeamColor playerColor);
-    void clear();
+    void clear() throws DataAccessException;
     int getSize();
 }
