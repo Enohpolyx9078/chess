@@ -18,9 +18,7 @@ public class ClearService {
         clearGames();
     }
 
-    private void clearUsers() {
-        USER_DAO.clear();
-    }
+    private void clearUsers() { USER_DAO.clear(); }
 
     private void clearAuths() {
         AUTH_DAO.clear();
