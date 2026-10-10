@@ -25,18 +25,22 @@ public class DatabaseManager {
     static private void createTables(Connection conn) throws SQLException {
         String createUserTable = """
                     CREATE TABLE IF NOT EXISTS user (
+                        userID INT NOT NULL AUTO_INCREMENT,
                         username VARCHAR(255) NOT NULL UNIQUE,
                         email VARCHAR(255) NOT NULL,
                         password VARCHAR(255) NOT NULL,
+                        PRIMARY KEY (userID)
                     )""";
         String createAuthTable = """
                     CREATE TABLE IF NOT EXISTS auth (
+                        authID INT NOT NULL AUTO_INCREMENT,
                         username VARCHAR(255) NOT NULL,
-                        token VARCHAR(255) NOT NULL
+                        token VARCHAR(255) NOT NULL,
+                        PRIMARY KEY (authID)
                     )""";
         String createGameTable = """
                     CREATE TABLE IF NOT EXISTS game (
-                        gameID INT NOT NULL UNIQUE,
+                        gameID INT NOT NULL AUTO_INCREMENT,
                         whiteUsername VARCHAR(255),
                         blackUsername VARCHAR(255),
                         gameName VARCHAR(255),
