@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserDAOTests {
     static private final UserDAO userDAO = new SQLUserDAO();
+
     @Test
     public void clearUsersTest() {
         assertDoesNotThrow(userDAO::clear);
@@ -28,6 +29,6 @@ public class UserDAOTests {
         userDAO.clear();
         UserData test = new UserData("enohpolyx", "pass", "email");
         userDAO.createUser(test);
-        assertEquals(test, userDAO.getUser("enohpolyx"));
+        assertEquals(test, userDAO.getUser(test.username()));
     }
 }
