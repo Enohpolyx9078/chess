@@ -11,7 +11,7 @@ public class AuthDAOTests {
     static private final AuthDAO authDAO = new SQLAuthDAO();
 
     @Test
-    public void clearUsersTest() {
+    public void clearAuthTest() {
         assertDoesNotThrow(authDAO::clear);
         assertEquals(0, authDAO.getSize());
     }
