@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO {
-    private static final Logger log = LoggerFactory.getLogger(SQLUserDAO.class);
+    private static String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
 
     @Override
     public UserData getUser(String username) {
@@ -25,8 +28,7 @@ public class SQLUserDAO implements UserDAO {
             try (var insertUserStatement = conn.prepareStatement(insertUser)) {
                 insertUserStatement.setString(1, user.username());
                 insertUserStatement.setString(2, user.email().toLowerCase());
-                //TODO hash the password
-                insertUserStatement.setString(3, user.password());
+                insertUserStatement.setString(3, hashPassword(user.password()));
                 insertUserStatement.executeUpdate();
             }
         } catch (SQLException _) {
