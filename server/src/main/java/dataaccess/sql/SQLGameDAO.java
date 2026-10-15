@@ -12,14 +12,18 @@ import model.SingleGameResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
     private static final Logger log = LoggerFactory.getLogger(SQLGameDAO.class);
+
+    private static String getStringFromBlob(Blob blob) throws SQLException {
+        if (blob == null) return "";
+        byte[] bytes = blob.getBytes(1, (int) blob.length());
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
 
     @Override
     public GameResult createGame(GameRequest request) throws DataAccessException {
@@ -47,8 +51,27 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(Integer integer) {
-        return null;
+    public GameData getGame(Integer gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String findGame = "SELECT * FROM game WHERE gameID=?";
+            try (var findGameStatement = conn.prepareStatement(findGame)) {
+                findGameStatement.setInt(1, gameID);
+                ResultSet rs = findGameStatement.executeQuery();
+                if (rs.next()) {
+                    return new GameData(
+                            rs.getInt("gameID"),
+                            rs.getString("whiteUsername"),
+                            rs.getString("blackUsername"),
+                            rs.getString("gameName"),
+                            new Gson().fromJson(
+                                    getStringFromBlob(rs.getBlob("chessGame")),
+                                    ChessGame.class));
+                }
+                return null;
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("unable to get game");
+        }
     }
 
     @Override
