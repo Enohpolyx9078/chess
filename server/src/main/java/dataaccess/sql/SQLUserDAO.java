@@ -21,7 +21,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public int getSize() {
-        return 0;
+    public int getSize() throws DataAccessException {
+        return SQLUtility.getTableSize("user");
     }
 }
