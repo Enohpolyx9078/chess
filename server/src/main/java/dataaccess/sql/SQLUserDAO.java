@@ -9,16 +9,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO {
+    private static final Logger log = LoggerFactory.getLogger(SQLUserDAO.class);
+
     private static String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     @Override
-    public UserData getUser(String username) {
-        return null;
+    public UserData getUser(String username) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String findUser = "SELECT * FROM user WHERE username=?";
+            try (var findUserStatement = conn.prepareStatement(findUser)) {
+                findUserStatement.setString(1, username);
+                ResultSet rs = findUserStatement.executeQuery();
+                if (rs.next()) {
+                    return new UserData(
+                            rs.getString("username"),
+                            "",
+                            rs.getString("email"));
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            log.error(e.toString());
+            throw new DataAccessException("error creating user");
+        }
     }
 
     @Override

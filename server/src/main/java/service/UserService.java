@@ -15,7 +15,7 @@ public class UserService {
 
     public UserService() {}
 
-    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         UserData user = USER_DAO.getUser(loginRequest.username());
         if (user == null) {
             throw new UnauthorizedException("Username and password do not match");

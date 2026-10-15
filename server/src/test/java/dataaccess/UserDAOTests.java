@@ -27,7 +27,7 @@ public class UserDAOTests {
     @Test
     public void createAndGetTest() throws DataAccessException {
         userDAO.clear();
-        UserData test = new UserData("enohpolyx", "pass", "email");
+        UserData test = new UserData("enohpolyx", "", "email");
         userDAO.createUser(test);
         assertEquals(test, userDAO.getUser(test.username()));
     }

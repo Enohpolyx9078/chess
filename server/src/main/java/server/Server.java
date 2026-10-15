@@ -107,7 +107,7 @@ public class Server {
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
      */
-    private void loginHandler(@NotNull Context context) throws UnauthorizedException {
+    private void loginHandler(@NotNull Context context) throws DataAccessException {
             LoginRequest loginRequest = getBodyObject(context, LoginRequest.class);
             LoginResult result = USER_SERVICE.login(loginRequest);
             setResponse(context, 200, new Gson().toJson(result));
