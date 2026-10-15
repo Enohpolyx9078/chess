@@ -6,7 +6,7 @@ import model.*;
 import java.util.List;
 
 public interface GameDAO {
-    GameResult createGame(GameRequest request);
+    GameResult createGame(GameRequest request) throws DataAccessException;
     List<SingleGameResponse> listGames();
     GameData getGame(Integer integer);
     void addPlayer(Integer gameID, String username, ChessGame.TeamColor playerColor);

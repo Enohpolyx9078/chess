@@ -18,7 +18,7 @@ public class GameService {
         return new ListGamesResponse(GAME_DAO.listGames());
     }
 
-    public GameResult createGame(GameRequest request) {
+    public GameResult createGame(GameRequest request) throws DataAccessException {
         return GAME_DAO.createGame(request);
     }
 

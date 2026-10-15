@@ -1,19 +1,39 @@
 package dataaccess.sql;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
 import model.GameData;
 import model.GameRequest;
 import model.GameResult;
 import model.SingleGameResponse;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
     @Override
-    public GameResult createGame(GameRequest request) {
-        return null;
+    public GameResult createGame(GameRequest request) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String insertGame = "INSERT INTO game (gameName, chessGame) VALUES(?, ?)";
+            try (var insertGameStatement = conn.prepareStatement(insertGame, Statement.RETURN_GENERATED_KEYS)) {
+                insertGameStatement.setString(1, request.gameName());
+                insertGameStatement.setString(2, new Gson().toJson(new ChessGame()));
+                insertGameStatement.executeUpdate();
+                ResultSet rs = insertGameStatement.getGeneratedKeys();
+                if (rs.next()) {
+                    return new GameResult(rs.getInt("gameID"));
+                }
+                return null;
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("unable to create game");
+        }
     }
 
     @Override

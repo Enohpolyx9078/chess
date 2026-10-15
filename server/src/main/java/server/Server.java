@@ -81,7 +81,7 @@ public class Server {
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
      */
-    private void createGameHandler(@NotNull Context context) {
+    private void createGameHandler(@NotNull Context context) throws DataAccessException {
             GameRequest request = getBodyObject(context, GameRequest.class);
             GameResult result = GAME_SERVICE.createGame(request);
             setResponse(context, 200, new Gson().toJson(result));
