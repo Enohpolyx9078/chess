@@ -8,36 +8,36 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthDAOTests {
-    static private final AuthDAO authDAO = new SQLAuthDAO();
+    static private final AuthDAO AUTH_DAO = new SQLAuthDAO();
 
     @Test
     public void clearAuthTest() throws DataAccessException {
-        assertDoesNotThrow(authDAO::clear);
-        assertEquals(0, authDAO.getSize());
+        assertDoesNotThrow(AUTH_DAO::clear);
+        assertEquals(0, AUTH_DAO.getSize());
     }
 
     @Test
     public void getSizeTest() throws DataAccessException {
-        authDAO.clear();
-        assertEquals(0, authDAO.getSize());
-        authDAO.createAuth(new UserData("user", "pass", "email"));
-        authDAO.createAuth(new UserData("user1", "pass1", "email1"));
-        assertEquals(2, authDAO.getSize());
+        AUTH_DAO.clear();
+        assertEquals(0, AUTH_DAO.getSize());
+        AUTH_DAO.createAuth(new UserData("user", "pass", "email"));
+        AUTH_DAO.createAuth(new UserData("user1", "pass1", "email1"));
+        assertEquals(2, AUTH_DAO.getSize());
     }
 
     @Test
     public void createAndGetTest() throws DataAccessException {
-        authDAO.clear();
+        AUTH_DAO.clear();
         UserData test = new UserData("mandycandy", "pass", "email");
-        String token = authDAO.createAuth(test);
-        assertEquals(new AuthData(token, test.username()), authDAO.getAuth(token));
+        String token = AUTH_DAO.createAuth(test);
+        assertEquals(new AuthData(token, test.username()), AUTH_DAO.getAuth(token));
     }
 
     @Test
     public void deleteTest() throws DataAccessException {
-        authDAO.clear();
-        String token = authDAO.createAuth(new UserData("oglee", "pass", "email"));
-        authDAO.deleteAuth(token);
-        assertEquals(0, authDAO.getSize());
+        AUTH_DAO.clear();
+        String token = AUTH_DAO.createAuth(new UserData("oglee", "pass", "email"));
+        AUTH_DAO.deleteAuth(token);
+        assertEquals(0, AUTH_DAO.getSize());
     }
 }

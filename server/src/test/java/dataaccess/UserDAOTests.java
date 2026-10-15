@@ -7,28 +7,28 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserDAOTests {
-    static private final UserDAO userDAO = new SQLUserDAO();
+    static private final UserDAO USER_DAO = new SQLUserDAO();
 
     @Test
     public void clearUsersTest() throws DataAccessException {
-        assertDoesNotThrow(userDAO::clear);
-        assertEquals(0, userDAO.getSize());
+        assertDoesNotThrow(USER_DAO::clear);
+        assertEquals(0, USER_DAO.getSize());
     }
 
     @Test
     public void getSizeTest() throws DataAccessException {
-        userDAO.clear();
-        assertEquals(0, userDAO.getSize());
-        userDAO.createUser(new UserData("user", "pass", "email"));
-        userDAO.createUser(new UserData("user1", "pass1", "email1"));
-        assertEquals(2, userDAO.getSize());
+        USER_DAO.clear();
+        assertEquals(0, USER_DAO.getSize());
+        USER_DAO.createUser(new UserData("user", "pass", "email"));
+        USER_DAO.createUser(new UserData("user1", "pass1", "email1"));
+        assertEquals(2, USER_DAO.getSize());
     }
 
     @Test
     public void createAndGetTest() throws DataAccessException {
-        userDAO.clear();
+        USER_DAO.clear();
         UserData test = new UserData("enohpolyx", "pass", "email");
-        userDAO.createUser(test);
-        assertEquals(test.email(), userDAO.getUser(test.username()).email());
+        USER_DAO.createUser(test);
+        assertEquals(test.email(), USER_DAO.getUser(test.username()).email());
     }
 }

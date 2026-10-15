@@ -5,16 +5,12 @@ import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO {
-    private static final Logger log = LoggerFactory.getLogger(SQLUserDAO.class);
-
     private static String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -34,8 +30,7 @@ public class SQLUserDAO implements UserDAO {
                 }
                 return null;
             }
-        } catch (SQLException e) {
-            log.error(e.toString());
+        } catch (SQLException _) {
             throw new DataAccessException("error creating user");
         }
     }

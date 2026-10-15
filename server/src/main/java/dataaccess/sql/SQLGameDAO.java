@@ -9,8 +9,6 @@ import model.GameData;
 import model.GameRequest;
 import model.GameResult;
 import model.SingleGameResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
@@ -18,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
-    private static final Logger log = LoggerFactory.getLogger(SQLGameDAO.class);
-
     private static String getStringFromBlob(Blob blob) throws SQLException {
-        if (blob == null) return "";
+        if (blob == null) {
+            return "";
+        }
         byte[] bytes = blob.getBytes(1, (int) blob.length());
         return new String(bytes, StandardCharsets.UTF_8);
     }
@@ -40,8 +38,7 @@ public class SQLGameDAO implements GameDAO {
                 }
                 return null;
             }
-        } catch (SQLException e) {
-            log.error(e.toString());
+        } catch (SQLException _) {
             throw new DataAccessException("unable to create game");
         }
     }

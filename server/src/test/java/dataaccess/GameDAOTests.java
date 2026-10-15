@@ -10,61 +10,61 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameDAOTests {
-    static private final GameDAO gameDAO = new SQLGameDAO();
+    static private final GameDAO GAME_DAO = new SQLGameDAO();
 
     @Test
     public void clearGamesTest() throws DataAccessException {
-        assertDoesNotThrow(gameDAO::clear);
-        assertEquals(0, gameDAO.getSize());
+        assertDoesNotThrow(GAME_DAO::clear);
+        assertEquals(0, GAME_DAO.getSize());
     }
 
     @Test
     public void getSizeTest() throws DataAccessException {
-        gameDAO.clear();
-        assertEquals(0, gameDAO.getSize());
-        gameDAO.createGame(new GameRequest("game"));
-        gameDAO.createGame(new GameRequest("game1"));
-        assertEquals(2, gameDAO.getSize());
+        GAME_DAO.clear();
+        assertEquals(0, GAME_DAO.getSize());
+        GAME_DAO.createGame(new GameRequest("game"));
+        GAME_DAO.createGame(new GameRequest("game1"));
+        assertEquals(2, GAME_DAO.getSize());
     }
 
     @Test
     public void createAndGetTest() throws DataAccessException {
-        gameDAO.clear();
+        GAME_DAO.clear();
         GameRequest req = new GameRequest("Name");
-        GameResult res = gameDAO.createGame(req);
+        GameResult res = GAME_DAO.createGame(req);
         GameData expected = new GameData(
                 res.gameID(),
                 null,
                 null,
                 req.gameName(),
                 new ChessGame());
-        assertEquals(expected, gameDAO.getGame(res.gameID()));
+        assertEquals(expected, GAME_DAO.getGame(res.gameID()));
     }
 
     @Test
     public void listGamesTest() throws DataAccessException {
-        gameDAO.clear();
-        gameDAO.createGame(new GameRequest("Name"));
-        gameDAO.createGame(new GameRequest("Name1"));
-        gameDAO.createGame(new GameRequest("Name2"));
-        assertEquals(3, gameDAO.listGames().size());
+        GAME_DAO.clear();
+        GAME_DAO.createGame(new GameRequest("Name"));
+        GAME_DAO.createGame(new GameRequest("Name1"));
+        GAME_DAO.createGame(new GameRequest("Name2"));
+        assertEquals(3, GAME_DAO.listGames().size());
     }
 
     @Test
     public void addPlayerTest() throws DataAccessException {
-        gameDAO.clear();
+        GAME_DAO.clear();
         String white = "awesome474";
         String black = "waxymarlin";
         GameRequest req = new GameRequest("Name");
-        GameResult res = gameDAO.createGame(req);
-        gameDAO.addPlayer(res.gameID(), white, ChessGame.TeamColor.WHITE);
-        gameDAO.addPlayer(res.gameID(), black, ChessGame.TeamColor.BLACK);
+        GameResult res = GAME_DAO.createGame(req);
+        GAME_DAO.addPlayer(res.gameID(), white, ChessGame.TeamColor.WHITE);
+        GAME_DAO.addPlayer(res.gameID(), black, ChessGame.TeamColor.BLACK);
         GameData expected = new GameData(
                 res.gameID(),
                 white,
                 black,
                 req.gameName(),
                 new ChessGame());
-        assertEquals(expected, gameDAO.getGame(res.gameID()));
+        assertEquals(expected, GAME_DAO.getGame(res.gameID()));
     }
 }
