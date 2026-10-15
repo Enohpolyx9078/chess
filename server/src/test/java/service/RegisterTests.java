@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterTests {
     @Test
-    public void registerSuccess() throws AlreadyTakenException {
+    public void registerSuccess() throws DataAccessException {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
         UserData resp = new UserData("MandyCandy", "123ABC", "a@example.com");
         UserDAO userAccess = new MemoryUserDAO();
@@ -19,7 +19,7 @@ public class RegisterTests {
     }
 
     @Test
-    public void usernameTakenTest() throws AlreadyTakenException {
+    public void usernameTakenTest() throws DataAccessException {
         UserData register = new UserData("oglee", "123", "a@example.com");
         UserService service = new UserService();
         service.register(register);

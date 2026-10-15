@@ -135,7 +135,7 @@ public class Server {
      *     <li>[403] <code>{"message": "Error: already taken"}</code></li>
      * </ul>
      */
-    private void registerHandler(@NotNull Context context) throws AlreadyTakenException {
+    private void registerHandler(@NotNull Context context) throws DataAccessException {
         UserData registerRequest = getBodyObject(context, UserData.class);
         LoginResult result = USER_SERVICE.register(registerRequest);
         setResponse(context, 200, new Gson().toJson(result));

@@ -30,7 +30,7 @@ public class UserService {
         return new LoginResult(loginRequest.username(), authToken);
     }
 
-    public LoginResult register(UserData user) throws AlreadyTakenException {
+    public LoginResult register(UserData user) throws DataAccessException {
         if (USER_DAO.getUser(user.username()) != null) {
             throw new AlreadyTakenException("Username already taken");
         }
