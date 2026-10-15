@@ -63,7 +63,7 @@ public class SQLGameDAO implements GameDAO {
                             rs.getString("whiteUsername"),
                             rs.getString("blackUsername"),
                             rs.getString("gameName"),
-                            new Gson().fromJson(
+                            ChessGame.createSerializer().fromJson(
                                     getStringFromBlob(rs.getBlob("chessGame")),
                                     ChessGame.class));
                 }

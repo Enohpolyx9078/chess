@@ -1,7 +1,12 @@
 package chess;
 
+import chess.movement.MoveStrategy;
 import chess.rules.EndGameEnforcer;
 import chess.rules.Enforcer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonObject;
 
 import java.util.*;
 
@@ -15,6 +20,30 @@ public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard currentBoard;
     private final Enforcer enforcer;
+
+    static public Gson createSerializer() {
+        GsonBuilder builder = new GsonBuilder();
+
+        builder.registerTypeAdapter(ChessPiece.class,
+                (JsonDeserializer<ChessPiece>) (el, _, _) -> {
+                    ChessPiece piece = null;
+                    if (el.isJsonObject()) {
+                        JsonObject current = el.getAsJsonObject();
+                        String pieceType = current.get("pieceType").getAsString();
+                        String pieceColor = current.get("teamColor").getAsString();
+                        piece = new ChessPiece(
+                                TeamColor.valueOf(pieceColor),
+                                ChessPiece.PieceType.valueOf(pieceType));
+                    }
+                    return piece;
+            });
+
+        builder.registerTypeAdapter(Enforcer.class,
+                (JsonDeserializer<Enforcer>) (_, _, _) -> new EndGameEnforcer()
+            );
+
+        return builder.create();
+    }
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
