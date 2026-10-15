@@ -13,7 +13,7 @@ public class GameDAOTests {
     static private final GameDAO gameDAO = new SQLGameDAO();
 
     @Test
-    public void clearAuthTest() {
+    public void clearAuthTest() throws DataAccessException {
         assertDoesNotThrow(gameDAO::clear);
         assertEquals(0, gameDAO.getSize());
     }

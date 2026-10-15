@@ -11,7 +11,7 @@ public class AuthDAOTests {
     static private final AuthDAO authDAO = new SQLAuthDAO();
 
     @Test
-    public void clearAuthTest() {
+    public void clearAuthTest() throws DataAccessException {
         assertDoesNotThrow(authDAO::clear);
         assertEquals(0, authDAO.getSize());
     }

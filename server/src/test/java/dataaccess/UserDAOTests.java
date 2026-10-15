@@ -10,7 +10,7 @@ public class UserDAOTests {
     static private final UserDAO userDAO = new SQLUserDAO();
 
     @Test
-    public void clearUsersTest() {
+    public void clearUsersTest() throws DataAccessException {
         assertDoesNotThrow(userDAO::clear);
         assertEquals(0, userDAO.getSize());
     }
