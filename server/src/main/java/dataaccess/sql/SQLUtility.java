@@ -17,6 +17,7 @@ public final class SQLUtility {
             String getSize = "SELECT COUNT(*) AS size FROM " + name;
             try (var getSizeStatement = conn.prepareStatement(getSize)) {
                 ResultSet rs = getSizeStatement.executeQuery();
+                rs.next();
                 return rs.getInt("size");
             }
         } catch (SQLException _) {
@@ -30,8 +31,7 @@ public final class SQLUtility {
             try (var truncateStatement = conn.prepareStatement(truncateTable)) {
                 truncateStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            log.error("e: ", e);
+        } catch (SQLException _) {
             throw new DataAccessException("unable to clear " + name);
         }
     }
