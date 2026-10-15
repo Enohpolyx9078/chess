@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
@@ -46,8 +47,25 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public List<SingleGameResponse> listGames() {
-        return List.of();
+    public List<SingleGameResponse> listGames() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            List<SingleGameResponse> gamesList = new ArrayList<>();
+            String getGames = "SELECT * FROM game";
+            try (var getGamesStatement = conn.prepareStatement(getGames)) {
+                ResultSet rs = getGamesStatement.executeQuery();
+                while (rs.next()) {
+                    gamesList.add(new SingleGameResponse(
+                            rs.getInt("gameID"),
+                            rs.getString("whiteUsername"),
+                            rs.getString("blackUsername"),
+                            rs.getString("gameName")
+                    ));
+                }
+                return gamesList;
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("unable to list games");
+        }
     }
 
     @Override

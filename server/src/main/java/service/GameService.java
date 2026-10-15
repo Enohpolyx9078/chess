@@ -14,7 +14,7 @@ public class GameService {
 
     public GameService() {}
 
-    public ListGamesResponse listGames() {
+    public ListGamesResponse listGames() throws DataAccessException {
         return new ListGamesResponse(GAME_DAO.listGames());
     }
 

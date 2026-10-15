@@ -65,7 +65,7 @@ public class Server {
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
      */
-    private void listGamesHandler(@NotNull Context context) {
+    private void listGamesHandler(@NotNull Context context) throws DataAccessException {
         ListGamesResponse response = GAME_SERVICE.listGames();
         Gson gson = new GsonBuilder() // some help with GsonBuilder syntax from Master Google
                 .serializeNulls()
