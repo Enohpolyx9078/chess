@@ -37,7 +37,7 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public int getSize() {
-        return 0;
+    public int getSize() throws DataAccessException {
+         return SQLUtility.getTableSize("game");
     }
 }

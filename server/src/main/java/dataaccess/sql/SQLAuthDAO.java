@@ -27,7 +27,7 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public int getSize() {
-        return 0;
+    public int getSize() throws DataAccessException {
+        return SQLUtility.getTableSize("auth");
     }
 }
