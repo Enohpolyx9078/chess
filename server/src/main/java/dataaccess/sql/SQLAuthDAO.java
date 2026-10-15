@@ -43,13 +43,21 @@ public class SQLAuthDAO implements AuthDAO {
                 return null;
             }
         } catch (SQLException _) {
-            throw new DataAccessException("Unable to create authentication");
+            throw new DataAccessException("Unable to get authentication");
         }
     }
 
     @Override
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String removeAuth = "DELETE FROM auth WHERE token=?";
+            try (var removeAuthStatement = conn.prepareStatement(removeAuth)) {
+                removeAuthStatement.setString(1, authToken);
+                removeAuthStatement.executeUpdate();
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("Unable to remove authentication");
+        }
     }
 
     @Override

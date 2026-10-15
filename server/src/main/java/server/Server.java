@@ -94,7 +94,7 @@ public class Server {
      *     <li>[401] <code>{"message": "Error: unauthorized"}</code></li>
      * </ul>
      */
-    private void logoutHandler(@NotNull Context context) {
+    private void logoutHandler(@NotNull Context context) throws DataAccessException {
             USER_SERVICE.logout(context.header("authorization"));
             setResponse(context, 200, "{}");
     }
