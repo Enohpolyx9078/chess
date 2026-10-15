@@ -29,7 +29,7 @@ public class SQLUserDAO implements UserDAO {
                 if (rs.next()) {
                     return new UserData(
                             rs.getString("username"),
-                            "",
+                            rs.getString("password"),
                             rs.getString("email"));
                 }
                 return null;

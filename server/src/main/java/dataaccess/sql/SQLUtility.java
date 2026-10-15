@@ -2,16 +2,12 @@ package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class SQLUtility {
-    private static final Logger log = LoggerFactory.getLogger(SQLUtility.class);
-
     static int getTableSize(String name) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             String getSize = "SELECT COUNT(*) AS size FROM " + name;
