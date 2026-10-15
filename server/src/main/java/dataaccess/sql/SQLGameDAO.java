@@ -9,6 +9,8 @@ import model.GameData;
 import model.GameRequest;
 import model.GameResult;
 import model.SingleGameResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,6 +19,8 @@ import java.sql.Statement;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
+    private static final Logger log = LoggerFactory.getLogger(SQLGameDAO.class);
+
     @Override
     public GameResult createGame(GameRequest request) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -27,11 +31,12 @@ public class SQLGameDAO implements GameDAO {
                 insertGameStatement.executeUpdate();
                 ResultSet rs = insertGameStatement.getGeneratedKeys();
                 if (rs.next()) {
-                    return new GameResult(rs.getInt("gameID"));
+                    return new GameResult(rs.getInt(1));
                 }
                 return null;
             }
-        } catch (SQLException _) {
+        } catch (SQLException e) {
+            log.error(e.toString());
             throw new DataAccessException("unable to create game");
         }
     }
