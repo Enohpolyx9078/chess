@@ -14,13 +14,13 @@ public class PawnStrategy extends MoveStrategy {
             {-1, 0}, {-1, -1}, {-1, 1}, {-2, 0}
     };
 
-    private final int[][] offsets;
-    private final MoveValidator v;
+    private final int[][] pawnOffsets;
+    private final MoveValidator pawnV;
 
     public PawnStrategy(ChessGame.TeamColor color, MoveValidator v) {
-        this.offsets = (color == ChessGame.TeamColor.WHITE) ?
+        this.pawnOffsets = (color == ChessGame.TeamColor.WHITE) ?
                 WHITE_OFFSETS : BLACK_OFFSETS;
-        this.v = v;
+        this.pawnV = v;
     }
 
     private boolean isPromotion(ChessBoard board, ChessMove move, ChessGame.TeamColor color) {
@@ -44,9 +44,9 @@ public class PawnStrategy extends MoveStrategy {
     @Override
     public Collection<ChessMove> getValidMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color) {
         final Collection<ChessMove> valid = new ArrayList<>();
-        for (int[] offset : offsets) {
+        for (int[] offset : pawnOffsets) {
             final ChessMove move = deriveTarget(myPosition, offset);
-            if (v.isValid(board, move, color)) {
+            if (pawnV.isValid(board, move, color)) {
                 if (isPromotion(board, move, color)) {
                     valid.addAll(getPromotions(move));
                 } else {
