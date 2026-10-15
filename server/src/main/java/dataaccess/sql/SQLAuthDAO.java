@@ -2,13 +2,29 @@ package dataaccess.sql;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import model.AuthData;
 import model.UserData;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.UUID;
+
 public class SQLAuthDAO implements AuthDAO {
     @Override
-    public String createAuth(UserData user) {
-        return "";
+    public String createAuth(UserData user) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String token = UUID.randomUUID().toString();
+            String insertAuth = "INSERT INTO auth (username, token) VALUES(?, ?)";
+            try (var insertAuthStatement = conn.prepareStatement(insertAuth)) {
+                insertAuthStatement.setString(1, user.username());
+                insertAuthStatement.setString(2, token);
+                insertAuthStatement.executeUpdate();
+                return token;
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("Unable to create authentication");
+        }
     }
 
     @Override
