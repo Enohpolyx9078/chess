@@ -7,6 +7,7 @@ import model.AuthData;
 import model.UserData;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -28,8 +29,22 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
-        return null;
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String findAuth = "SELECT * FROM auth WHERE token=?";
+            try (var findAuthStatement = conn.prepareStatement(findAuth)) {
+                findAuthStatement.setString(1, authToken);
+                ResultSet rs = findAuthStatement.executeQuery();
+                if (rs.next()) {
+                    return new AuthData(
+                            rs.getString("token"),
+                            rs.getString("username"));
+                }
+                return null;
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("Unable to create authentication");
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ public class GameService {
         return GAME_DAO.createGame(request);
     }
 
-    public void joinGame(JoinGameRequest request, String authToken) throws NotFoundException, AlreadyTakenException {
+    public void joinGame(JoinGameRequest request, String authToken) throws DataAccessException {
         GameData game = GAME_DAO.getGame(request.gameID());
         if (game == null) {
             throw new NotFoundException("Game not found");

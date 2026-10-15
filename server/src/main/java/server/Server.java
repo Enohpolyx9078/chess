@@ -52,7 +52,7 @@ public class Server {
      *     <li>[403] <code>{"message": "Error: already taken"}</code></li>
      * </ul>
      */
-    private void joinGameHandler(@NotNull Context context) throws NotFoundException, AlreadyTakenException {
+    private void joinGameHandler(@NotNull Context context) throws DataAccessException {
         JoinGameRequest request = getBodyObject(context, JoinGameRequest.class);
         GAME_SERVICE.joinGame(request, context.header("authorization"));
         setResponse(context, 200, "{}");
