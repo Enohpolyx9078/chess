@@ -20,6 +20,14 @@ public class Server {
     private static final ClearService CLEAR_SERVICE = new ClearService();
     private static final GameService GAME_SERVICE = new GameService();
 
+    static {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", this::registerHandler)
