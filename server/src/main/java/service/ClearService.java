@@ -1,14 +1,14 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryGameDAO;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
+import dataaccess.sql.SQLUserDAO;
 
 public class ClearService {
-    private static final UserDAO USER_DAO = new MemoryUserDAO();
-    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
-    private static final GameDAO GAME_DAO = new MemoryGameDAO();
+    private static final UserDAO USER_DAO = new SQLUserDAO();
+    private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
+    private static final GameDAO GAME_DAO = new SQLGameDAO();
 
     public ClearService() {}
 

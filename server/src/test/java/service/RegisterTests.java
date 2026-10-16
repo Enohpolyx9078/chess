@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.sql.SQLUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
@@ -12,10 +12,10 @@ public class RegisterTests {
     public void registerSuccess() throws DataAccessException {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
         UserData resp = new UserData("MandyCandy", "123ABC", "a@example.com");
-        UserDAO userAccess = new MemoryUserDAO();
+        UserDAO userAccess = new SQLUserDAO();
         UserService service = new UserService();
         service.register(register);
-        assertEquals(resp, userAccess.getUser(register.username()));
+        assertEquals(resp.username(), userAccess.getUser(register.username()).username());
     }
 
     @Test

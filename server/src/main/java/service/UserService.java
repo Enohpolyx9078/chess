@@ -1,17 +1,16 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLUserDAO;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
-
-import java.util.Objects;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
-    private static final UserDAO USER_DAO = new MemoryUserDAO();
-    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
+    private static final UserDAO USER_DAO = new SQLUserDAO();
+    private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
 
     public UserService() {}
 
@@ -21,8 +20,7 @@ public class UserService {
             throw new UnauthorizedException("Username and password do not match");
         }
 
-        // Eventually we'll replace this with checking password hashes
-        if (!Objects.equals(user.password(), loginRequest.password())) {
+        if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
             throw new UnauthorizedException("Username and password do not match");
         }
 

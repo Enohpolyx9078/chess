@@ -2,15 +2,15 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryGameDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
 import model.*;
 
 import java.util.Objects;
 
 public class GameService {
-    private static final GameDAO GAME_DAO = new MemoryGameDAO();
-    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
+    private static final GameDAO GAME_DAO = new SQLGameDAO();
+    private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
 
     public GameService() {}
 

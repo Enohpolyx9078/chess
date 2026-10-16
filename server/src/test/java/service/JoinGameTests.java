@@ -4,8 +4,8 @@ import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.memory.MemoryGameDAO;
 import dataaccess.NotFoundException;
+import dataaccess.sql.SQLGameDAO;
 import model.GameRequest;
 import model.JoinGameRequest;
 import model.UserData;
@@ -17,7 +17,7 @@ public class JoinGameTests {
     ClearService clearService = new ClearService();
     GameService gameService = new GameService();
     UserService userService = new UserService();
-    GameDAO gameDAO = new MemoryGameDAO();
+    GameDAO gameDAO = new SQLGameDAO();
 
     @Test
     public void normalJoinTest() throws DataAccessException {

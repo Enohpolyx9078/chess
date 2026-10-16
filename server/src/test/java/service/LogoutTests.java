@@ -1,9 +1,8 @@
 package service;
 
-import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.sql.SQLAuthDAO;
 import model.LoginResult;
 import model.UserData;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LogoutTests {
     ClearService clearService = new ClearService();
     UserService service = new UserService();
-    AuthDAO authDAO = new MemoryAuthDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
     @Test
     public void badTokenTest() throws DataAccessException {
         clearService.clearApplication();

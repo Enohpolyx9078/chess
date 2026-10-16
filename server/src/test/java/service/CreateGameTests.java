@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.memory.MemoryGameDAO;
+import dataaccess.sql.SQLGameDAO;
 import model.GameRequest;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CreateGameTests {
     ClearService clearService = new ClearService();
     GameService service = new GameService();
-    GameDAO gameDAO = new MemoryGameDAO();
+    GameDAO gameDAO = new SQLGameDAO();
 
     @Test
     public void normalCreateTest() throws DataAccessException {

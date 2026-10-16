@@ -1,9 +1,9 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryGameDAO;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
+import dataaccess.sql.SQLUserDAO;
 import model.GameRequest;
 import model.UserData;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClearTests {
     @Test
     public void clearAuthTest() throws DataAccessException {
-        AuthDAO authAccess = new MemoryAuthDAO();
+        AuthDAO authAccess = new SQLAuthDAO();
         authAccess.clear();
         UserData register = new UserData("enohpolyx", "123ABC", "a@example.com");
         authAccess.createAuth(register);
@@ -25,7 +25,7 @@ public class ClearTests {
     @Test
     public void clearUsersTest() throws DataAccessException {
         UserData register = new UserData("MandyCandy", "123ABC", "A@example.com");
-        UserDAO userAccess = new MemoryUserDAO();
+        UserDAO userAccess = new SQLUserDAO();
         UserService service = new UserService();
         service.register(register);
         assertEquals(1, userAccess.getSize());
@@ -36,7 +36,7 @@ public class ClearTests {
     @Test
     public void clearGameTest() throws DataAccessException {
         GameRequest game = new GameRequest("First Game");
-        GameDAO gameAccess = new MemoryGameDAO();
+        GameDAO gameAccess = new SQLGameDAO();
         GameService service = new GameService();
         service.createGame(game);
         assertEquals(1, gameAccess.getSize());
@@ -49,9 +49,9 @@ public class ClearTests {
         ClearService clearService = new ClearService();
         UserService userService = new UserService();
         GameService gameService = new GameService();
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
+        UserDAO userDAO = new SQLUserDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
         userDAO.clear();
         authDAO.clear();
         gameDAO.clear();

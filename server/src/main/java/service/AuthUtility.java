@@ -2,10 +2,10 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.sql.SQLAuthDAO;
 
 public final class AuthUtility {
-    private static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
+    private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
 
     AuthUtility() {
         throw new UnsupportedOperationException("Cannot instantiate utility class");

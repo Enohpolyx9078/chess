@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.sql.SQLAuthDAO;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LoginTests {
     ClearService clearService = new ClearService();
     UserService service = new UserService();
-    AuthDAO authDAO = new MemoryAuthDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
 
     @Test
     public void badUsernameTest() throws DataAccessException {
