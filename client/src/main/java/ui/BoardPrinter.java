@@ -8,35 +8,52 @@ import chess.ChessPosition;
 public class BoardPrinter {
     static private final int width = 9;
 
-    static public void printSquare(ChessGame.TeamColor color, ChessPiece piece) {
-        final String BEGIN_COLOR = color == ChessGame.TeamColor.WHITE ?
+    static private ChessGame.TeamColor swapColor(ChessGame.TeamColor currentColor) {
+        return currentColor == ChessGame.TeamColor.WHITE ?
+                ChessGame.TeamColor.BLACK :
+                ChessGame.TeamColor.WHITE;
+    }
+
+    static private String setBeginColor(ChessGame.TeamColor currentColor) {
+        return currentColor == ChessGame.TeamColor.WHITE ?
                 EscapeSequences.SET_BG_COLOR_WHITE :
                 EscapeSequences.SET_BG_COLOR_BLACK;
-        final String BEGIN_TEXT = color == ChessGame.TeamColor.WHITE ?
-                EscapeSequences.SET_TEXT_COLOR_BLACK :
-                EscapeSequences.SET_TEXT_COLOR_WHITE;
-        final String SET_COLOR = BEGIN_COLOR + BEGIN_TEXT;
+    }
+
+    static private char getIcon(ChessPiece piece) {
         char icon = ' ';
         if (piece != null) {
             icon = piece.getPieceType() == ChessPiece.PieceType.KNIGHT ?
                     'N' :
                     piece.getPieceType().name().charAt(0);
         }
-        System.out.println(SET_COLOR + " ".repeat(width) + EscapeSequences.RESET_BG_COLOR);
-        System.out.println(SET_COLOR + " ".repeat(width / 2) +
-                icon +
-                " ".repeat(width/2) + EscapeSequences.RESET_BG_COLOR);
-        System.out.println(SET_COLOR + " ".repeat(width) + EscapeSequences.RESET_BG_COLOR);
+        return icon;
     }
 
-    static public void printCol(ChessBoard board, int col, ChessGame.TeamColor startColor) {
-        ChessGame.TeamColor currentColor = startColor;
-        for (var i = 1; i <= board.getSize(); i++) {
-            ChessPiece chessPiece = board.getPiece(new ChessPosition(i, col));
-            printSquare(currentColor, chessPiece);
-            currentColor = currentColor == ChessGame.TeamColor.WHITE ?
-                    ChessGame.TeamColor.BLACK :
-                    ChessGame.TeamColor.WHITE;
+    static private void printColorLine(ChessGame.TeamColor color, ChessPiece[] row) {
+        ChessGame.TeamColor currentColor = color;
+        for (int i = 0; i < row.length; i++) {
+            String beginColor = setBeginColor(currentColor);
+            System.out.print(beginColor + " ".repeat(width) + EscapeSequences.RESET_BG_COLOR);
+            currentColor = swapColor(currentColor);
         }
+        System.out.print('\n');
+    }
+    static private void printCharLine(ChessGame.TeamColor color, ChessPiece[] row) {
+        ChessGame.TeamColor currentColor = color;
+        for (ChessPiece chessPiece : row) {
+            String beginColor = setBeginColor(currentColor);
+            System.out.print(beginColor + " ".repeat(width / 2) +
+                    getIcon(chessPiece) +
+                    " ".repeat(width / 2) + EscapeSequences.RESET_BG_COLOR);
+            currentColor = swapColor(currentColor);
+        }
+        System.out.print('\n');
+    }
+
+    static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor) {
+        printColorLine(startColor, row);
+        printCharLine(startColor, row);
+        printColorLine(startColor, row);
     }
 }
