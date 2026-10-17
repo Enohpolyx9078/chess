@@ -50,6 +50,9 @@ public class ChessBoard {
         board[r][c] = piece;
     }
 
+    public ChessPiece[] getRow(int i) {
+        return board[i];
+    }
 
     private ChessPiece[] buildHomeRow(ChessGame.TeamColor color) {
         return new ChessPiece[] {

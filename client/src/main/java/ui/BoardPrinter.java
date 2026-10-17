@@ -3,7 +3,6 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
-import chess.ChessPosition;
 
 public class BoardPrinter {
     static private final int width = 9;
@@ -14,10 +13,17 @@ public class BoardPrinter {
                 ChessGame.TeamColor.WHITE;
     }
 
-    static private String setBeginColor(ChessGame.TeamColor currentColor) {
-        return currentColor == ChessGame.TeamColor.WHITE ?
+    static private String setBeginColor(ChessGame.TeamColor currentColor, ChessPiece currentPiece) {
+        final String BG_COLOR = currentColor == ChessGame.TeamColor.WHITE ?
                 EscapeSequences.SET_BG_COLOR_WHITE :
                 EscapeSequences.SET_BG_COLOR_BLACK;
+        if (currentPiece == null) {
+            return BG_COLOR;
+        }
+        final String T_COLOR = currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE ?
+                EscapeSequences.SET_TEXT_COLOR_BLUE :
+                EscapeSequences.SET_TEXT_COLOR_RED;
+        return BG_COLOR + T_COLOR + EscapeSequences.SET_TEXT_BOLD;
     }
 
     static private char getIcon(ChessPiece piece) {
@@ -32,8 +38,8 @@ public class BoardPrinter {
 
     static private void printColorLine(ChessGame.TeamColor color, ChessPiece[] row) {
         ChessGame.TeamColor currentColor = color;
-        for (int i = 0; i < row.length; i++) {
-            String beginColor = setBeginColor(currentColor);
+        for (ChessPiece chessPiece : row) {
+            String beginColor = setBeginColor(currentColor, chessPiece);
             System.out.print(beginColor + " ".repeat(width) + EscapeSequences.RESET_BG_COLOR);
             currentColor = swapColor(currentColor);
         }
@@ -42,7 +48,7 @@ public class BoardPrinter {
     static private void printCharLine(ChessGame.TeamColor color, ChessPiece[] row) {
         ChessGame.TeamColor currentColor = color;
         for (ChessPiece chessPiece : row) {
-            String beginColor = setBeginColor(currentColor);
+            String beginColor = setBeginColor(currentColor, chessPiece);
             System.out.print(beginColor + " ".repeat(width / 2) +
                     getIcon(chessPiece) +
                     " ".repeat(width / 2) + EscapeSequences.RESET_BG_COLOR);
@@ -55,5 +61,13 @@ public class BoardPrinter {
         printColorLine(startColor, row);
         printCharLine(startColor, row);
         printColorLine(startColor, row);
+    }
+
+    static public void printBoard(ChessBoard board) {
+        ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        for (var i = 0; i < board.getSize(); i++) {
+            printRow(board.getRow(i), currentColor);
+            currentColor = swapColor(currentColor);
+        }
     }
 }
