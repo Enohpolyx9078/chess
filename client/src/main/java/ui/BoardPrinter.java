@@ -6,7 +6,7 @@ import chess.ChessPiece;
 
 public class BoardPrinter {
     static private final String RESET = EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR;
-    static private final int WIDTH = 9;
+    static private final int WIDTH = 3;
     static private final char[] COORDS = new char[] {'1', '2', '3', '4', '5', '6', '7', '8'};
 
     static private ChessGame.TeamColor swapColor(ChessGame.TeamColor currentColor) {
@@ -73,9 +73,10 @@ public class BoardPrinter {
     }
 
     static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor, char label) {
-        printColorLine(startColor, row);
+        // Set WIDTH to 9 and uncomment the color lines to print a big board
+        //printColorLine(startColor, row);
         printCharLine(startColor, row, label);
-        printColorLine(startColor, row);
+        //printColorLine(startColor, row);
     }
 
     static public void printBoardBlack(ChessBoard board) {
