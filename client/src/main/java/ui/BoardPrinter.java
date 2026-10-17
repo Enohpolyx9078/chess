@@ -6,7 +6,8 @@ import chess.ChessPiece;
 
 public class BoardPrinter {
     static private final String RESET = EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR;
-    static private final int width = 9;
+    static private final int WIDTH = 9;
+    static private final char[] COORDS = new char[] {'1', '2', '3', '4', '5', '6', '7', '8'};
 
     static private ChessGame.TeamColor swapColor(ChessGame.TeamColor currentColor) {
         return currentColor == ChessGame.TeamColor.WHITE ?
@@ -39,44 +40,61 @@ public class BoardPrinter {
 
     static private void printColorLine(ChessGame.TeamColor color, ChessPiece[] row) {
         ChessGame.TeamColor currentColor = color;
+        System.out.print("   ");
         for (ChessPiece chessPiece : row) {
             String beginColor = setBeginColor(currentColor, chessPiece);
-            System.out.print(beginColor + " ".repeat(width) + RESET);
+            System.out.print(beginColor + " ".repeat(WIDTH) + RESET);
             currentColor = swapColor(currentColor);
         }
-        System.out.print('\n');
+        System.out.print("   \n");
     }
-    static private void printCharLine(ChessGame.TeamColor color, ChessPiece[] row) {
+    static private void printCharLine(ChessGame.TeamColor color, ChessPiece[] row, char label) {
         ChessGame.TeamColor currentColor = color;
+        System.out.print(" " + label + " ");
         for (ChessPiece chessPiece : row) {
             String beginColor = setBeginColor(currentColor, chessPiece);
-            System.out.print(beginColor + " ".repeat(width / 2) +
+            System.out.print(beginColor + " ".repeat(WIDTH / 2) +
                     getIcon(chessPiece) +
-                    " ".repeat(width / 2) + RESET);
+                    " ".repeat(WIDTH / 2) + RESET);
             currentColor = swapColor(currentColor);
         }
-        System.out.print('\n');
+        System.out.print(" " + label + " \n");
     }
 
-    static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor) {
+    static private void printLetterLine(boolean reverse) {
+        final char[] LETTERS = new char[] {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        System.out.print("   ");
+        for (var i = 0; i < LETTERS.length; i++) {
+            System.out.print(" ".repeat(WIDTH / 2)
+                    + (reverse ? LETTERS[LETTERS.length - (i + 1)] : LETTERS[i]) +
+                    " ".repeat(WIDTH /2));
+        }
+        System.out.print("   \n");
+    }
+
+    static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor, char label) {
         printColorLine(startColor, row);
-        printCharLine(startColor, row);
+        printCharLine(startColor, row, label);
         printColorLine(startColor, row);
     }
 
     static public void printBoardBlack(ChessBoard board) {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        printLetterLine(true);
         for (var i = 0; i < board.getSize(); i++) {
-            printRow(board.getRow(i), currentColor);
+            printRow(board.getRow(i), currentColor, COORDS[i]);
             currentColor = swapColor(currentColor);
         }
+        printLetterLine(true);
     }
 
     static public void printBoardWhite(ChessBoard board) {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        printLetterLine(false);
         for (var i = board.getSize() - 1; i >= 0; i--) {
-            printRow(board.getRow(i), currentColor);
+            printRow(board.getRow(i), currentColor, COORDS[i]);
             currentColor = swapColor(currentColor);
         }
+        printLetterLine(false);
     }
 }
