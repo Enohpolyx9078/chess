@@ -46,6 +46,10 @@ public class CLIClient {
         }
     }
 
+    private void showNetworkError(NetworkException e) {
+        System.out.println(e.getMessage());
+    }
+
     private void doUnknown(String input) {
         System.out.printf("'%s' is not a recognized command.\n", input);
         doHelp();
@@ -73,15 +77,26 @@ public class CLIClient {
             authToken = FACADE.login(username, password);
             state = Status.SIGNED_IN;
         } catch (NetworkException e) {
-            //TODO show error on fail
+            showNetworkError(e);
         }
     }
 
     private void doRegister() {
-        //TODO show a register prompt
-        //TODO interact with Facade to register
-        //TODO set state to SIGNED_IN on success
-        //TODO show error on fail
+        // show a register prompt
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        // interact with Facade to register
+        try {
+            authToken = FACADE.register(username, password, email);
+            state = Status.SIGNED_IN;
+        } catch (NetworkException e) {
+            showNetworkError(e);
+        }
     }
 
     private void handlePreLogin(String input) {
