@@ -1,5 +1,6 @@
 package client;
 
+import facade.NetworkException;
 import facade.ServerFacade;
 
 import java.util.Scanner;
@@ -20,6 +21,7 @@ public class CLIClient {
     private static final ServerFacade FACADE = new ServerFacade();
     private static Scanner scanner;
 
+    private String authToken;
     private Status state = Status.SIGNED_OUT;
 
     public void run() {
@@ -60,14 +62,19 @@ public class CLIClient {
     }
 
     private void doLogin() {
-        //TODO show a login prompt
+        // show a login prompt
         System.out.print("Username: ");
         String username = scanner.nextLine();
         System.out.print("Password: ");
         String password = scanner.nextLine();
-        //TODO interact with the Facade to login
-        //TODO set state to SIGNED_IN on success
-        //TODO show error on fail
+
+        // interact with the Facade to login
+        try {
+            authToken = FACADE.login(username, password);
+            state = Status.SIGNED_IN;
+        } catch (NetworkException e) {
+            //TODO show error on fail
+        }
     }
 
     private void doRegister() {

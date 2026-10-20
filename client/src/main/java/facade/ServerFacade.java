@@ -1,11 +1,15 @@
 package facade;
 
 public class ServerFacade {
-    public void register(String username, String password, String email) {
+    public String register(String username, String password, String email) throws NetworkException {
         //TODO throw on fail
+        //TODO return the auth token
+        return "";
     }
 
-    public void login(String username, String password) {
+    public String login(String username, String password) throws NetworkException {
         //TODO throw on fail
+        //TODO return the auth token
+        return "";
     }
 }
