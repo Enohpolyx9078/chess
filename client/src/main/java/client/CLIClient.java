@@ -136,9 +136,17 @@ public class CLIClient {
     }
 
     private void doLogout() {
-        //TODO interact with the Facade to sign out
-        //TODO clear authToken
-        //TODO set state to SIGNED_OUT
+        // interact with the Facade to sign out
+        try {
+            FACADE.logout(authToken);
+        } catch (NetworkException e) {
+            //TODO display as a warning
+            showNetworkError(e);
+        } finally {
+            // logout on the client regardless of network errors
+            authToken = null;
+            state = Status.SIGNED_OUT;
+        }
     }
 
     private void handlePreLogin(String input) {
