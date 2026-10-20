@@ -8,9 +8,13 @@ public class CLIClient {
             login - sign in to chess with an existing account
             quit - close this application
             help - displays this menu""";
-    //TODO signed in help
     private static final String SIGNED_IN_HELP = """
-            TODO signed in help""";
+            create - creates a new game
+            list - lists all games
+            play - join a game as a player
+            observe - join a game as an observer
+            logout - sign out of your account
+            help - displays this menu""";
 
     private Status state = Status.SIGNED_OUT;
 
