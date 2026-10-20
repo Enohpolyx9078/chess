@@ -1,5 +1,7 @@
 package client;
 
+import facade.ServerFacade;
+
 import java.util.Scanner;
 
 public class CLIClient {
@@ -15,16 +17,19 @@ public class CLIClient {
             observe - join a game as an observer
             logout - sign out of your account
             help - displays this menu""";
+    private static final ServerFacade FACADE = new ServerFacade();
+    private static Scanner scanner;
 
     private Status state = Status.SIGNED_OUT;
 
     public void run() {
-        try (Scanner SCANNER = new Scanner(System.in)) {
+        try {
+            scanner = new Scanner(System.in);
             System.out.println("♕ 240 Chess Client ♕");
             System.out.println("Type Help to get started.");
             while (!state.equals(Status.QUIT)) {
                 System.out.printf("[%s] >>> ", state.name());
-                String input = SCANNER.nextLine();
+                String input = scanner.nextLine();
                 if (state == Status.SIGNED_OUT) {
                     handlePreLogin(input);
                 } else {
@@ -32,6 +37,10 @@ public class CLIClient {
                 }
             }
             System.out.println("Thanks for playing!");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            scanner.close();
         }
     }
 
@@ -52,6 +61,10 @@ public class CLIClient {
 
     private void doLogin() {
         //TODO show a login prompt
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
         //TODO interact with the Facade to login
         //TODO set state to SIGNED_IN on success
         //TODO show error on fail
