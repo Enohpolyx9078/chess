@@ -2,7 +2,9 @@ package client;
 
 import facade.NetworkException;
 import facade.ServerFacade;
+import model.GameData;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class CLIClient {
@@ -100,13 +102,27 @@ public class CLIClient {
     }
 
     private void doCreate() {
-        //TODO show a create prompt
-        //TODO interact with the Facade to create a game
+        // show a creation prompt
+        System.out.print("Game Name: ");
+        String gameName = scanner.nextLine();
+
+        // interact with the Facade to create a game
+        try {
+            FACADE.create(authToken, gameName);
+        } catch (NetworkException e) {
+            showNetworkError(e);
+        }
     }
 
     private void doList() {
-        //TODO interact with the Facade to get a list of games
-        //TODO display all games
+        // interact with the Facade to get a list of games
+        try {
+            Collection<GameData> games = FACADE.listGames(authToken);
+            //TODO display all games
+            System.out.println("***SOME GAMES***");
+        } catch (NetworkException e) {
+            showNetworkError(e);
+        }
     }
 
     private void doPlay() {
