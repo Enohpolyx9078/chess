@@ -18,22 +18,23 @@ public class CLIClient {
                     handlePostLogin(input);
                 }
             }
+            System.out.println("Thanks for coming!");
         }
     }
 
-    private static void doUnknown() {
+    private void doUnknown() {
         //TODO display error message
     }
 
-    private static void doHelp() {
+    private void doHelp() {
         //TODO display the help menu
     }
 
-    private static void doQuit() {
-        //TODO set state to QUIT
+    private void doQuit() {
+        state = Status.QUIT;
     }
 
-    private static void doLogin() {
+    private void doLogin() {
         //TODO show a login prompt
         //TODO interact with the Facade to login
         //TODO set state to SIGNED_IN on success
