@@ -19,10 +19,10 @@ public class CLIClient {
             logout - sign out of your account
             help - displays this menu""";
     private static final ServerFacade FACADE = new ServerFacade();
-    private static Scanner scanner;
 
     private String authToken;
     private Status state = Status.SIGNED_OUT;
+    private static Scanner scanner;
 
     public void run() {
         try {
@@ -120,6 +120,7 @@ public class CLIClient {
     }
 
     private void doLogout() {
+        //TODO interact with the Facade to sign out
         //TODO clear authToken
         //TODO set state to SIGNED_OUT
     }
