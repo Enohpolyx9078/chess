@@ -99,6 +99,31 @@ public class CLIClient {
         }
     }
 
+    private void doCreate() {
+        //TODO show a create prompt
+        //TODO interact with the Facade to create a game
+    }
+
+    private void doList() {
+        //TODO interact with the Facade to get a list of games
+        //TODO display all games
+    }
+
+    private void doPlay() {
+        //TODO show a select and join game prompt
+        //TODO interact with the Facade to add the player to the game
+    }
+
+    private void doObserve() {
+        //TODO show a select game prompt
+        //TODO interact with the Facade to add the player to the game
+    }
+
+    private void doLogout() {
+        //TODO clear authToken
+        //TODO set state to SIGNED_OUT
+    }
+
     private void handlePreLogin(String input) {
         switch (input.toLowerCase().trim()) {
             case "help":
@@ -119,7 +144,28 @@ public class CLIClient {
     }
 
     private void handlePostLogin(String input) {
-
+        switch (input.toLowerCase().trim()) {
+            case "help":
+                doHelp();
+                break;
+            case "create":
+                doCreate();
+                break;
+            case "list":
+                doList();
+                break;
+            case "play":
+                doPlay();
+                break;
+            case "observe":
+                doObserve();
+                break;
+            case "logout":
+                doLogout();
+                break;
+            default:
+                doUnknown(input);
+        }
     }
 
     private enum Status {
