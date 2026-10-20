@@ -48,10 +48,11 @@ public class BoardPrinter {
         }
         System.out.print("   \n");
     }
-    static private void printCharLine(ChessGame.TeamColor color, ChessPiece[] row, char label) {
+    static private void printCharLine(ChessGame.TeamColor color, ChessPiece[] row, char label, boolean reverse) {
         ChessGame.TeamColor currentColor = color;
         System.out.print(" " + label + " ");
-        for (ChessPiece chessPiece : row) {
+        for (int i = 0; i < row.length; i++) {
+            ChessPiece chessPiece = reverse ? row[row.length - (i + 1)] : row[i];
             String beginColor = setBeginColor(currentColor, chessPiece);
             System.out.print(beginColor + " ".repeat(WIDTH / 2) +
                     getIcon(chessPiece) +
@@ -72,10 +73,10 @@ public class BoardPrinter {
         System.out.print("   \n");
     }
 
-    static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor, char label) {
+    static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor, char label, boolean reverse) {
         // Set WIDTH to 9 and uncomment the color lines to print a big board
         //printColorLine(startColor, row);
-        printCharLine(startColor, row, label);
+        printCharLine(startColor, row, label, reverse);
         //printColorLine(startColor, row);
     }
 
@@ -83,7 +84,7 @@ public class BoardPrinter {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
         printLetterLine(true);
         for (var i = 0; i < board.getSize(); i++) {
-            printRow(board.getRow(i), currentColor, COORDS[i]);
+            printRow(board.getRow(i), currentColor, COORDS[i], true);
             currentColor = swapColor(currentColor);
         }
         printLetterLine(true);
@@ -93,7 +94,7 @@ public class BoardPrinter {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
         printLetterLine(false);
         for (var i = board.getSize() - 1; i >= 0; i--) {
-            printRow(board.getRow(i), currentColor, COORDS[i]);
+            printRow(board.getRow(i), currentColor, COORDS[i], false);
             currentColor = swapColor(currentColor);
         }
         printLetterLine(false);
