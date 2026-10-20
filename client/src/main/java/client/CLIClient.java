@@ -22,8 +22,9 @@ public class CLIClient {
         }
     }
 
-    private void doUnknown() {
-        //TODO display error message
+    private void doUnknown(String input) {
+        System.out.printf("'%s' is not a recognized command.\n", input);
+        doHelp();
     }
 
     private void doHelp() {
@@ -53,7 +54,7 @@ public class CLIClient {
                 doLogin();
                 break;
             default:
-                doUnknown();
+                doUnknown(input);
         }
     }
 
