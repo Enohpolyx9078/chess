@@ -3,6 +3,15 @@ package client;
 import java.util.Scanner;
 
 public class CLIClient {
+    private static final String SIGNED_OUT_HELP = """
+            register - create a new account to play chess
+            login - sign in to chess with an existing account
+            quit - close this application
+            help - displays this menu""";
+    //TODO signed in help
+    private static final String SIGNED_IN_HELP = """
+            TODO signed in help""";
+
     private Status state = Status.SIGNED_OUT;
 
     public void run() {
@@ -18,7 +27,7 @@ public class CLIClient {
                     handlePostLogin(input);
                 }
             }
-            System.out.println("Thanks for coming!");
+            System.out.println("Thanks for playing!");
         }
     }
 
@@ -28,7 +37,9 @@ public class CLIClient {
     }
 
     private void doHelp() {
-        //TODO display the help menu
+        System.out.println((state == Status.SIGNED_OUT) ?
+                SIGNED_OUT_HELP :
+                SIGNED_IN_HELP);
     }
 
     private void doQuit() {
@@ -38,6 +49,13 @@ public class CLIClient {
     private void doLogin() {
         //TODO show a login prompt
         //TODO interact with the Facade to login
+        //TODO set state to SIGNED_IN on success
+        //TODO show error on fail
+    }
+
+    private void doRegister() {
+        //TODO show a register prompt
+        //TODO interact with Facade to register
         //TODO set state to SIGNED_IN on success
         //TODO show error on fail
     }
@@ -52,6 +70,9 @@ public class CLIClient {
                 break;
             case "login":
                 doLogin();
+                break;
+            case "register":
+                doRegister();
                 break;
             default:
                 doUnknown(input);
