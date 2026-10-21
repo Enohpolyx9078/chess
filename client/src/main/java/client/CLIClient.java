@@ -1,10 +1,12 @@
 package client;
 
+import chess.ChessGame;
 import facade.NetworkException;
 import facade.ServerFacade;
 import model.GameData;
 
 import java.util.Collection;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLIClient {
@@ -126,8 +128,26 @@ public class CLIClient {
     }
 
     private void doPlay() {
-        //TODO show a select and join game prompt
-        //TODO interact with the Facade to add the player to the game
+        String color = "none";
+        try {
+            // show a select and join game prompt
+            System.out.print("Game ID: ");
+            int gameId = scanner.nextInt();
+            scanner.nextLine(); // flush the \n character
+            System.out.print("Color: ");
+            color = scanner.nextLine();
+            ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
+
+            // interact with the Facade to join the game
+            FACADE.play(authToken, gameId, teamColor);
+            state = Status.SIGNED_IN;
+        } catch (InputMismatchException _) {
+            System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
+        } catch (IllegalArgumentException _) {
+            System.out.printf("Invalid color: '%s'\nColor must be either 'BLACK' or 'WHITE'.\n", color);
+        } catch (NetworkException e) {
+            showNetworkError(e);
+        }
     }
 
     private void doObserve() {
