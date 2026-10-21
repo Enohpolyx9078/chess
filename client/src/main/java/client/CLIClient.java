@@ -151,8 +151,21 @@ public class CLIClient {
     }
 
     private void doObserve() {
-        //TODO show a select game prompt
-        //TODO interact with the Facade to add the player to the game
+        try {
+            // show a select game prompt
+            System.out.print("Game ID: ");
+            int gameId = scanner.nextInt();
+            scanner.nextLine(); // flush the \n character
+            System.out.print("Color: ");
+
+            // interact with the Facade to watch the game
+            FACADE.observe(authToken, gameId);
+            state = Status.SIGNED_IN;
+        } catch (InputMismatchException _) {
+            System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
+        } catch (NetworkException e) {
+            showNetworkError(e);
+        }
     }
 
     private void doLogout() {
