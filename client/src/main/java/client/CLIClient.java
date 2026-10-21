@@ -12,6 +12,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLIClient {
+    private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
     private static final String COMMAND_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE;
     private static final String ERROR_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_RED;
 
@@ -50,7 +51,7 @@ public class CLIClient {
             scanner = new Scanner(System.in);
             System.out.println(
                     EscapeSequences.beautify(
-                            EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
+                            SYSTEM_STYLE,
                             "♕ 240 Chess Client ♕"));
             System.out.println(EscapeSequences.beautify(
                     EscapeSequences.SET_TEXT_FAINT,
@@ -69,7 +70,7 @@ public class CLIClient {
                 }
             }
             System.out.println(EscapeSequences.beautify(
-                    EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
+                    SYSTEM_STYLE,
                     "Thanks for playing!"));
         } catch (Exception e) {
             throw new RuntimeException(e);
