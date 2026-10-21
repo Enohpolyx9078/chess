@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 public class CLIClient {
     private static final String COMMAND_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE;
+    private static final String ERROR_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_RED;
 
     private static final String SIGNED_OUT_HELP = """
             %s - create a new account to play chess
@@ -79,13 +80,13 @@ public class CLIClient {
 
     private void showNetworkError(NetworkException e) {
         System.out.println(EscapeSequences.beautify(
-                EscapeSequences.SET_TEXT_COLOR_RED,
+                ERROR_STYLE,
                 e.getMessage()));
     }
 
     private void doUnknown(String input) {
         System.out.printf(EscapeSequences.beautify(
-                EscapeSequences.SET_TEXT_COLOR_RED,
+                ERROR_STYLE,
                 "'%s' is not a recognized command.\n"), input);
         doHelp();
     }
@@ -180,12 +181,12 @@ public class CLIClient {
             }
         } catch (InputMismatchException _) {
             System.out.printf(EscapeSequences.beautify(
-                    EscapeSequences.SET_TEXT_COLOR_RED,
+                    ERROR_STYLE,
                     "Invalid ID: '%s'\n"), scanner.nextLine());
             System.out.println("Game ID must be a number.");
         } catch (IllegalArgumentException _) {
             System.out.printf(EscapeSequences.beautify(
-                    EscapeSequences.SET_TEXT_COLOR_RED,
+                    ERROR_STYLE,
                     "Invalid color: '%s'\n"), color);
             System.out.println("Color must be either " +
                     EscapeSequences.beautify(EscapeSequences.SET_TEXT_BOLD,"'BLACK'") + " or " +
