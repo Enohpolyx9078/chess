@@ -61,5 +61,9 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
 
+    public static final String FULL_RESET = RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_BLINKING +
+            RESET_TEXT_BOLD_FAINT + RESET_TEXT_BLINKING + RESET_TEXT_ITALIC + RESET_TEXT_UNDERLINE;
+
     public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
+    public static String beautify(String options, String text) { return options + text + FULL_RESET; }
 }

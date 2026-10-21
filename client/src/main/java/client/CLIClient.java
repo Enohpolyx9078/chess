@@ -5,24 +5,39 @@ import facade.NetworkException;
 import facade.ServerFacade;
 import model.GameData;
 import ui.BoardPrinter;
+import ui.EscapeSequences;
 
 import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLIClient {
+    private static final String COMMAND_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE;
+
     private static final String SIGNED_OUT_HELP = """
-            register - create a new account to play chess
-            login - sign in to chess with an existing account
-            quit - close this application
-            help - displays this menu""";
+            %s - create a new account to play chess
+            %s - sign in to chess with an existing account
+            %s - close this application
+            %s - displays this menu""".formatted(
+                    EscapeSequences.beautify(COMMAND_STYLE,"register"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"login"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"quit"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"help"));
+
     private static final String SIGNED_IN_HELP = """
-            create - creates a new game
-            list - lists all games
-            play - join a game as a player
-            observe - join a game as an observer
-            logout - sign out of your account
-            help - displays this menu""";
+            %s - creates a new game
+            %s - lists all games
+            %s - join a game as a player
+            %s - join a game as an observer
+            %s - sign out of your account
+            %s - displays this menu""".formatted(
+                    EscapeSequences.beautify(COMMAND_STYLE,"create"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"list"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"play"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"observe"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"logout"),
+                    EscapeSequences.beautify(COMMAND_STYLE,"help"));
+
     private static final ServerFacade FACADE = new ServerFacade();
 
     private String authToken;
@@ -32,10 +47,19 @@ public class CLIClient {
     public void run() {
         try {
             scanner = new Scanner(System.in);
-            System.out.println("♕ 240 Chess Client ♕");
-            System.out.println("Type Help to get started.");
+            System.out.println(
+                    EscapeSequences.beautify(
+                            EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
+                            "♕ 240 Chess Client ♕"));
+            System.out.println(EscapeSequences.beautify(
+                    EscapeSequences.SET_TEXT_FAINT,
+                    "Type Help to get started."));
             while (!state.equals(Status.QUIT)) {
-                System.out.printf("[%s] >>> ", state.name());
+                System.out.printf(
+                        EscapeSequences.beautify(
+                                EscapeSequences.SET_TEXT_BOLD,
+                                "[%s] >>> "),
+                        state.name());
                 String input = scanner.nextLine();
                 if (state == Status.SIGNED_OUT) {
                     handlePreLogin(input);
@@ -43,7 +67,9 @@ public class CLIClient {
                     handlePostLogin(input);
                 }
             }
-            System.out.println("Thanks for playing!");
+            System.out.println(EscapeSequences.beautify(
+                    EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
+                    "Thanks for playing!"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -52,11 +78,15 @@ public class CLIClient {
     }
 
     private void showNetworkError(NetworkException e) {
-        System.out.println(e.getMessage());
+        System.out.println(EscapeSequences.beautify(
+                EscapeSequences.SET_TEXT_COLOR_RED,
+                e.getMessage()));
     }
 
     private void doUnknown(String input) {
-        System.out.printf("'%s' is not a recognized command.\n", input);
+        System.out.printf(EscapeSequences.beautify(
+                EscapeSequences.SET_TEXT_COLOR_RED,
+                "'%s' is not a recognized command.\n"), input);
         doHelp();
     }
 
@@ -149,9 +179,17 @@ public class CLIClient {
                 BoardPrinter.printBoardBlack(game.game().getBoard());
             }
         } catch (InputMismatchException _) {
-            System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
+            System.out.printf(EscapeSequences.beautify(
+                    EscapeSequences.SET_TEXT_COLOR_RED,
+                    "Invalid ID: '%s'\n"), scanner.nextLine());
+            System.out.println("Game ID must be a number.");
         } catch (IllegalArgumentException _) {
-            System.out.printf("Invalid color: '%s'\nColor must be either 'BLACK' or 'WHITE'.\n", color);
+            System.out.printf(EscapeSequences.beautify(
+                    EscapeSequences.SET_TEXT_COLOR_RED,
+                    "Invalid color: '%s'\n"), color);
+            System.out.println("Color must be either " +
+                    EscapeSequences.beautify(EscapeSequences.SET_TEXT_BOLD,"'BLACK'") + " or " +
+                    EscapeSequences.beautify(EscapeSequences.SET_TEXT_BOLD,"'WHITE'"));
         } catch (NetworkException e) {
             showNetworkError(e);
         }
