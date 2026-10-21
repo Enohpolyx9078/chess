@@ -173,7 +173,8 @@ public class CLIClient {
         try {
             FACADE.logout(authToken);
         } catch (NetworkException e) {
-            //TODO display as a warning
+            // display as a warning
+            System.out.print("Warning: ");
             showNetworkError(e);
         } finally {
             // logout on the client regardless of network errors
