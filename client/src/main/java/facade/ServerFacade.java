@@ -27,8 +27,9 @@ public class ServerFacade {
         return null;
     }
 
-    public void play(String authToken, int gameID, ChessGame.TeamColor color) throws NetworkException {
+    public GameData play(String authToken, int gameID, ChessGame.TeamColor color) throws NetworkException {
         //TODO throw on fail
+        return new GameData(-1, null, null, "TODO", new ChessGame());
     }
 
     public void observe(String authToken, int gameID) throws NetworkException {

@@ -4,6 +4,7 @@ import chess.ChessGame;
 import facade.NetworkException;
 import facade.ServerFacade;
 import model.GameData;
+import ui.BoardPrinter;
 
 import java.util.Collection;
 import java.util.InputMismatchException;
@@ -139,8 +140,14 @@ public class CLIClient {
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
 
             // interact with the Facade to join the game
-            FACADE.play(authToken, gameId, teamColor);
-            state = Status.SIGNED_IN;
+            GameData game = FACADE.play(authToken, gameId, teamColor);
+
+            // print the board
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                BoardPrinter.printBoardWhite(game.game().getBoard());
+            } else {
+                BoardPrinter.printBoardBlack(game.game().getBoard());
+            }
         } catch (InputMismatchException _) {
             System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
         } catch (IllegalArgumentException _) {
@@ -160,7 +167,6 @@ public class CLIClient {
 
             // interact with the Facade to watch the game
             FACADE.observe(authToken, gameId);
-            state = Status.SIGNED_IN;
         } catch (InputMismatchException _) {
             System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
         } catch (NetworkException e) {
