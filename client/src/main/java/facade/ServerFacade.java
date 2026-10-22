@@ -1,9 +1,13 @@
 package facade;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.Collection;
+import java.util.Map;
 
 public class ServerFacade {
     private String url;
@@ -13,8 +17,21 @@ public class ServerFacade {
     }
 
     public String register(String username, String password, String email) throws NetworkException {
-        //TODO throw on fail
-        //TODO return the auth token
+        try {
+            var body = Map.of("username", username, "password", password, "email", email);
+            HttpResponse<String> resp = NetworkSender.sendRequest(
+                    url, NetworkSender.Methods.POST, new String[]{}, new Gson().toJson(body));
+            if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+                //TODO success
+                System.out.println(resp.body());
+                //TODO return the auth token
+            } else {
+                //TODO fail
+                System.out.println("Error: received status code " + resp.statusCode());
+            }
+        } catch (IOException | InterruptedException _) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
         return "";
     }
 
