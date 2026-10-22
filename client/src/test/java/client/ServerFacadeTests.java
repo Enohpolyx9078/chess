@@ -1,11 +1,23 @@
 package client;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.UserDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLUserDAO;
+import facade.NetworkException;
+import facade.ServerFacade;
 import org.junit.jupiter.api.*;
 import server.Server;
+import service.ClearService;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerFacadeTests {
-
+    private static final ClearService CLEAR_SERVICE = new ClearService();
+    private static final UserDAO USER_DAO = new SQLUserDAO();
+    private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
+    private static final ServerFacade FACADE = new ServerFacade();
     private static Server server;
 
     @BeforeAll
@@ -15,6 +27,11 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
     }
 
+    @BeforeEach
+    public void clear() throws DataAccessException {
+        CLEAR_SERVICE.clearApplication();
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -22,8 +39,32 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    public void normalRegisterTest() throws DataAccessException {
+        String token = FACADE.register("user", "pass", "email");
+        assertNotNull(token);
+        assertEquals(1, USER_DAO.getSize());
+        assertNotNull(AUTH_DAO.getAuth(token));
     }
 
+    @Test
+    public void duplicateUserNameTest() {
+        FACADE.register("user", "pass", "email");
+        assertThrows(NetworkException.class,
+                () -> FACADE.register("user", "pass", "email"));
+    }
+
+    @Test
+    public void normalLoginTest() throws DataAccessException {
+        FACADE.register("user", "pass", "email");
+        String token = FACADE.login("user", "pass");
+        assertNotNull(token);
+        assertNotNull(AUTH_DAO.getAuth(token));
+    }
+
+    @Test
+    public void badLoginTest() throws DataAccessException {
+        FACADE.register("user", "pass", "email");
+        assertThrows(NetworkException.class,
+                () -> FACADE.login("user", "wrong"));
+    }
 }
