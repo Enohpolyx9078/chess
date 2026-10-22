@@ -7,6 +7,7 @@ import model.GameData;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
@@ -20,19 +21,15 @@ public class ServerFacade {
         try {
             var body = Map.of("username", username, "password", password, "email", email);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    url, NetworkSender.Methods.POST, new String[]{}, new Gson().toJson(body));
-            if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
-                //TODO success
-                System.out.println(resp.body());
-                //TODO return the auth token
-            } else {
-                //TODO fail
-                System.out.println("Error: received status code " + resp.statusCode());
+                    url+"/user", NetworkSender.Methods.POST, null, new Gson().toJson(body));
+            var respBody = new Gson().fromJson(resp.body(), Map.class);
+            if (isError(resp)) {
+                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
             }
+            return respBody.get("authToken").toString();
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
         }
-        return "";
     }
 
     public String login(String username, String password) throws NetworkException {
@@ -61,5 +58,9 @@ public class ServerFacade {
 
     public void logout(String authToken) throws NetworkException {
         //TODO throw on fail
+    }
+
+    private static boolean isError(HttpResponse<String> resp) {
+        return (resp.statusCode() < 200 || resp.statusCode() >= 300);
     }
 }

@@ -13,10 +13,12 @@ public final class NetworkSender {
     // modified for this project
     public static HttpResponse<String> sendRequest(String url, Methods method, String[] headers, String body)
             throws InterruptedException, IOException {
-        var request = HttpRequest.newBuilder(URI.create(url))
-                .method(method.name(), requestBodyPublisher(body))
-                .headers(headers)
-                .build();
+        var builder = HttpRequest.newBuilder(URI.create(url))
+                .method(method.name(), requestBodyPublisher(body));
+                if (headers != null && headers.length > 0) {
+                    builder.headers(headers);
+                }
+        var request = builder.build();
         return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
