@@ -12,6 +12,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLIClient {
+    private static final String SERVER_URL = "";
+
     private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
     private static final String COMMAND_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE;
     private static final String ERROR_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_RED;
@@ -40,7 +42,7 @@ public class CLIClient {
                     EscapeSequences.beautify(COMMAND_STYLE,"logout"),
                     EscapeSequences.beautify(COMMAND_STYLE,"help"));
 
-    private static final ServerFacade FACADE = new ServerFacade();
+    private static final ServerFacade FACADE = new ServerFacade(SERVER_URL);
 
     private String authToken;
     private Status state = Status.SIGNED_OUT;

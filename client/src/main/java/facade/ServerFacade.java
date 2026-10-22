@@ -6,6 +6,12 @@ import model.GameData;
 import java.util.Collection;
 
 public class ServerFacade {
+    private String url;
+
+    public ServerFacade(String url) {
+        this.url = url;
+    }
+
     public String register(String username, String password, String email) throws NetworkException {
         //TODO throw on fail
         //TODO return the auth token

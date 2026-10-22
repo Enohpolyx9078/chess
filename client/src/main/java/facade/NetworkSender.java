@@ -7,7 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public final class NetworkSender {
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     // boilerplate code from MasteryLS docs
     // modified for this project
@@ -17,7 +17,7 @@ public final class NetworkSender {
                 .method(method.name(), requestBodyPublisher(body))
                 .headers(headers)
                 .build();
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public enum Methods {
