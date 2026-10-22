@@ -17,7 +17,7 @@ public class ServerFacadeTests {
     private static final ClearService CLEAR_SERVICE = new ClearService();
     private static final UserDAO USER_DAO = new SQLUserDAO();
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
-    private static final ServerFacade FACADE = new ServerFacade();
+    private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
     private static Server server;
 
     @BeforeAll
