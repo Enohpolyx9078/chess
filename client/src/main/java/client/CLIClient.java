@@ -46,6 +46,7 @@ public class CLIClient {
     private static final ServerFacade FACADE = new ServerFacade(SERVER_URL);
 
     private String authToken;
+    private Collection<SingleGameResponse> currentGames;
     private Status state = Status.SIGNED_OUT;
     private static Scanner scanner;
 
@@ -152,12 +153,31 @@ public class CLIClient {
         }
     }
 
+    private void printOneGame(SingleGameResponse game) {
+        System.out.println(EscapeSequences.beautify(
+                EscapeSequences.SET_TEXT_BOLD,
+                game.gameName()) +
+                "\n    White: " +
+                EscapeSequences.beautify(
+                        EscapeSequences.SET_TEXT_COLOR_BLUE,
+                        game.whiteUsername()) +
+                "\n    Black: " +
+                EscapeSequences.beautify(
+                        EscapeSequences.SET_TEXT_COLOR_RED,
+                        game.blackUsername())
+        );
+    }
+
     private void doList() {
-        // interact with the Facade to get a list of games
         try {
-            Collection<SingleGameResponse> games = FACADE.listGames(authToken);
-            //TODO display all games
-            games.forEach(System.out::println);
+            currentGames = FACADE.listGames(authToken);
+            int i = 1;
+            for (SingleGameResponse game : currentGames) {
+                System.out.print(EscapeSequences.beautify(
+                        EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
+                        i + " - "));
+                printOneGame(game);
+            }
         } catch (NetworkException e) {
             showNetworkError(e);
         }
