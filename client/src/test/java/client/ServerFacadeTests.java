@@ -148,6 +148,12 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void badLogoutTest() {
+        assertThrows(NetworkException.class,
+                () -> facade.logout("fake"));
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE)
     public void offlineTest() {
         server.stop();
