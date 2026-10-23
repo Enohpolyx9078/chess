@@ -20,7 +20,10 @@ public class ServerFacade {
         try {
             var body = Map.of("username", username, "password", password, "email", email);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/user", NetworkSender.Methods.POST, null, new Gson().toJson(body));
+                    URL + "/user",
+                    NetworkSender.Methods.POST,
+                    null,
+                    new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
                 throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
@@ -35,7 +38,10 @@ public class ServerFacade {
         try {
             var body = Map.of("username", username, "password", password);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/session", NetworkSender.Methods.POST, null, new Gson().toJson(body));
+                    URL + "/session",
+                    NetworkSender.Methods.POST,
+                    null,
+                    new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
                 throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
@@ -47,8 +53,20 @@ public class ServerFacade {
     }
 
     public void create(String authToken, String gameName) throws NetworkException {
-        //TODO throw on fail (network drop, error, or no gameID in resp)
-        //TODO post to game
+        try {
+            var body = Map.of("gameName", gameName);
+            HttpResponse<String> resp = NetworkSender.sendRequest(
+                    URL + "/game",
+                    NetworkSender.Methods.POST,
+                    new String[]{"authorization", authToken},
+                    new Gson().toJson(body));
+            var respBody = new Gson().fromJson(resp.body(), Map.class);
+            if (isError(resp)) {
+                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+            }
+        } catch (IOException | InterruptedException _) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
     }
 
     public Collection<GameData> listGames(String authToken) throws NetworkException {
