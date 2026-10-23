@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
-    private final String URL;
+    private final String url;
     private List<SingleGameResponse> currentGames;
 
     public ServerFacade(String url) {
-        this.URL = url;
+        this.url = url;
     }
 
     public String register(String username, String password, String email) throws NetworkException {
         try {
             var body = Map.of("username", username, "password", password, "email", email);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/user",
+                    url + "/user",
                     NetworkSender.Methods.POST,
                     null,
                     new Gson().toJson(body));
@@ -42,7 +42,7 @@ public class ServerFacade {
         try {
             var body = Map.of("username", username, "password", password);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/session",
+                    url + "/session",
                     NetworkSender.Methods.POST,
                     null,
                     new Gson().toJson(body));
@@ -60,7 +60,7 @@ public class ServerFacade {
         try {
             var body = Map.of("gameName", gameName);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/game",
+                    url + "/game",
                     NetworkSender.Methods.POST,
                     new String[]{"authorization", authToken},
                     new Gson().toJson(body));
@@ -76,7 +76,7 @@ public class ServerFacade {
     public Collection<SingleGameResponse> listGames(String authToken) throws NetworkException {
         try {
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/game",
+                    url + "/game",
                     NetworkSender.Methods.GET,
                     new String[]{"authorization", authToken},
                     null);
@@ -102,7 +102,7 @@ public class ServerFacade {
             }
             var body = Map.of("playerColor", color.name(), "gameID", getGameId(gameCode));
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/game",
+                    url + "/game",
                     NetworkSender.Methods.PUT,
                     new String[]{"authorization", authToken},
                     new Gson().toJson(body));
@@ -125,7 +125,7 @@ public class ServerFacade {
             }
             var body = Map.of("gameID", getGameId(gameCode));
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/game",
+                    url + "/game",
                     NetworkSender.Methods.PUT,
                     new String[]{"authorization", authToken},
                     new Gson().toJson(body));
@@ -141,7 +141,7 @@ public class ServerFacade {
     public void logout(String authToken) throws NetworkException {
         try {
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    URL + "/session",
+                    url + "/session",
                     NetworkSender.Methods.DELETE,
                     new String[]{"authorization", authToken},
                     null);
