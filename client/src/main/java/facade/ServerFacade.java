@@ -3,6 +3,8 @@ package facade;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
+import model.ListGamesResponse;
+import model.SingleGameResponse;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -69,9 +71,22 @@ public class ServerFacade {
         }
     }
 
-    public Collection<GameData> listGames(String authToken) throws NetworkException {
-        //TODO throw on fail
-        return null;
+    public Collection<SingleGameResponse> listGames(String authToken) throws NetworkException {
+        try {
+            HttpResponse<String> resp = NetworkSender.sendRequest(
+                    URL + "/game",
+                    NetworkSender.Methods.GET,
+                    new String[]{"authorization", authToken},
+                    null);
+            if (isError(resp)) {
+                var respMap = new Gson().fromJson(resp.body(), Map.class);
+                throw new NetworkException(resp.statusCode() + " " + respMap.get("message"));
+            }
+            ListGamesResponse list = new Gson().fromJson(resp.body(), ListGamesResponse.class);
+            return list.games();
+        } catch (IOException | InterruptedException _) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
     }
 
     public GameData play(String authToken, int gameID, ChessGame.TeamColor color) throws NetworkException {

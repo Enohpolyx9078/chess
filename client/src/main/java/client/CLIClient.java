@@ -4,6 +4,7 @@ import chess.ChessGame;
 import facade.NetworkException;
 import facade.ServerFacade;
 import model.GameData;
+import model.SingleGameResponse;
 import ui.BoardPrinter;
 import ui.EscapeSequences;
 
@@ -154,9 +155,9 @@ public class CLIClient {
     private void doList() {
         // interact with the Facade to get a list of games
         try {
-            Collection<GameData> games = FACADE.listGames(authToken);
+            Collection<SingleGameResponse> games = FACADE.listGames(authToken);
             //TODO display all games
-            System.out.println("***SOME GAMES***");
+            games.forEach(System.out::println);
         } catch (NetworkException e) {
             showNetworkError(e);
         }

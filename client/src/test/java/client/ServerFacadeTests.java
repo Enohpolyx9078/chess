@@ -10,6 +10,7 @@ import dataaccess.sql.SQLUserDAO;
 import facade.NetworkException;
 import facade.ServerFacade;
 import model.GameData;
+import model.SingleGameResponse;
 import org.junit.jupiter.api.*;
 import server.Server;
 import service.ClearService;
@@ -86,7 +87,7 @@ public class ServerFacadeTests {
         for (var i = 0; i < 3; ++i) {
             FACADE.create(authToken, "Super Cool Name");
         }
-        Collection<GameData> list = FACADE.listGames(authToken);
+        Collection<SingleGameResponse> list = FACADE.listGames(authToken);
         assertEquals(3, list.size());
     }
 
