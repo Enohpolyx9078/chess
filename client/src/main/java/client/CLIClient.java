@@ -46,7 +46,6 @@ public class CLIClient {
     private static final ServerFacade FACADE = new ServerFacade(SERVER_URL);
 
     private String authToken;
-    private Collection<SingleGameResponse> currentGames;
     private Status state = Status.SIGNED_OUT;
     private static Scanner scanner;
 
@@ -170,7 +169,7 @@ public class CLIClient {
 
     private void doList() {
         try {
-            currentGames = FACADE.listGames(authToken);
+            Collection<SingleGameResponse> currentGames = FACADE.listGames(authToken);
             int i = 1;
             for (SingleGameResponse game : currentGames) {
                 System.out.print(EscapeSequences.beautify(
@@ -190,6 +189,13 @@ public class CLIClient {
             System.out.print("Game ID: ");
             int gameId = scanner.nextInt();
             scanner.nextLine(); // flush the \n character
+            if (gameId <= 0) {
+                System.out.println(EscapeSequences.beautify(
+                        ERROR_STYLE,
+                        "Game ID must be greater than 0."));
+                return;
+            }
+
             System.out.print("Color: ");
             color = scanner.nextLine();
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
@@ -199,13 +205,12 @@ public class CLIClient {
 
             // just print a throwaway board for now
             ChessGame game = new ChessGame();
-
-            // print the board
             if (teamColor == ChessGame.TeamColor.WHITE) {
                 BoardPrinter.printBoardWhite(game.getBoard());
             } else {
                 BoardPrinter.printBoardBlack(game.getBoard());
             }
+
         } catch (InputMismatchException _) {
             System.out.printf(EscapeSequences.beautify(
                     ERROR_STYLE,

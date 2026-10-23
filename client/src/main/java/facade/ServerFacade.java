@@ -4,14 +4,17 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.ListGamesResponse;
 import model.SingleGameResponse;
+import ui.EscapeSequences;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
     private final String URL;
+    private List<SingleGameResponse> currentGames;
 
     public ServerFacade(String url) {
         this.URL = url;
@@ -82,15 +85,22 @@ public class ServerFacade {
                 throw new NetworkException(resp.statusCode() + " " + respMap.get("message"));
             }
             ListGamesResponse list = new Gson().fromJson(resp.body(), ListGamesResponse.class);
+            currentGames = list.games();
             return list.games();
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
         }
     }
 
-    public void play(String authToken, int gameID, ChessGame.TeamColor color) throws NetworkException {
+    public void play(String authToken, int gameCode, ChessGame.TeamColor color) throws NetworkException {
         try {
-            var body = Map.of("playerColor", color.name(), "gameID", gameID);
+            if (currentGames == null || currentGames.isEmpty()) {
+                throw new NetworkException("Games have not been loaded. Load all games with %s".formatted(
+                        EscapeSequences.beautify(
+                                EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE,
+                                "list")));
+            }
+            var body = Map.of("playerColor", color.name(), "gameID", getGameId(gameCode));
             HttpResponse<String> resp = NetworkSender.sendRequest(
                     URL + "/game",
                     NetworkSender.Methods.PUT,
@@ -111,6 +121,13 @@ public class ServerFacade {
 
     public void logout(String authToken) throws NetworkException {
         //TODO throw on fail
+    }
+
+    private int getGameId(int gameCode) {
+        if (gameCode > currentGames.size() || gameCode <= 0) {
+            return -1;
+        }
+        return currentGames.get(gameCode - 1).gameID();
     }
 
     private static boolean isError(HttpResponse<String> resp) {
