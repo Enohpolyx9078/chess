@@ -2,8 +2,10 @@ package client;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
 import dataaccess.sql.SQLUserDAO;
 import facade.NetworkException;
 import facade.ServerFacade;
@@ -17,6 +19,7 @@ public class ServerFacadeTests {
     private static final ClearService CLEAR_SERVICE = new ClearService();
     private static final UserDAO USER_DAO = new SQLUserDAO();
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
+    private static final GameDAO GAME_DAO = new SQLGameDAO();
     private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
     private static Server server;
 
@@ -68,6 +71,15 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void normalCreateTest() throws DataAccessException {
+        //TODO create a game
+        // ensure the dao persisted it
+        String authToken = FACADE.register("user", "pass", "email");
+        FACADE.create(authToken, "Super Cool Name");
+        assertEquals(1, GAME_DAO.getSize());
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE)
     public void offlineTest() {
         server.stop();
@@ -75,5 +87,10 @@ public class ServerFacadeTests {
                 () -> FACADE.login("user", "wrong"));
         assertThrows(NetworkException.class,
                 () -> FACADE.register("user", "pass", "email"));
+        assertThrows(NetworkException.class,
+                () -> FACADE.create("token", "name"));
+        //TODO assert list throws
+        //TODO assert play throws
+        //TODO assert logout throws
     }
 }

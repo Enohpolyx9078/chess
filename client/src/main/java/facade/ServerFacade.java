@@ -47,7 +47,8 @@ public class ServerFacade {
     }
 
     public void create(String authToken, String gameName) throws NetworkException {
-        //TODO throw on fail
+        //TODO throw on fail (network drop, error, or no gameID in resp)
+        //TODO post to game
     }
 
     public Collection<GameData> listGames(String authToken) throws NetworkException {
