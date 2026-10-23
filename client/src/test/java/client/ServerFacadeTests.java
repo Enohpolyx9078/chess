@@ -37,7 +37,6 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-
     @Test
     public void normalRegisterTest() throws DataAccessException {
         String token = FACADE.register("user", "pass", "email");
@@ -62,9 +61,19 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void badLoginTest() throws DataAccessException {
+    public void badLoginTest() {
         FACADE.register("user", "pass", "email");
         assertThrows(NetworkException.class,
                 () -> FACADE.login("user", "wrong"));
+    }
+
+    @Test
+    @Order(Integer.MAX_VALUE)
+    public void offlineTest() {
+        server.stop();
+        assertThrows(NetworkException.class,
+                () -> FACADE.login("user", "wrong"));
+        assertThrows(NetworkException.class,
+                () -> FACADE.register("user", "pass", "email"));
     }
 }

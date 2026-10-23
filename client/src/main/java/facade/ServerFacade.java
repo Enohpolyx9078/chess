@@ -7,21 +7,20 @@ import model.GameData;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
-    private String url;
+    private final String URL;
 
     public ServerFacade(String url) {
-        this.url = url;
+        this.URL = url;
     }
 
     public String register(String username, String password, String email) throws NetworkException {
         try {
             var body = Map.of("username", username, "password", password, "email", email);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    url+"/user", NetworkSender.Methods.POST, null, new Gson().toJson(body));
+                    URL + "/user", NetworkSender.Methods.POST, null, new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
                 throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
@@ -36,7 +35,7 @@ public class ServerFacade {
         try {
             var body = Map.of("username", username, "password", password);
             HttpResponse<String> resp = NetworkSender.sendRequest(
-                    url+"/session", NetworkSender.Methods.POST, null, new Gson().toJson(body));
+                    URL + "/session", NetworkSender.Methods.POST, null, new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
                 throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
