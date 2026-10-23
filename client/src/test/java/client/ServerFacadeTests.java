@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServerFacadeTests {
     private static final ClearService CLEAR_SERVICE = new ClearService();
     private static final UserDAO USER_DAO = new SQLUserDAO();
