@@ -28,18 +28,19 @@ public class ServerFacadeTests {
     private static final GameDAO GAME_DAO = new SQLGameDAO();
     private static ServerFacade facade;
     private static Server server;
+    private static int port;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
     }
 
     @BeforeEach
     public void clear() throws DataAccessException {
         CLEAR_SERVICE.clearApplication();
-        facade = new ServerFacade("http://localhost:8080");
+        facade = new ServerFacade("http://localhost:"+port);
     }
 
     @AfterAll

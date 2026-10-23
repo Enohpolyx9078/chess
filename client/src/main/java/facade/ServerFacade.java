@@ -123,7 +123,7 @@ public class ServerFacade {
                                 EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE,
                                 "list")));
             }
-            var body = Map.of("gameID", getGameId(gameCode));
+            var body = Map.of("gameID", getGameId(gameCode), "playerColor", "OBSERVE");
             HttpResponse<String> resp = NetworkSender.sendRequest(
                     url + "/game",
                     NetworkSender.Methods.PUT,

@@ -1,6 +1,5 @@
 package chess;
 
-import chess.movement.MoveStrategy;
 import chess.rules.EndGameEnforcer;
 import chess.rules.Enforcer;
 import com.google.gson.Gson;
@@ -87,7 +86,8 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK,
+        OBSERVE
     }
 
     /**

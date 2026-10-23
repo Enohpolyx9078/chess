@@ -28,8 +28,7 @@ public class GameService {
             throw new NotFoundException("Game not found");
         }
         ChessGame.TeamColor playerColor = request.playerColor();
-        if (playerColor == null) {
-            // This is an observer
+        if (playerColor == ChessGame.TeamColor.OBSERVE) {
             return;
         }
         if ((
