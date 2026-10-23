@@ -9,9 +9,12 @@ import dataaccess.sql.SQLGameDAO;
 import dataaccess.sql.SQLUserDAO;
 import facade.NetworkException;
 import facade.ServerFacade;
+import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import service.ClearService;
+
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,11 +75,19 @@ public class ServerFacadeTests {
 
     @Test
     public void normalCreateTest() throws DataAccessException {
-        //TODO create a game
-        // ensure the dao persisted it
         String authToken = FACADE.register("user", "pass", "email");
         FACADE.create(authToken, "Super Cool Name");
         assertEquals(1, GAME_DAO.getSize());
+    }
+
+    @Test
+    public void listGamesTest() {
+        String authToken = FACADE.register("user", "pass", "email");
+        for (var i = 0; i < 3; ++i) {
+            FACADE.create(authToken, "Super Cool Name");
+        }
+        Collection<GameData> list = FACADE.listGames(authToken);
+        assertEquals(3, list.size());
     }
 
     @Test
@@ -89,7 +100,8 @@ public class ServerFacadeTests {
                 () -> FACADE.register("user", "pass", "email"));
         assertThrows(NetworkException.class,
                 () -> FACADE.create("token", "name"));
-        //TODO assert list throws
+        assertThrows(NetworkException.class,
+                () -> FACADE.listGames("token"));
         //TODO assert play throws
         //TODO assert logout throws
     }
