@@ -170,6 +170,17 @@ public class CLIClient {
     private void doList() {
         try {
             Collection<SingleGameResponse> currentGames = FACADE.listGames(authToken);
+            if (currentGames.isEmpty()) {
+                System.out.printf("%s Start a new one with %s\n",
+                        EscapeSequences.beautify(
+                                EscapeSequences.SET_TEXT_BOLD,
+                                "No games yet."
+                        ),
+                        EscapeSequences.beautify(
+                                COMMAND_STYLE,
+                                "create"));
+                return;
+            }
             int i = 1;
             for (SingleGameResponse game : currentGames) {
                 System.out.print(EscapeSequences.beautify(

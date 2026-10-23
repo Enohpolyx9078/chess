@@ -141,6 +141,13 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void logoutTest() throws DataAccessException {
+        String authToken = facade.register("user", "pass", "email");
+        facade.logout(authToken);
+        assertNull(AUTH_DAO.getAuth(authToken));
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE)
     public void offlineTest() {
         server.stop();
@@ -156,6 +163,7 @@ public class ServerFacadeTests {
                 () -> facade.play("token", 1, ChessGame.TeamColor.WHITE));
         assertThrows(NetworkException.class,
                 () -> facade.observe("token", 1));
-        //TODO assert logout throws
+        assertThrows(NetworkException.class,
+                () -> facade.logout("token"));
     }
 }

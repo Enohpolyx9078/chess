@@ -139,7 +139,19 @@ public class ServerFacade {
     }
 
     public void logout(String authToken) throws NetworkException {
-        //TODO throw on fail
+        try {
+            HttpResponse<String> resp = NetworkSender.sendRequest(
+                    URL + "/session",
+                    NetworkSender.Methods.DELETE,
+                    new String[]{"authorization", authToken},
+                    null);
+            if (isError(resp)) {
+                var respMap = new Gson().fromJson(resp.body(), Map.class);
+                throw new NetworkException(resp.statusCode() + " " + respMap.get("message"));
+            }
+        } catch (IOException | InterruptedException _) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
     }
 
     private int getGameId(int gameCode) {
