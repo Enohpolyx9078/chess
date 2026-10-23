@@ -33,9 +33,18 @@ public class ServerFacade {
     }
 
     public String login(String username, String password) throws NetworkException {
-        //TODO throw on fail
-        //TODO return the auth token
-        return "";
+        try {
+            var body = Map.of("username", username, "password", password);
+            HttpResponse<String> resp = NetworkSender.sendRequest(
+                    url+"/session", NetworkSender.Methods.POST, null, new Gson().toJson(body));
+            var respBody = new Gson().fromJson(resp.body(), Map.class);
+            if (isError(resp)) {
+                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+            }
+            return respBody.get("authToken").toString();
+        } catch (IOException | InterruptedException _) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
     }
 
     public void create(String authToken, String gameName) throws NetworkException {
