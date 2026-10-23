@@ -3,7 +3,6 @@ package client;
 import chess.ChessGame;
 import facade.NetworkException;
 import facade.ServerFacade;
-import model.GameData;
 import model.SingleGameResponse;
 import ui.BoardPrinter;
 import ui.EscapeSequences;
