@@ -27,12 +27,19 @@ public class GameService {
         if (game == null) {
             throw new NotFoundException("Game not found");
         }
-        if (((Objects.equals(request.playerColor(), ChessGame.TeamColor.WHITE)) ?
-                game.whiteUsername() :
-                game.blackUsername()) != null) {
+        ChessGame.TeamColor playerColor = request.playerColor();
+        if (playerColor == null) {
+            // This is an observer
+            return;
+        }
+        if ((
+                Objects.equals(playerColor, ChessGame.TeamColor.WHITE) ?
+                        game.whiteUsername() :
+                        game.blackUsername()
+        ) != null) {
             throw new AlreadyTakenException("Requested color is already taken");
         }
         String username = AUTH_DAO.getAuth(authToken).username();
-        GAME_DAO.addPlayer(game.gameID(), username, request.playerColor());
+        GAME_DAO.addPlayer(game.gameID(), username, playerColor);
     }
 }

@@ -26,7 +26,7 @@ public class ServerFacadeTests {
     private static final UserDAO USER_DAO = new SQLUserDAO();
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
     private static final GameDAO GAME_DAO = new SQLGameDAO();
-    private static final ServerFacade FACADE = new ServerFacade("http://localhost:8080");
+    private static ServerFacade facade;
     private static Server server;
 
     @BeforeAll
@@ -39,6 +39,7 @@ public class ServerFacadeTests {
     @BeforeEach
     public void clear() throws DataAccessException {
         CLEAR_SERVICE.clearApplication();
+        facade = new ServerFacade("http://localhost:8080");
     }
 
     @AfterAll
@@ -48,7 +49,7 @@ public class ServerFacadeTests {
 
     @Test
     public void normalRegisterTest() throws DataAccessException {
-        String token = FACADE.register("user", "pass", "email");
+        String token = facade.register("user", "pass", "email");
         assertNotNull(token);
         assertEquals(1, USER_DAO.getSize());
         assertNotNull(AUTH_DAO.getAuth(token));
@@ -56,82 +57,87 @@ public class ServerFacadeTests {
 
     @Test
     public void duplicateUserNameTest() {
-        FACADE.register("user", "pass", "email");
+        facade.register("user", "pass", "email");
         assertThrows(NetworkException.class,
-                () -> FACADE.register("user", "pass", "email"));
+                () -> facade.register("user", "pass", "email"));
     }
 
     @Test
     public void normalLoginTest() throws DataAccessException {
-        FACADE.register("user", "pass", "email");
-        String token = FACADE.login("user", "pass");
+        facade.register("user", "pass", "email");
+        String token = facade.login("user", "pass");
         assertNotNull(token);
         assertNotNull(AUTH_DAO.getAuth(token));
     }
 
     @Test
     public void badLoginTest() {
-        FACADE.register("user", "pass", "email");
+        facade.register("user", "pass", "email");
         assertThrows(NetworkException.class,
-                () -> FACADE.login("user", "wrong"));
+                () -> facade.login("user", "wrong"));
     }
 
     @Test
     public void normalCreateTest() throws DataAccessException {
-        String authToken = FACADE.register("user", "pass", "email");
-        FACADE.create(authToken, "Super Cool Name");
+        String authToken = facade.register("user", "pass", "email");
+        facade.create(authToken, "Super Cool Name");
         assertEquals(1, GAME_DAO.getSize());
     }
 
     @Test
     public void listGamesTest() {
-        String authToken = FACADE.register("user", "pass", "email");
+        String authToken = facade.register("user", "pass", "email");
         for (var i = 0; i < 3; ++i) {
-            FACADE.create(authToken, "Super Cool Name");
+            facade.create(authToken, "Super Cool Name");
         }
-        Collection<SingleGameResponse> list = FACADE.listGames(authToken);
+        Collection<SingleGameResponse> list = facade.listGames(authToken);
         assertEquals(3, list.size());
     }
 
     @Test
     public void joinGameTest() throws DataAccessException {
-        String authToken = FACADE.register("user", "pass", "email");
-        FACADE.create(authToken, "Super Cool Name");
-        FACADE.play(authToken, 1, ChessGame.TeamColor.WHITE);
+        String authToken = facade.register("user", "pass", "email");
+        facade.create(authToken, "Super Cool Name");
+        facade.listGames(authToken);
+        facade.play(authToken, 1, ChessGame.TeamColor.WHITE);
         GameData game = GAME_DAO.getGame(1);
         assertEquals("user", game.whiteUsername());
     }
 
     @Test
     public void colorTakenTest() {
-        String authToken = FACADE.register("user", "pass", "email");
-        FACADE.create(authToken, "Super Cool Name");
-        FACADE.play(authToken, 1, ChessGame.TeamColor.WHITE);
+        String authToken = facade.register("user", "pass", "email");
+        facade.create(authToken, "Super Cool Name");
+        facade.listGames(authToken);
+        facade.play(authToken, 1, ChessGame.TeamColor.WHITE);
         assertThrows(NetworkException.class,
-                () -> FACADE.play(authToken, 1, ChessGame.TeamColor.WHITE));
+                () -> facade.play(authToken, 1, ChessGame.TeamColor.WHITE));
     }
 
     @Test
     public void badIDTest() {
-        String authToken = FACADE.register("user", "pass", "email");
-        FACADE.create(authToken, "Super Cool Name");
+        String authToken = facade.register("user", "pass", "email");
+        facade.create(authToken, "Super Cool Name");
+        facade.listGames(authToken);
         assertThrows(NetworkException.class,
-                () -> FACADE.play(authToken, 255, ChessGame.TeamColor.WHITE));
+                () -> facade.play(authToken, 255, ChessGame.TeamColor.WHITE));
     }
 
     @Test
     public void observeTest() {
-        String authToken = FACADE.register("user", "pass", "email");
-        FACADE.create(authToken, "Super Cool Name");
-        assertDoesNotThrow(() -> FACADE.observe(authToken, 1));
+        String authToken = facade.register("user", "pass", "email");
+        facade.create(authToken, "Super Cool Name");
+        facade.listGames(authToken);
+        assertDoesNotThrow(() -> facade.observe(authToken, 1));
     }
 
     @Test
     public void badObserveTest() {
-        String authToken = FACADE.register("user", "pass", "email");
-        FACADE.create(authToken, "Super Cool Name");
+        String authToken = facade.register("user", "pass", "email");
+        facade.create(authToken, "Super Cool Name");
+        facade.listGames(authToken);
         assertThrows(NetworkException.class,
-                () -> FACADE.observe(authToken, 255));
+                () -> facade.observe(authToken, 255));
     }
 
     @Test
@@ -139,17 +145,17 @@ public class ServerFacadeTests {
     public void offlineTest() {
         server.stop();
         assertThrows(NetworkException.class,
-                () -> FACADE.login("user", "wrong"));
+                () -> facade.login("user", "wrong"));
         assertThrows(NetworkException.class,
-                () -> FACADE.register("user", "pass", "email"));
+                () -> facade.register("user", "pass", "email"));
         assertThrows(NetworkException.class,
-                () -> FACADE.create("token", "name"));
+                () -> facade.create("token", "name"));
         assertThrows(NetworkException.class,
-                () -> FACADE.listGames("token"));
+                () -> facade.listGames("token"));
         assertThrows(NetworkException.class,
-                () -> FACADE.play("token", 1, ChessGame.TeamColor.WHITE));
+                () -> facade.play("token", 1, ChessGame.TeamColor.WHITE));
         assertThrows(NetworkException.class,
-                () -> FACADE.observe("token", 1));
+                () -> facade.observe("token", 1));
         //TODO assert logout throws
     }
 }

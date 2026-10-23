@@ -115,8 +115,27 @@ public class ServerFacade {
         }
     }
 
-    public void observe(String authToken, int gameID) throws NetworkException {
-        //TODO throw on fail
+    public void observe(String authToken, int gameCode) throws NetworkException {
+        try {
+            if (currentGames == null || currentGames.isEmpty()) {
+                throw new NetworkException("Games have not been loaded. Load all games with %s".formatted(
+                        EscapeSequences.beautify(
+                                EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE,
+                                "list")));
+            }
+            var body = Map.of("gameID", getGameId(gameCode));
+            HttpResponse<String> resp = NetworkSender.sendRequest(
+                    URL + "/game",
+                    NetworkSender.Methods.PUT,
+                    new String[]{"authorization", authToken},
+                    new Gson().toJson(body));
+            var respBody = new Gson().fromJson(resp.body(), Map.class);
+            if (isError(resp)) {
+                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+            }
+        } catch (IOException | InterruptedException _) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
     }
 
     public void logout(String authToken) throws NetworkException {
