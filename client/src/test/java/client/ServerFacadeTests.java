@@ -120,6 +120,21 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void observeTest() {
+        String authToken = FACADE.register("user", "pass", "email");
+        FACADE.create(authToken, "Super Cool Name");
+        assertDoesNotThrow(() -> FACADE.observe(authToken, 1));
+    }
+
+    @Test
+    public void badObserveTest() {
+        String authToken = FACADE.register("user", "pass", "email");
+        FACADE.create(authToken, "Super Cool Name");
+        assertThrows(NetworkException.class,
+                () -> FACADE.observe(authToken, 255));
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE)
     public void offlineTest() {
         server.stop();
@@ -133,7 +148,8 @@ public class ServerFacadeTests {
                 () -> FACADE.listGames("token"));
         assertThrows(NetworkException.class,
                 () -> FACADE.play("token", 1, ChessGame.TeamColor.WHITE));
-        //TODO assert observe throws
+        assertThrows(NetworkException.class,
+                () -> FACADE.observe("token", 1));
         //TODO assert logout throws
     }
 }
