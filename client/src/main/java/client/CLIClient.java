@@ -195,13 +195,16 @@ public class CLIClient {
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
 
             // interact with the Facade to join the game
-            GameData game = FACADE.play(authToken, gameId, teamColor);
+            FACADE.play(authToken, gameId, teamColor);
+
+            // just print a throwaway board for now
+            ChessGame game = new ChessGame();
 
             // print the board
             if (teamColor == ChessGame.TeamColor.WHITE) {
-                BoardPrinter.printBoardWhite(game.game().getBoard());
+                BoardPrinter.printBoardWhite(game.getBoard());
             } else {
-                BoardPrinter.printBoardBlack(game.game().getBoard());
+                BoardPrinter.printBoardBlack(game.getBoard());
             }
         } catch (InputMismatchException _) {
             System.out.printf(EscapeSequences.beautify(
