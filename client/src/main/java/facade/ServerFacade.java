@@ -30,7 +30,7 @@ public class ServerFacade {
                     new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
-                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+                throw new NetworkException(respBody.get("message").toString());
             }
             return respBody.get("authToken").toString();
         } catch (IOException | InterruptedException _) {
@@ -48,7 +48,7 @@ public class ServerFacade {
                     new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
-                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+                throw new NetworkException(respBody.get("message").toString());
             }
             return respBody.get("authToken").toString();
         } catch (IOException | InterruptedException _) {
@@ -66,7 +66,7 @@ public class ServerFacade {
                     new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
-                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+                throw new NetworkException(respBody.get("message").toString());
             }
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
@@ -82,7 +82,7 @@ public class ServerFacade {
                     null);
             if (isError(resp)) {
                 var respMap = new Gson().fromJson(resp.body(), Map.class);
-                throw new NetworkException(resp.statusCode() + " " + respMap.get("message"));
+                throw new NetworkException(respMap.get("message").toString());
             }
             ListGamesResponse list = new Gson().fromJson(resp.body(), ListGamesResponse.class);
             currentGames = list.games();
@@ -108,7 +108,7 @@ public class ServerFacade {
                     new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
-                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+                throw new NetworkException(respBody.get("message").toString());
             }
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
@@ -131,7 +131,7 @@ public class ServerFacade {
                     new Gson().toJson(body));
             var respBody = new Gson().fromJson(resp.body(), Map.class);
             if (isError(resp)) {
-                throw new NetworkException(resp.statusCode() + " " + respBody.get("message"));
+                throw new NetworkException(respBody.get("message").toString());
             }
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
@@ -147,7 +147,7 @@ public class ServerFacade {
                     null);
             if (isError(resp)) {
                 var respMap = new Gson().fromJson(resp.body(), Map.class);
-                throw new NetworkException(resp.statusCode() + " " + respMap.get("message"));
+                throw new NetworkException(respMap.get("message").toString());
             }
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
