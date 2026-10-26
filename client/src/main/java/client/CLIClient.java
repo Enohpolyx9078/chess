@@ -188,6 +188,7 @@ public class CLIClient {
                         EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
                         i + " - "));
                 printOneGame(game);
+                i++;
             }
         } catch (NetworkException e) {
             showNetworkError(e);
