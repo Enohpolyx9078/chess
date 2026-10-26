@@ -152,17 +152,19 @@ public class CLIClient {
     }
 
     private void printOneGame(SingleGameResponse game) {
+        String whiteName = game.whiteUsername();
+        String blackName = game.blackUsername();
         System.out.println(EscapeSequences.beautify(
                 EscapeSequences.SET_TEXT_BOLD,
                 game.gameName()) +
                 "\n    White: " +
                 EscapeSequences.beautify(
                         EscapeSequences.SET_TEXT_COLOR_BLUE,
-                        game.whiteUsername()) +
+                        (whiteName != null) ? whiteName : "-") +
                 "\n    Black: " +
                 EscapeSequences.beautify(
                         EscapeSequences.SET_TEXT_COLOR_RED,
-                        game.blackUsername())
+                        (blackName != null) ? blackName : "-")
         );
     }
 
