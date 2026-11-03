@@ -42,6 +42,9 @@ public class CLIClient {
                     EscapeSequences.beautify(COMMAND_STYLE,"logout"),
                     EscapeSequences.beautify(COMMAND_STYLE,"help"));
 
+    private static final String PLAYING_HELP = """
+            TODO""";
+
     private static final ServerFacade FACADE = new ServerFacade(SERVER_URL);
 
     private String authToken;
@@ -67,6 +70,8 @@ public class CLIClient {
                 String input = scanner.nextLine();
                 if (state == Status.SIGNED_OUT) {
                     handlePreLogin(input);
+                } else if (state == Status.PLAYING) {
+                    handlePlaying(input);
                 } else {
                     handlePostLogin(input);
                 }
@@ -95,9 +100,11 @@ public class CLIClient {
     }
 
     private void doHelp() {
-        System.out.println((state == Status.SIGNED_OUT) ?
-                SIGNED_OUT_HELP :
-                SIGNED_IN_HELP);
+        System.out.println(switch (state) {
+            case SIGNED_IN -> SIGNED_IN_HELP;
+            case PLAYING -> PLAYING_HELP;
+            default -> SIGNED_OUT_HELP;
+        });
     }
 
     private void doQuit() {
@@ -317,9 +324,14 @@ public class CLIClient {
         }
     }
 
+    private void handlePlaying(String input) {
+        System.out.println(EscapeSequences.CLEAR_SCREEN);
+    }
+
     private enum Status {
         SIGNED_OUT,
         SIGNED_IN,
+        PLAYING,
         QUIT
     }
 }
