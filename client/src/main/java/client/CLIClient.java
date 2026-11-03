@@ -222,15 +222,8 @@ public class CLIClient {
 
             // interact with the Facade to join the game
             FACADE.play(authToken, gameId, teamColor);
-
-            // just print a throwaway board for now
-            ChessGame game = new ChessGame();
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                BoardPrinter.printBoardWhite(game.getBoard());
-            } else {
-                BoardPrinter.printBoardBlack(game.getBoard());
-            }
-
+            state = Status.PLAYING;
+            handlePlaying("");
         } catch (InputMismatchException _) {
             System.out.printf(EscapeSequences.beautify(
                     ERROR_STYLE,
@@ -326,6 +319,19 @@ public class CLIClient {
 
     private void handlePlaying(String input) {
         System.out.println(EscapeSequences.CLEAR_SCREEN);
+        // just print a throwaway board for now
+        ChessGame game = new ChessGame();
+        var teamColor = ChessGame.TeamColor.WHITE;
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            BoardPrinter.printBoardWhite(game.getBoard());
+        } else {
+            BoardPrinter.printBoardBlack(game.getBoard());
+        }
+        switch (input.toLowerCase().trim()) {
+            case "help":
+                doHelp();
+                break;
+        }
     }
 
     private enum Status {
