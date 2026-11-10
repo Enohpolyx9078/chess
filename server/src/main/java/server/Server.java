@@ -11,6 +11,7 @@ import model.*;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
 import service.*;
+import websocket.commands.UserGameCommand;
 
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class Server {
     private static final UserService USER_SERVICE = new UserService();
     private static final ClearService CLEAR_SERVICE = new ClearService();
     private static final GameService GAME_SERVICE = new GameService();
+    private static final PlayService PLAY_SERVICE = new PlayService();
 
     static {
         try {
@@ -55,12 +57,7 @@ public class Server {
     }
 
     private void wsHandler(WsConfig ws) {
-        ws.onConnect(ctx -> {
-            ctx.enableAutomaticPings();
-            System.out.println("WebSocket connected");
-        });
-        ws.onMessage(ctx -> ctx.send("WebSocket response: " + ctx.message()));
-        ws.onClose(ctx -> System.out.println("WebSocket closed"));
+        PLAY_SERVICE.register(ws);
     }
 
     /**
