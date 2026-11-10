@@ -6,6 +6,7 @@ import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
+import io.javalin.websocket.WsConfig;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
@@ -37,6 +38,7 @@ public class Server {
                 .get("/game", this::listGamesHandler)
                 .put("/game", this::joinGameHandler)
                 .delete("/db", this::clearHandler)
+                .ws("/ws", this::wsHandler)
                 .exception(Exception.class, this::exceptionHandler)
                 .error(404, this::notFound);
         javalin.before("/game", context -> {
@@ -51,6 +53,16 @@ public class Server {
             }
         });
     }
+
+    private void wsHandler(WsConfig ws) {
+        ws.onConnect(ctx -> {
+            ctx.enableAutomaticPings();
+            System.out.println("WebSocket connected");
+        });
+        ws.onMessage(ctx -> ctx.send("WebSocket response: " + ctx.message()));
+        ws.onClose(ctx -> System.out.println("WebSocket closed"));
+    }
+
     /**
      * Joins a game as the provided color
      * <ul>
