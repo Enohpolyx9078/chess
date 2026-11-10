@@ -17,6 +17,12 @@ public class PlayService {
             if (!AuthUtility.isAuthorized(command.getAuthToken())) {
                 throw new UnauthorizedException("Missing or invalid token");
             }
+            //TODO handle events:
+            // CONNECT -> Group user into game room, Respond with LOAD_GAME
+            // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
+            // LEAVE
+            // RESIGN
+            // send NOTIFICATION to relevant parties afterward all commands
 
             ctx.send("WebSocket response: " + ctx.message());
         });
