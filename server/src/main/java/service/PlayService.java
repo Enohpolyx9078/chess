@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import dataaccess.UnauthorizedException;
 import io.javalin.websocket.WsConfig;
-import org.eclipse.jetty.server.Authentication;
 import websocket.commands.UserGameCommand;
 
 public class PlayService {
@@ -27,7 +26,7 @@ public class PlayService {
             // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
             // LEAVE
             // RESIGN
-            // send NOTIFICATION to relevant parties afterward all commands
+            // send NOTIFICATION to relevant parties after all commands
             //TODO handle invalid commands
 
             ctx.send("WebSocket response: " + ctx.message());
@@ -47,9 +46,9 @@ public class PlayService {
                         commandType type = commandType.valueOf(current.get("commandType").getAsString());
                         command = switch (type) {
                             case CONNECT -> new Gson().fromJson(el, UserGameCommand.class);
-                            case MAKE_MOVE -> null;
-                            case LEAVE -> null;
-                            case RESIGN -> null;
+                            case MAKE_MOVE -> null; //TODO handle MAKE_MOVE
+                            case LEAVE -> null; //TODO handle LEAVE
+                            case RESIGN -> null; //TODO handle RESIGN
                         };
                     }
                     return command;
