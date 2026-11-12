@@ -11,7 +11,6 @@ import model.*;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.Gson;
 import service.*;
-import websocket.commands.UserGameCommand;
 
 import java.util.Map;
 
