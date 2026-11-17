@@ -6,7 +6,13 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import dataaccess.UnauthorizedException;
 import io.javalin.websocket.WsConfig;
+import io.javalin.websocket.WsContext;
+import io.javalin.websocket.WsMessageContext;
 import websocket.commands.UserGameCommand;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayService {
     public void register(WsConfig ws) {
@@ -28,11 +34,23 @@ public class PlayService {
             // RESIGN
             // send NOTIFICATION to relevant parties after all commands
             //TODO handle invalid commands
+            switch (command.getCommandType()) {
+                case CONNECT -> doConnect(command, ctx);
+            }
 
             ctx.send("WebSocket response: " + ctx.message());
         });
         ws.onClose(ctx -> System.out.println("WebSocket closed"));
     }
+
+    private void doConnect(UserGameCommand command, WsMessageContext ctx) {
+        // Group user into game room, Respond with LOAD_GAME
+        Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
+        room.add(ctx);
+        ROOMS.put(command.getGameID(), room);
+    }
+
+    private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
 
     private static final Gson COMMAND_SERIALIZER = createCommandSerializer();
 
@@ -43,7 +61,7 @@ public class PlayService {
                     UserGameCommand command = null;
                     if (el.isJsonObject()) {
                         JsonObject current = el.getAsJsonObject();
-                        commandType type = commandType.valueOf(current.get("commandType").getAsString());
+                        UserGameCommand.CommandType type = UserGameCommand.CommandType.valueOf(current.get("commandType").getAsString());
                         command = switch (type) {
                             case CONNECT -> new Gson().fromJson(el, UserGameCommand.class);
                             case MAKE_MOVE -> null; //TODO handle MAKE_MOVE
@@ -54,12 +72,5 @@ public class PlayService {
                     return command;
                 });
         return builder.create();
-    }
-
-    private enum commandType {
-        CONNECT,
-        MAKE_MOVE,
-        LEAVE,
-        RESIGN
     }
 }
