@@ -5,24 +5,26 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import dataaccess.NotFoundException;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
+import dataaccess.sql.SQLAuthDAO;
 import dataaccess.sql.SQLGameDAO;
 import io.javalin.websocket.WsConfig;
 import io.javalin.websocket.WsContext;
 import io.javalin.websocket.WsMessageContext;
+import model.AuthData;
 import model.GameData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayService {
     private static final GameDAO GAME_DAO = new SQLGameDAO();
+    private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
 
     public void register(WsConfig ws) {
         ws.onConnect(ctx -> {
@@ -51,15 +53,34 @@ public class PlayService {
     }
 
     private void doConnect(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
-        // Group user into game room, Respond with LOAD_GAME
         GameData game = GAME_DAO.getGame(command.getGameID());
         if (game == null) {
             throw new NotFoundException("Game does not exist");
         }
+        AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
+        if (auth == null) {
+            throw new UnauthorizedException("User is not authorized");
+        }
+
         Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
         room.add(ctx);
         ROOMS.put(command.getGameID(), room);
+        String playerRole = "observer";
+        if (Objects.equals(auth.username(), game.whiteUsername())) {
+            playerRole = "white";
+        } else if (Objects.equals(auth.username(), game.blackUsername())) {
+            playerRole = "black";
+        }
         ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
+        notifyOthers(auth.username() + " joined as " + playerRole, ctx, room);
+    }
+
+    private void notifyOthers(String msg, WsMessageContext ctx, Collection<WsContext> room) {
+        room.forEach((player) -> {
+            if (player != ctx) {
+                player.send(new Gson().toJson(new NotificationMessage(msg)));
+            }
+        });
     }
 
     private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
