@@ -60,9 +60,8 @@ public class PlayService {
                 ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
                 return;
             }
-            Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
-            room.add(ctx);
-            ROOMS.put(command.getGameID(), room);
+            Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
+            ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
             String playerRole = "observer";
             AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
             if (Objects.equals(auth.username(), game.whiteUsername())) {
@@ -70,7 +69,6 @@ public class PlayService {
             } else if (Objects.equals(auth.username(), game.blackUsername())) {
                 playerRole = "black";
             }
-            ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
             notifyOthers(
                     new NotificationMessage(auth.username() + " joined as " + playerRole),
                     ctx,
@@ -78,6 +76,13 @@ public class PlayService {
         } catch (DataAccessException e) {
             ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
         }
+    }
+
+    private Collection<WsContext> addToRoom(Integer gameID, WsMessageContext ctx) {
+        Collection<WsContext> room = ROOMS.getOrDefault(gameID, new ArrayList<>());
+        room.add(ctx);
+        ROOMS.put(gameID, room);
+        return room;
     }
 
     private void notifyOthers(ServerMessage msg, WsMessageContext ctx, Collection<WsContext> room) {
