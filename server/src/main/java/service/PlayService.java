@@ -59,7 +59,7 @@ public class PlayService {
         Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
         room.add(ctx);
         ROOMS.put(command.getGameID(), room);
-        ctx.send(new LoadGameMessage(game.game()));
+        ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
     }
 
     private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
