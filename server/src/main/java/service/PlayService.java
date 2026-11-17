@@ -17,6 +17,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,16 +73,19 @@ public class PlayService {
                 playerRole = "black";
             }
             ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
-            notifyOthers(auth.username() + " joined as " + playerRole, ctx, room);
+            notifyOthers(
+                    new NotificationMessage(auth.username() + " joined as " + playerRole),
+                    ctx,
+                    room);
         } catch (DataAccessException e) {
             ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
         }
     }
 
-    private void notifyOthers(String msg, WsMessageContext ctx, Collection<WsContext> room) {
+    private void notifyOthers(ServerMessage msg, WsMessageContext ctx, Collection<WsContext> room) {
         room.forEach((player) -> {
             if (player != ctx) {
-                player.send(new Gson().toJson(new NotificationMessage(msg)));
+                player.send(new Gson().toJson(msg));
             }
         });
     }
