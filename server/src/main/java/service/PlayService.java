@@ -90,6 +90,10 @@ public class PlayService {
         });
     }
 
+    private void notifyAll(ServerMessage msg, Collection<WsContext> room) {
+        room.forEach((player) -> player.send(new Gson().toJson(msg)));
+    }
+
     private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
 
     private static final Gson COMMAND_SERIALIZER = createCommandSerializer();
