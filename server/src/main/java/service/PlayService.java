@@ -14,6 +14,7 @@ import io.javalin.websocket.WsMessageContext;
 import model.AuthData;
 import model.GameData;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
@@ -36,7 +37,8 @@ public class PlayService {
 
             // check the authToken
             if (!AuthUtility.isAuthorized(command.getAuthToken())) {
-                throw new UnauthorizedException("Missing or invalid token");
+                ctx.send(new Gson().toJson(new ErrorMessage("Missing or invalid auth token")));
+                return;
             }
             //TODO handle events:
             // CONNECT -> Group user into game room, Respond with LOAD_GAME
@@ -52,27 +54,32 @@ public class PlayService {
         ws.onClose(ctx -> System.out.println("WebSocket closed"));
     }
 
-    private void doConnect(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
-        GameData game = GAME_DAO.getGame(command.getGameID());
-        if (game == null) {
-            throw new NotFoundException("Game does not exist");
+    private void doConnect(UserGameCommand command, WsMessageContext ctx) {
+        try {
+            AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
+            if (auth == null) {
+                ctx.send(new Gson().toJson(new ErrorMessage("User is not authorized")));
+                return;
+            }
+            GameData game = GAME_DAO.getGame(command.getGameID());
+            if (game == null) {
+                ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
+                return;
+            }
+            Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
+            room.add(ctx);
+            ROOMS.put(command.getGameID(), room);
+            String playerRole = "observer";
+            if (Objects.equals(auth.username(), game.whiteUsername())) {
+                playerRole = "white";
+            } else if (Objects.equals(auth.username(), game.blackUsername())) {
+                playerRole = "black";
+            }
+            ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
+            notifyOthers(auth.username() + " joined as " + playerRole, ctx, room);
+        } catch (DataAccessException e) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
         }
-        AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
-        if (auth == null) {
-            throw new UnauthorizedException("User is not authorized");
-        }
-
-        Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
-        room.add(ctx);
-        ROOMS.put(command.getGameID(), room);
-        String playerRole = "observer";
-        if (Objects.equals(auth.username(), game.whiteUsername())) {
-            playerRole = "white";
-        } else if (Objects.equals(auth.username(), game.blackUsername())) {
-            playerRole = "black";
-        }
-        ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
-        notifyOthers(auth.username() + " joined as " + playerRole, ctx, room);
     }
 
     private void notifyOthers(String msg, WsMessageContext ctx, Collection<WsContext> room) {
