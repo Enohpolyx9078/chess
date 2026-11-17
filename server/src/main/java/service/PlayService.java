@@ -56,11 +56,6 @@ public class PlayService {
 
     private void doConnect(UserGameCommand command, WsMessageContext ctx) {
         try {
-            AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
-            if (auth == null) {
-                ctx.send(new Gson().toJson(new ErrorMessage("User is not authorized")));
-                return;
-            }
             GameData game = GAME_DAO.getGame(command.getGameID());
             if (game == null) {
                 ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
@@ -70,6 +65,7 @@ public class PlayService {
             room.add(ctx);
             ROOMS.put(command.getGameID(), room);
             String playerRole = "observer";
+            AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
             if (Objects.equals(auth.username(), game.whiteUsername())) {
                 playerRole = "white";
             } else if (Objects.equals(auth.username(), game.blackUsername())) {
