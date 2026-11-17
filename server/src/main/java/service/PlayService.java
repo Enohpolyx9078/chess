@@ -1,20 +1,29 @@
 package service;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
+import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
+import dataaccess.NotFoundException;
 import dataaccess.UnauthorizedException;
+import dataaccess.sql.SQLGameDAO;
 import io.javalin.websocket.WsConfig;
 import io.javalin.websocket.WsContext;
 import io.javalin.websocket.WsMessageContext;
+import model.GameData;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayService {
+    private static final GameDAO GAME_DAO = new SQLGameDAO();
+
     public void register(WsConfig ws) {
         ws.onConnect(ctx -> {
             ctx.enableAutomaticPings();
@@ -37,17 +46,20 @@ public class PlayService {
             switch (command.getCommandType()) {
                 case CONNECT -> doConnect(command, ctx);
             }
-
-            ctx.send("WebSocket response: " + ctx.message());
         });
         ws.onClose(ctx -> System.out.println("WebSocket closed"));
     }
 
-    private void doConnect(UserGameCommand command, WsMessageContext ctx) {
+    private void doConnect(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
         // Group user into game room, Respond with LOAD_GAME
+        GameData game = GAME_DAO.getGame(command.getGameID());
+        if (game == null) {
+            throw new NotFoundException("Game does not exist");
+        }
         Collection<WsContext> room = ROOMS.getOrDefault(command.getGameID(), new ArrayList<>());
         room.add(ctx);
         ROOMS.put(command.getGameID(), room);
+        ctx.send(new LoadGameMessage(game.game()));
     }
 
     private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
