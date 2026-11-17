@@ -79,10 +79,10 @@ public class PlayService {
     }
 
     private Collection<WsContext> addToRoom(Integer gameID, WsMessageContext ctx) {
+        ctx.attribute("gameID", gameID);
         Collection<WsContext> room = ROOMS.getOrDefault(gameID, new ArrayList<>());
         room.add(ctx);
         ROOMS.put(gameID, room);
-        ctx.attribute("gameID", gameID);
         return room;
     }
 
