@@ -1,6 +1,5 @@
 package service;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -29,10 +28,7 @@ public class PlayService {
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
 
     public void register(WsConfig ws) {
-        ws.onConnect(ctx -> {
-            ctx.enableAutomaticPings();
-            System.out.println("WebSocket connected");
-        });
+        ws.onConnect(WsContext::enableAutomaticPings);
         ws.onMessage(ctx -> {
             UserGameCommand command = COMMAND_SERIALIZER.fromJson(ctx.message(), UserGameCommand.class);
 
@@ -42,7 +38,6 @@ public class PlayService {
                 return;
             }
             //TODO handle events:
-            // CONNECT -> Group user into game room, Respond with LOAD_GAME
             // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
             // LEAVE
             // RESIGN
@@ -52,7 +47,10 @@ public class PlayService {
                 case CONNECT -> doConnect(command, ctx);
             }
         });
-        ws.onClose(ctx -> System.out.println("WebSocket closed"));
+        ws.onClose(ctx -> {
+            //TODO remove this client from their room
+            System.out.println("WebSocket closed");
+        });
     }
 
     private void doConnect(UserGameCommand command, WsMessageContext ctx) {
