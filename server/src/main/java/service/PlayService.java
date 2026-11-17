@@ -60,6 +60,7 @@ public class PlayService {
                 ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
                 return;
             }
+            ctx.attribute("gameID", command.getGameID());
             Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
             ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
             String playerRole = "observer";
