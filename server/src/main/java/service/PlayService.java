@@ -46,11 +46,11 @@ public class PlayService {
             // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
             // RESIGN
             // send NOTIFICATION to relevant parties after all commands
-            //TODO handle invalid commands
             try {
                 switch (command.getCommandType()) {
                     case CONNECT -> doConnect(command, ctx);
                     case LEAVE -> doLeave(command, ctx);
+                    default -> ctx.send(new Gson().toJson(new ErrorMessage("Unknown command")));
                 }
             } catch (DataAccessException e) {
                 ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
