@@ -43,13 +43,12 @@ public class PlayService {
                 ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
                 return;
             }
-            //TODO handle events:
-            // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
-            // RESIGN
             try {
                 switch (command.getCommandType()) {
                     case CONNECT -> doConnect(command, ctx);
                     case LEAVE -> doLeave(command, ctx);
+                    case MAKE_MOVE -> doMakeMove(command, ctx);
+                    case RESIGN -> doResign(command, ctx);
                     default -> ctx.send(new Gson().toJson(new ErrorMessage("Unknown command")));
                 }
             } catch (DataAccessException e) {
@@ -57,6 +56,18 @@ public class PlayService {
             }
         });
         ws.onClose(this::removeFromRoom);
+    }
+
+    private void doResign(UserGameCommand command, WsMessageContext ctx) {
+        //TODO handle resigning
+    }
+
+    private void doMakeMove(UserGameCommand command, WsMessageContext ctx) {
+        //TODO validate the requested move
+        // update the game in the database
+        // respond with LOAD_GAME
+        // notify other clients
+        // check game state and notify all clients if the game is over
     }
 
     private void doLeave(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
