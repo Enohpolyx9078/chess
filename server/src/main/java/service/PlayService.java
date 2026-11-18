@@ -32,9 +32,13 @@ public class PlayService {
         ws.onMessage(ctx -> {
             UserGameCommand command = COMMAND_SERIALIZER.fromJson(ctx.message(), UserGameCommand.class);
 
-            // check the authToken
+            // check the command
             if (!AuthUtility.isAuthorized(command.getAuthToken())) {
                 ctx.send(new Gson().toJson(new ErrorMessage("Missing or invalid auth token")));
+                return;
+            }
+            if (GAME_DAO.getGame(command.getGameID()) == null) {
+                ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
                 return;
             }
             //TODO handle events:
@@ -45,6 +49,7 @@ public class PlayService {
             //TODO handle invalid commands
             switch (command.getCommandType()) {
                 case CONNECT -> doConnect(command, ctx);
+                case LEAVE -> doLeave(command, ctx);
             }
         });
         ws.onClose(ctx -> {
@@ -53,13 +58,13 @@ public class PlayService {
         });
     }
 
+    private void doLeave(UserGameCommand command, WsMessageContext ctx) {
+
+    }
+
     private void doConnect(UserGameCommand command, WsMessageContext ctx) {
         try {
             GameData game = GAME_DAO.getGame(command.getGameID());
-            if (game == null) {
-                ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
-                return;
-            }
             Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
             ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
             String playerRole = "observer";
@@ -111,9 +116,8 @@ public class PlayService {
                         JsonObject current = el.getAsJsonObject();
                         UserGameCommand.CommandType type = UserGameCommand.CommandType.valueOf(current.get("commandType").getAsString());
                         command = switch (type) {
-                            case CONNECT -> new Gson().fromJson(el, UserGameCommand.class);
+                            case CONNECT, LEAVE -> new Gson().fromJson(el, UserGameCommand.class);
                             case MAKE_MOVE -> null; //TODO handle MAKE_MOVE
-                            case LEAVE -> null; //TODO handle LEAVE
                             case RESIGN -> null; //TODO handle RESIGN
                         };
                     }
