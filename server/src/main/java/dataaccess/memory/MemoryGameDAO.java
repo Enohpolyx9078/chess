@@ -1,6 +1,7 @@
 package dataaccess.memory;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.*;
 
@@ -50,6 +51,17 @@ public class MemoryGameDAO implements GameDAO {
                     new GameData(game, username, game.blackUsername()) :
                     new GameData(game, game.whiteUsername(), username);
             GAMES.put(gameID, joined);
+        }
+    }
+
+    @Override
+    public void removePlayer(Integer gameID, ChessGame.TeamColor playerColor) throws DataAccessException {
+        GameData game = getGame(gameID);
+        if (game != null) {
+            GameData left = (Objects.equals(playerColor, ChessGame.TeamColor.WHITE)) ?
+                    new GameData(game, null, game.blackUsername()) :
+                    new GameData(game, game.whiteUsername(), null);
+            GAMES.put(gameID, left);
         }
     }
 

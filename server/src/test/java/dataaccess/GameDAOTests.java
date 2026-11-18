@@ -67,4 +67,23 @@ public class GameDAOTests {
                 new ChessGame());
         assertEquals(expected, GAME_DAO.getGame(res.gameID()));
     }
+
+    @Test
+    public void removePlayerTest() throws DataAccessException {
+        GAME_DAO.clear();
+        String white = "awesome474";
+        String black = "waxymarlin";
+        GameRequest req = new GameRequest("Name");
+        GameResult res = GAME_DAO.createGame(req);
+        GAME_DAO.addPlayer(res.gameID(), white, ChessGame.TeamColor.WHITE);
+        GAME_DAO.addPlayer(res.gameID(), black, ChessGame.TeamColor.BLACK);
+        GAME_DAO.removePlayer(res.gameID(), ChessGame.TeamColor.WHITE);
+        GameData expected = new GameData(
+                res.gameID(),
+                null,
+                black,
+                req.gameName(),
+                new ChessGame());
+        assertEquals(expected, GAME_DAO.getGame(res.gameID()));
+    }
 }

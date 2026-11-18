@@ -105,6 +105,19 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
+    public void removePlayer(Integer gameID, ChessGame.TeamColor color) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String updateGame = "UPDATE game SET " + color + "Username=NULL WHERE gameID=?";
+            try (var updateGameStatement = conn.prepareStatement(updateGame)) {
+                updateGameStatement.setInt(1, gameID);
+                updateGameStatement.executeUpdate();
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("unable to remove player");
+        }
+    }
+
+    @Override
     public void clear() throws DataAccessException {
         SQLUtility.clearTable("game");
     }
