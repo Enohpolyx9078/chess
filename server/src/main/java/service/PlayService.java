@@ -43,7 +43,6 @@ public class PlayService {
             }
             //TODO handle events:
             // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
-            // LEAVE
             // RESIGN
             // send NOTIFICATION to relevant parties after all commands
             //TODO handle invalid commands
@@ -53,7 +52,7 @@ public class PlayService {
             }
         });
         ws.onClose(ctx -> {
-            //TODO remove this client from their room
+            removeFromRoom(ctx);
             System.out.println("WebSocket closed");
         });
     }
@@ -87,8 +86,19 @@ public class PlayService {
         ctx.attribute("gameID", gameID);
         Collection<WsContext> room = ROOMS.getOrDefault(gameID, new ArrayList<>());
         room.add(ctx);
-        ROOMS.put(gameID, room);
         return room;
+    }
+
+    private void removeFromRoom(WsContext ctx) {
+        Integer gameID = ctx.attribute("gameID");
+        if (gameID == null) {
+            return;
+        }
+        Collection<WsContext> room = ROOMS.get(gameID);
+        if (room == null) {
+            return;
+        }
+        room.remove(ctx);
     }
 
     private void notifyOthers(ServerMessage msg, WsMessageContext ctx, Collection<WsContext> room) {
