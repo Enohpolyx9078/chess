@@ -13,6 +13,7 @@ import io.javalin.websocket.WsContext;
 import io.javalin.websocket.WsMessageContext;
 import model.AuthData;
 import model.GameData;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -45,7 +46,6 @@ public class PlayService {
             //TODO handle events:
             // MAKE_MOVE -> Validate, respond with LOAD_GAME, and check game state
             // RESIGN
-            // send NOTIFICATION to relevant parties after all commands
             try {
                 switch (command.getCommandType()) {
                     case CONNECT -> doConnect(command, ctx);
@@ -156,11 +156,9 @@ public class PlayService {
                     if (el.isJsonObject()) {
                         JsonObject current = el.getAsJsonObject();
                         UserGameCommand.CommandType type = UserGameCommand.CommandType.valueOf(current.get("commandType").getAsString());
-                        command = switch (type) {
-                            case CONNECT, LEAVE -> new Gson().fromJson(el, UserGameCommand.class);
-                            case MAKE_MOVE -> null; //TODO handle MAKE_MOVE
-                            case RESIGN -> null; //TODO handle RESIGN
-                        };
+                        command = (type == UserGameCommand.CommandType.MAKE_MOVE) ?
+                                new Gson().fromJson(el, MakeMoveCommand.class) :
+                                new Gson().fromJson(el, UserGameCommand.class);
                     }
                     return command;
                 });
