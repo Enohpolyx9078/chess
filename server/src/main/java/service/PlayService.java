@@ -73,8 +73,8 @@ public class PlayService {
                 playerRole = "black";
             }
             notifyOthers(
-                    new NotificationMessage(auth.username() + " joined as " + playerRole),
                     ctx,
+                    new NotificationMessage(auth.username() + " joined as " + playerRole),
                     room);
         } catch (DataAccessException e) {
             ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
@@ -110,7 +110,7 @@ public class PlayService {
         }
     }
 
-    private void notifyOthers(ServerMessage msg, WsMessageContext ctx, Collection<WsContext> room) {
+    private void notifyOthers(WsMessageContext ctx,ServerMessage msg, Collection<WsContext> room) {
         room.forEach((player) -> {
             if (player != ctx) {
                 checkAndSend(player, msg);
