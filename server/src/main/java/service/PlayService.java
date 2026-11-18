@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -46,39 +47,59 @@ public class PlayService {
             // RESIGN
             // send NOTIFICATION to relevant parties after all commands
             //TODO handle invalid commands
-            switch (command.getCommandType()) {
-                case CONNECT -> doConnect(command, ctx);
-                case LEAVE -> doLeave(command, ctx);
+            try {
+                switch (command.getCommandType()) {
+                    case CONNECT -> doConnect(command, ctx);
+                    case LEAVE -> doLeave(command, ctx);
+                }
+            } catch (DataAccessException e) {
+                ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
             }
         });
         ws.onClose(this::removeFromRoom);
     }
 
-    private void doLeave(UserGameCommand command, WsMessageContext ctx) {
-        //TODO update game to remove client
-        // update game in the database
-        // notify all other clients that user left
+    private void doLeave(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
+        ctx.closeSession();
+        if (command.getGameID() != ctx.attribute("gameID")) {
+            return;
+        }
+        String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
+        GameData game = GAME_DAO.getGame(command.getGameID());
+        boolean isObserver =
+                !Objects.equals(game.whiteUsername(), username) &&
+                        !Objects.equals(game.blackUsername(), username);
+        if (!isObserver) {
+            GAME_DAO.removePlayer(command.getGameID(),
+                    Objects.equals(username, game.whiteUsername()) ?
+                            ChessGame.TeamColor.WHITE :
+                            ChessGame.TeamColor.BLACK);
+        }
+        Collection<WsContext> room = removeFromRoom(ctx);
+        if (room == null) {
+            return;
+        }
+        notifyOthers(
+                ctx,
+                new NotificationMessage(username + " has left the game"),
+                room);
     }
 
-    private void doConnect(UserGameCommand command, WsMessageContext ctx) {
-        try {
-            GameData game = GAME_DAO.getGame(command.getGameID());
-            Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
-            ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
-            String playerRole = "observer";
-            AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
-            if (Objects.equals(auth.username(), game.whiteUsername())) {
-                playerRole = "white";
-            } else if (Objects.equals(auth.username(), game.blackUsername())) {
-                playerRole = "black";
-            }
-            notifyOthers(
-                    ctx,
-                    new NotificationMessage(auth.username() + " joined as " + playerRole),
-                    room);
-        } catch (DataAccessException e) {
-            ctx.send(new Gson().toJson(new ErrorMessage("Failed: " + e.getMessage())));
+    private void doConnect(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
+        GameData game = GAME_DAO.getGame(command.getGameID());
+        Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
+        ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
+        String playerRole = "observer";
+        AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
+        if (Objects.equals(auth.username(), game.whiteUsername())) {
+            playerRole = "white";
+        } else if (Objects.equals(auth.username(), game.blackUsername())) {
+            playerRole = "black";
         }
+        notifyOthers(
+                ctx,
+                new NotificationMessage(auth.username() + " joined as " + playerRole),
+                room);
     }
 
     private Collection<WsContext> addToRoom(Integer gameID, WsMessageContext ctx) {
@@ -89,17 +110,18 @@ public class PlayService {
         return room;
     }
 
-    private void removeFromRoom(WsContext ctx) {
+    private Collection<WsContext> removeFromRoom(WsContext ctx) {
         Integer gameID = ctx.attribute("gameID");
         if (gameID == null) {
-            return;
+            return null;
         }
         Collection<WsContext> room = ROOMS.get(gameID);
         if (room == null) {
-            return;
+            return null;
         }
         room.remove(ctx);
         ROOMS.put(gameID, room);
+        return room;
     }
 
     private void checkAndSend(WsContext player, ServerMessage msg) {
