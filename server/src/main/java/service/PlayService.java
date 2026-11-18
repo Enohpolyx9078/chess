@@ -51,14 +51,13 @@ public class PlayService {
                 case LEAVE -> doLeave(command, ctx);
             }
         });
-        ws.onClose(ctx -> {
-            removeFromRoom(ctx);
-            System.out.println("WebSocket closed");
-        });
+        ws.onClose(this::removeFromRoom);
     }
 
     private void doLeave(UserGameCommand command, WsMessageContext ctx) {
-
+        //TODO update game to remove client
+        // update game in the database
+        // notify all other clients that user left
     }
 
     private void doConnect(UserGameCommand command, WsMessageContext ctx) {
@@ -86,6 +85,7 @@ public class PlayService {
         ctx.attribute("gameID", gameID);
         Collection<WsContext> room = ROOMS.getOrDefault(gameID, new ArrayList<>());
         room.add(ctx);
+        ROOMS.put(gameID, room);
         return room;
     }
 
@@ -99,18 +99,27 @@ public class PlayService {
             return;
         }
         room.remove(ctx);
+        ROOMS.put(gameID, room);
+    }
+
+    private void checkAndSend(WsContext player, ServerMessage msg) {
+        if (player.session.isOpen()) {
+            player.send(new Gson().toJson(msg));
+        } else {
+            removeFromRoom(player);
+        }
     }
 
     private void notifyOthers(ServerMessage msg, WsMessageContext ctx, Collection<WsContext> room) {
         room.forEach((player) -> {
             if (player != ctx) {
-                player.send(new Gson().toJson(msg));
+                checkAndSend(player, msg);
             }
         });
     }
 
     private void notifyAll(ServerMessage msg, Collection<WsContext> room) {
-        room.forEach((player) -> player.send(new Gson().toJson(msg)));
+        room.forEach((player) -> checkAndSend(player, msg));
     }
 
     private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
