@@ -118,6 +118,20 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
+    public void updateGame(Integer gameID, ChessGame game) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String updateGame = "UPDATE game SET chessGame=? WHERE gameID=?";
+            try (var updateGameStatement = conn.prepareStatement(updateGame)) {
+                updateGameStatement.setString(1, new Gson().toJson(game));
+                updateGameStatement.setInt(2, gameID);
+                updateGameStatement.executeUpdate();
+            }
+        } catch (SQLException _) {
+            throw new DataAccessException("unable to update game");
+        }
+    }
+
+    @Override
     public void clear() throws DataAccessException {
         SQLUtility.clearTable("game");
     }

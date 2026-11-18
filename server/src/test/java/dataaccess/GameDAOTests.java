@@ -1,6 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import dataaccess.sql.SQLGameDAO;
 import model.GameData;
 import model.GameRequest;
@@ -85,5 +88,20 @@ public class GameDAOTests {
                 req.gameName(),
                 new ChessGame());
         assertEquals(expected, GAME_DAO.getGame(res.gameID()));
+    }
+
+    @Test
+    public void updateGameTest() throws DataAccessException, InvalidMoveException {
+        GAME_DAO.clear();
+        GameRequest req = new GameRequest("Name");
+        GameResult res = GAME_DAO.createGame(req);
+        ChessGame game = GAME_DAO.getGame(res.gameID()).game();
+        game.makeMove(new ChessMove(
+                new ChessPosition(2, 2),
+                new ChessPosition(3, 2),
+                null));
+        GAME_DAO.updateGame(res.gameID(), game);
+        assertNotEquals(new ChessGame(), game);
+        assertEquals(game, GAME_DAO.getGame(res.gameID()).game());
     }
 }
