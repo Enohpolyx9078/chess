@@ -1,6 +1,9 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -62,12 +65,48 @@ public class PlayService {
         //TODO handle resigning
     }
 
-    private void doMakeMove(UserGameCommand command, WsMessageContext ctx) {
+    private void doMakeMove(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
         //TODO validate the requested move
-        // update the game in the database
-        // respond with LOAD_GAME
-        // notify other clients
-        // check game state and notify all clients if the game is over
+        //    make sure it's the user's turn
+        //    make sure the move they requested is valid
+        String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
+        GameData game = GAME_DAO.getGame(command.getGameID());
+
+        if (!attemptMove((MakeMoveCommand) command, game, username)) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Invalid move")));
+            return;
+        }
+
+        //TODO update the game in the database
+        //    do the move in ChessGame
+        //    store the move
+
+        //TODO send LOAD_GAME to all clients
+        //TODO notify other clients that a move was made
+        //TODO check game state and notify all clients if the game is over
+    }
+
+    private boolean attemptMove(MakeMoveCommand command, GameData gameData, String username) {
+        String playerRole = getPlayerRole(gameData, username);
+        if (Objects.equals(playerRole, "observer")) {
+            return false;
+        }
+        ChessGame game = gameData.game();
+        ChessMove move = command.getMove();
+        ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
+        if (piece == null) {
+            return false;
+        }
+        ChessGame.TeamColor playerTeam = ChessGame.TeamColor.valueOf(playerRole.toUpperCase());
+        if (piece.getTeamColor() != playerTeam) {
+            return false;
+        }
+        try {
+            game.makeMove(move);
+        } catch (InvalidMoveException e) {
+            return false;
+        }
+        return true;
     }
 
     private void doLeave(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
@@ -100,17 +139,22 @@ public class PlayService {
         GameData game = GAME_DAO.getGame(command.getGameID());
         Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
         ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
-        String playerRole = "observer";
         AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
-        if (Objects.equals(auth.username(), game.whiteUsername())) {
-            playerRole = "white";
-        } else if (Objects.equals(auth.username(), game.blackUsername())) {
-            playerRole = "black";
-        }
+        String playerRole = getPlayerRole(game, auth.username());
         notifyOthers(
                 ctx,
                 new NotificationMessage(auth.username() + " joined as " + playerRole),
                 room);
+    }
+
+    private String getPlayerRole(GameData game, String username) {
+        String playerRole = "observer";
+        if (Objects.equals(username, game.whiteUsername())) {
+            playerRole = "white";
+        } else if (Objects.equals(username, game.blackUsername())) {
+            playerRole = "black";
+        }
+        return playerRole;
     }
 
     private Collection<WsContext> addToRoom(Integer gameID, WsMessageContext ctx) {

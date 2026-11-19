@@ -86,6 +86,9 @@ public class ChessBoard {
         final int[] posData = interpretChessPosition(position);
         final int r = posData[0];
         final int c = posData[1];
+        if (r > size || c > size || r <= 0 || c <= 0) {
+            return null;
+        }
         return board[r][c];
     }
 
