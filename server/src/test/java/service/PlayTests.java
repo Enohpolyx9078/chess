@@ -27,40 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PlayTests extends WebSocketTests{
     private static final GameDAO GAME_DAO = new SQLGameDAO();
 
-    @AfterAll
-    static void stopServer() {
-        server.stop();
-    }
-
-    @BeforeAll
-    public static void init() throws URISyntaxException {
-        server = new Server();
-        var port = Integer.toString(server.run(0));
-        System.out.println("Started test HTTP server on " + port);
-
-        serverFacade = new TestServerFacade("localhost", port);
-        serverFacade.clear();
-        environment = new WebsocketTestingEnvironment("localhost", port, "/ws", passoff.server.TestFactory.getGsonBuilder());
-        waitTime = passoff.server.TestFactory.getMessageTime();
-    }
-
-    @BeforeEach
-    public void setup() {
-        //populate database with HTTP calls
-        serverFacade.clear();
-        white = registerUser("white", "WHITE", "white@chess.com");
-        black = registerUser("black", "BLACK", "black@chess.com");
-        observer = registerUser("observer", "OBSERVER", "observer@chess.com");
-        gameID = createGame(white, "testGame");
-        joinGame(gameID, white, ChessGame.TeamColor.WHITE);
-        joinGame(gameID, black, ChessGame.TeamColor.BLACK);
-    }
-
-    @AfterEach
-    public void tearDown() {
-        environment.disconnectAll();
-    }
-
     @Test
     @Order(1)
     @DisplayName("Connect 1 User")
