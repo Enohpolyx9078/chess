@@ -10,9 +10,7 @@ import org.junit.jupiter.api.*;
 import passoff.model.*;
 import passoff.server.*;
 import passoff.websocket.*;
-import server.Server;
 
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,7 +74,7 @@ public class PlayTests extends WebSocketTests{
 
     @Test
     @Order(5)
-    @DisplayName("Make Move Bad Authtoken")
+    @DisplayName("Make Move Bad Auth Token")
     public void makeMoveUnauthorized() throws DataAccessException {
         makeMoveBadAuthtoken();
         assertEquals(new ChessGame(), GAME_DAO.getGame(gameID).game());
