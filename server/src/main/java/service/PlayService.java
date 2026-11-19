@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayService {
     private static final GameDAO GAME_DAO = new SQLGameDAO();
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
+    private final ConcurrentHashMap<Integer, Collection<WsContext>> rooms = new ConcurrentHashMap<>();
 
     public void register(WsConfig ws) {
         ws.onConnect(WsContext::enableAutomaticPings);
@@ -84,7 +85,7 @@ public class PlayService {
             ctx.send(new Gson().toJson(new ErrorMessage("Game not specified")));
             return;
         }
-        Collection<WsContext> room = ROOMS.get(roomID);
+        Collection<WsContext> room = rooms.get(roomID);
         notifyAll(new NotificationMessage(username + " resigned"), room);
     }
 
@@ -95,7 +96,7 @@ public class PlayService {
             ctx.send(new Gson().toJson(new ErrorMessage("Game not specified")));
             return;
         }
-        Collection<WsContext> room = ROOMS.get(roomID);
+        Collection<WsContext> room = rooms.get(roomID);
         if (room == null) {
             ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
             return;
@@ -213,9 +214,9 @@ public class PlayService {
 
     private Collection<WsContext> addToRoom(Integer gameID, WsMessageContext ctx) {
         ctx.attribute("gameID", gameID);
-        Collection<WsContext> room = ROOMS.getOrDefault(gameID, new ArrayList<>());
+        Collection<WsContext> room = rooms.getOrDefault(gameID, new ArrayList<>());
         room.add(ctx);
-        ROOMS.put(gameID, room);
+        rooms.put(gameID, room);
         return room;
     }
 
@@ -224,12 +225,12 @@ public class PlayService {
         if (gameID == null) {
             return null;
         }
-        Collection<WsContext> room = ROOMS.get(gameID);
+        Collection<WsContext> room = rooms.get(gameID);
         if (room == null) {
             return null;
         }
         room.remove(ctx);
-        ROOMS.put(gameID, room);
+        rooms.put(gameID, room);
         return room;
     }
 
@@ -252,8 +253,6 @@ public class PlayService {
     private void notifyAll(ServerMessage msg, Collection<WsContext> room) {
         room.forEach((player) -> checkAndSend(player, msg));
     }
-
-    private final ConcurrentHashMap<Integer, Collection<WsContext>> ROOMS = new ConcurrentHashMap<>();
 
     private static final Gson COMMAND_SERIALIZER = createCommandSerializer();
 
