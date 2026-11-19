@@ -55,6 +55,10 @@ public class Server {
         });
     }
 
+    public PlayService getPlayService() {
+        return PLAY_SERVICE;
+    }
+
     private void wsHandler(WsConfig ws) {
         PLAY_SERVICE.register(ws);
     }

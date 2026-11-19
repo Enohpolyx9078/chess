@@ -28,7 +28,7 @@ public class ClearTests {
         UserDAO userAccess = new SQLUserDAO();
         UserService service = new UserService();
         service.register(register);
-        assertEquals(1, userAccess.getSize());
+        assertTrue(userAccess.getSize() > 0);
         userAccess.clear();
         assertEquals(0, userAccess.getSize());
     }

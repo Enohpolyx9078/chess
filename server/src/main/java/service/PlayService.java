@@ -62,6 +62,10 @@ public class PlayService {
         ws.onClose(this::removeFromRoom);
     }
 
+    public ConcurrentHashMap<Integer, Collection<WsContext>> getRooms() {
+        return rooms;
+    }
+
     private void doResign(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
         GameData game = GAME_DAO.getGame(command.getGameID());
         ChessGame chessGame = game.game();
