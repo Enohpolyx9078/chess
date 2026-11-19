@@ -61,15 +61,38 @@ public class PlayService {
         ws.onClose(this::removeFromRoom);
     }
 
-    private void doResign(UserGameCommand command, WsMessageContext ctx) {
-        //TODO handle resigning
+    private void doResign(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
+        GameData game = GAME_DAO.getGame(command.getGameID());
+        ChessGame chessGame = game.game();
+        String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
+        String playerRole = getPlayerRole(game, username);
+        if (Objects.equals(playerRole, "observer")) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Observers cannot resign")));
+            return;
+        }
+        if (chessGame.isGameOver()) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Game has ended")));
+            return;
+        }
+
+        chessGame.resign();
+        GAME_DAO.updateGame(command.getGameID(), chessGame);
+
+        // Notify all clients that user resigned
+        Integer roomID = ctx.attribute("gameID");
+        if (roomID == null) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Game not specified")));
+            return;
+        }
+        Collection<WsContext> room = ROOMS.get(roomID);
+        notifyAll(new NotificationMessage(username + " resigned"), room);
     }
 
     private void doMakeMove(MakeMoveCommand command, WsMessageContext ctx) throws DataAccessException {
         // Validate the move
         Integer roomID = ctx.attribute("gameID");
         if (roomID == null) {
-            ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
+            ctx.send(new Gson().toJson(new ErrorMessage("Game not specified")));
             return;
         }
         Collection<WsContext> room = ROOMS.get(roomID);
@@ -83,7 +106,6 @@ public class PlayService {
             ctx.send(new Gson().toJson(new ErrorMessage("Game has ended")));
             return;
         }
-        //TODO error when game has been resigned
 
         String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
         ChessGame updated = attemptMove(command, game, username);

@@ -18,6 +18,7 @@ import java.util.*;
 public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard currentBoard;
+    private boolean resigned;
     private final Enforcer enforcer;
 
     static public Gson createSerializer() {
@@ -144,6 +145,10 @@ public class ChessGame {
         }
     }
 
+    public void resign() {
+        resigned = true;
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -180,7 +185,8 @@ public class ChessGame {
     }
 
     public boolean isGameOver() {
-        return isInCheckmate(TeamColor.WHITE) ||
+        return resigned ||
+                isInCheckmate(TeamColor.WHITE) ||
                 isInCheckmate(TeamColor.BLACK) ||
                 isInStalemate(TeamColor.WHITE) ||
                 isInStalemate(TeamColor.BLACK);
