@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class CLIClient {
+public class CLIClient implements Notifier{
     private static final String SERVER_URL = "http://localhost:8080";
 
     private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
@@ -56,7 +56,7 @@ public class CLIClient {
                     EscapeSequences.beautify(COMMAND_STYLE, "highlight"),
                     EscapeSequences.beautify(COMMAND_STYLE, "help"));
 
-    private static final ServerFacade FACADE = new ServerFacade(SERVER_URL);
+    private final ServerFacade facade = new ServerFacade(SERVER_URL, this);
 
     private String authToken;
     private Status state = Status.SIGNED_OUT;
@@ -97,8 +97,12 @@ public class CLIClient {
         }
     }
 
+     public void showMessage(String msg) {
+        System.out.println(msg);
+    }
+
     private void showNetworkError(NetworkException e) {
-        System.out.println(EscapeSequences.beautify(
+        showMessage(EscapeSequences.beautify(
                 ERROR_STYLE,
                 e.getMessage()));
     }
@@ -131,7 +135,7 @@ public class CLIClient {
 
         // interact with the Facade to login
         try {
-            authToken = FACADE.login(username, password);
+            authToken = facade.login(username, password);
             state = Status.SIGNED_IN;
         } catch (NetworkException e) {
             showNetworkError(e);
@@ -149,7 +153,7 @@ public class CLIClient {
 
         // interact with Facade to register
         try {
-            authToken = FACADE.register(username, password, email);
+            authToken = facade.register(username, password, email);
             state = Status.SIGNED_IN;
         } catch (NetworkException e) {
             showNetworkError(e);
@@ -163,7 +167,7 @@ public class CLIClient {
 
         // interact with the Facade to create a game
         try {
-            FACADE.create(authToken, gameName);
+            facade.create(authToken, gameName);
         } catch (NetworkException e) {
             showNetworkError(e);
         }
@@ -188,7 +192,7 @@ public class CLIClient {
 
     private void doList() {
         try {
-            Collection<SingleGameResponse> currentGames = FACADE.listGames(authToken);
+            Collection<SingleGameResponse> currentGames = facade.listGames(authToken);
             if (currentGames.isEmpty()) {
                 System.out.printf("%s Start a new one with %s\n",
                         EscapeSequences.beautify(
@@ -232,7 +236,7 @@ public class CLIClient {
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
 
             // interact with the Facade to join the game
-            FACADE.play(authToken, gameId, teamColor);
+            facade.play(authToken, gameId, teamColor);
             state = Status.PLAYING;
             handlePlaying("");
         } catch (InputMismatchException _) {
@@ -261,7 +265,7 @@ public class CLIClient {
             System.out.print("Color: ");
 
             // interact with the Facade to watch the game
-            FACADE.observe(authToken, gameId);
+            facade.observe(authToken, gameId);
         } catch (InputMismatchException _) {
             System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
         } catch (NetworkException e) {
@@ -272,7 +276,7 @@ public class CLIClient {
     private void doLogout() {
         // interact with the Facade to sign out
         try {
-            FACADE.logout(authToken);
+            facade.logout(authToken);
         } catch (NetworkException e) {
             // display as a warning
             System.out.print("Warning: ");
