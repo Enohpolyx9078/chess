@@ -66,47 +66,77 @@ public class PlayService {
     }
 
     private void doMakeMove(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
-        //TODO validate the requested move
-        //    make sure it's the user's turn
-        //    make sure the move they requested is valid
-        String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
+        // Validate the move
+        Integer roomID = ctx.attribute("gameID");
+        if (roomID == null) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
+            return;
+        }
+        Collection<WsContext> room = ROOMS.get(roomID);
+        if (room == null) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Game does not exist")));
+            return;
+        }
         GameData game = GAME_DAO.getGame(command.getGameID());
+        ChessGame chessGame = game.game();
+        if (chessGame.isGameOver()) {
+            ctx.send(new Gson().toJson(new ErrorMessage("Game has ended")));
+            return;
+        }
+        //TODO error when game has been resigned
 
-        if (!attemptMove((MakeMoveCommand) command, game, username)) {
+        String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
+        ChessGame updated = attemptMove((MakeMoveCommand) command, game, username);
+        if (updated == null) {
             ctx.send(new Gson().toJson(new ErrorMessage("Invalid move")));
             return;
         }
 
-        //TODO update the game in the database
-        //    do the move in ChessGame
-        //    store the move
+        GAME_DAO.updateGame(command.getGameID(), updated);
 
-        //TODO send LOAD_GAME to all clients
-        //TODO notify other clients that a move was made
-        //TODO check game state and notify all clients if the game is over
+        notifyAll(new LoadGameMessage(updated), room);
+        notifyOthers(
+                ctx,
+                new NotificationMessage(parseChessMove(((MakeMoveCommand) command).getMove(), username)),
+                room);
+        if (updated.hasLost(ChessGame.TeamColor.WHITE)) {
+            notifyAll(new NotificationMessage(game.blackUsername() + " wins!"), room);
+        } else if (updated.hasLost(ChessGame.TeamColor.BLACK)) {
+            notifyAll(new NotificationMessage(game.whiteUsername() + " wins!"), room);
+        }
     }
 
-    private boolean attemptMove(MakeMoveCommand command, GameData gameData, String username) {
+    private String parseChessMove(ChessMove move, String username) {
+        char[] coords = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        return "%s moved %c%d to %c%d".formatted(
+                username,
+                coords[move.getStartPosition().getColumn() - 1],
+                move.getStartPosition().getRow(),
+                coords[move.getEndPosition().getColumn() - 1],
+                move.getEndPosition().getRow());
+    }
+
+    private ChessGame attemptMove(MakeMoveCommand command, GameData gameData, String username) {
         String playerRole = getPlayerRole(gameData, username);
         if (Objects.equals(playerRole, "observer")) {
-            return false;
+            return null;
         }
         ChessGame game = gameData.game();
         ChessMove move = command.getMove();
         ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
         if (piece == null) {
-            return false;
+            return null;
         }
         ChessGame.TeamColor playerTeam = ChessGame.TeamColor.valueOf(playerRole.toUpperCase());
         if (piece.getTeamColor() != playerTeam) {
-            return false;
+            return null;
         }
         try {
             game.makeMove(move);
         } catch (InvalidMoveException e) {
-            return false;
+            return null;
         }
-        return true;
+        return game;
     }
 
     private void doLeave(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {

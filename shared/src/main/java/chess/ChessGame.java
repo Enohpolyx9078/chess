@@ -175,6 +175,17 @@ public class ChessGame {
         return enforcer.isInStalemate(teamColor, this.currentBoard);
     }
 
+    public boolean hasLost(TeamColor teamColor) {
+        return isInCheckmate(teamColor) || isInStalemate(teamColor);
+    }
+
+    public boolean isGameOver() {
+        return isInCheckmate(TeamColor.WHITE) ||
+                isInCheckmate(TeamColor.BLACK) ||
+                isInStalemate(TeamColor.WHITE) ||
+                isInStalemate(TeamColor.BLACK);
+    }
+
     /**
      * Sets this game's chessboard to a given board
      *
