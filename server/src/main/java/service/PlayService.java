@@ -50,7 +50,7 @@ public class PlayService {
                 switch (command.getCommandType()) {
                     case CONNECT -> doConnect(command, ctx);
                     case LEAVE -> doLeave(command, ctx);
-                    case MAKE_MOVE -> doMakeMove(command, ctx);
+                    case MAKE_MOVE -> doMakeMove((MakeMoveCommand) command, ctx);
                     case RESIGN -> doResign(command, ctx);
                     default -> ctx.send(new Gson().toJson(new ErrorMessage("Unknown command")));
                 }
@@ -65,7 +65,7 @@ public class PlayService {
         //TODO handle resigning
     }
 
-    private void doMakeMove(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
+    private void doMakeMove(MakeMoveCommand command, WsMessageContext ctx) throws DataAccessException {
         // Validate the move
         Integer roomID = ctx.attribute("gameID");
         if (roomID == null) {
@@ -86,7 +86,7 @@ public class PlayService {
         //TODO error when game has been resigned
 
         String username = AUTH_DAO.getAuth(command.getAuthToken()).username();
-        ChessGame updated = attemptMove((MakeMoveCommand) command, game, username);
+        ChessGame updated = attemptMove(command, game, username);
         if (updated == null) {
             ctx.send(new Gson().toJson(new ErrorMessage("Invalid move")));
             return;
@@ -97,7 +97,7 @@ public class PlayService {
         notifyAll(new LoadGameMessage(updated), room);
         notifyOthers(
                 ctx,
-                new NotificationMessage(parseChessMove(((MakeMoveCommand) command).getMove(), username)),
+                new NotificationMessage(parseChessMove(command.getMove(), username)),
                 room);
         if (updated.hasLost(ChessGame.TeamColor.WHITE)) {
             notifyAll(new NotificationMessage(game.blackUsername() + " wins!"), room);
@@ -123,20 +123,21 @@ public class PlayService {
         }
         ChessGame game = gameData.game();
         ChessMove move = command.getMove();
-        ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
-        if (piece == null) {
-            return null;
-        }
-        ChessGame.TeamColor playerTeam = ChessGame.TeamColor.valueOf(playerRole.toUpperCase());
-        if (piece.getTeamColor() != playerTeam) {
-            return null;
-        }
         try {
-            game.makeMove(move);
-        } catch (InvalidMoveException e) {
+            ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
+            ChessGame.TeamColor playerTeam = ChessGame.TeamColor.valueOf(playerRole.toUpperCase());
+            if (piece.getTeamColor() != playerTeam) {
+                return null;
+            }
+            try {
+                game.makeMove(move);
+            } catch (InvalidMoveException e) {
+                return null;
+            }
+            return game;
+        } catch (IndexOutOfBoundsException _) {
             return null;
         }
-        return game;
     }
 
     private void doLeave(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
