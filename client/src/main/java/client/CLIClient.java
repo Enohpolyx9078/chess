@@ -43,7 +43,18 @@ public class CLIClient {
                     EscapeSequences.beautify(COMMAND_STYLE,"help"));
 
     private static final String PLAYING_HELP = """
-            TODO""";
+            %s - redraws the board
+            %s - leave the game
+            %s - make a move
+            %s - give up (you lose the game)
+            %s - show available moves for a given piece
+            %s - displays this menu""".formatted(
+                    EscapeSequences.beautify(COMMAND_STYLE, "redraw"),
+                    EscapeSequences.beautify(COMMAND_STYLE, "leave"),
+                    EscapeSequences.beautify(COMMAND_STYLE, "move"),
+                    EscapeSequences.beautify(COMMAND_STYLE, "resign"),
+                    EscapeSequences.beautify(COMMAND_STYLE, "highlight"),
+                    EscapeSequences.beautify(COMMAND_STYLE, "help"));
 
     private static final ServerFacade FACADE = new ServerFacade(SERVER_URL);
 
@@ -275,45 +286,23 @@ public class CLIClient {
 
     private void handlePreLogin(String input) {
         switch (input.toLowerCase().trim()) {
-            case "help":
-                doHelp();
-                break;
-            case "quit":
-                doQuit();
-                break;
-            case "login":
-                doLogin();
-                break;
-            case "register":
-                doRegister();
-                break;
-            default:
-                doUnknown(input);
+            case "help" -> doHelp();
+            case "quit" -> doQuit();
+            case "login" -> doLogin();
+            case "register" -> doRegister();
+            default -> doUnknown(input);
         }
     }
 
     private void handlePostLogin(String input) {
         switch (input.toLowerCase().trim()) {
-            case "help":
-                doHelp();
-                break;
-            case "create":
-                doCreate();
-                break;
-            case "list":
-                doList();
-                break;
-            case "play":
-                doPlay();
-                break;
-            case "observe":
-                doObserve();
-                break;
-            case "logout":
-                doLogout();
-                break;
-            default:
-                doUnknown(input);
+            case "help" -> doHelp();
+            case "create" -> doCreate();
+            case "list" -> doList();
+            case "play" -> doPlay();
+            case "observe" -> doObserve();
+            case "logout" -> doLogout();
+            default -> doUnknown(input);
         }
     }
 
@@ -328,9 +317,8 @@ public class CLIClient {
             BoardPrinter.printBoardBlack(game.getBoard());
         }
         switch (input.toLowerCase().trim()) {
-            case "help":
-                doHelp();
-                break;
+            case "help" -> doHelp();
+            default -> doUnknown(input);
         }
     }
 
