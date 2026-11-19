@@ -65,19 +65,18 @@ public class CLIClient implements Notifier{
     public void run() {
         try {
             scanner = new Scanner(System.in);
-            System.out.println(
+            showMessage(
                     EscapeSequences.beautify(
                             SYSTEM_STYLE,
                             "♕ 240 Chess Client ♕"));
-            System.out.println(EscapeSequences.beautify(
+            showMessage(EscapeSequences.beautify(
                     EscapeSequences.SET_TEXT_FAINT,
                     "Type Help to get started."));
             while (!state.equals(Status.QUIT)) {
-                System.out.printf(
-                        EscapeSequences.beautify(
+                showPrompt((EscapeSequences.beautify(
                                 EscapeSequences.SET_TEXT_BOLD,
-                                "[%s] >>> "),
-                        state.name());
+                                "[%s] >>> "))
+                        .formatted(state.name()));
                 String input = scanner.nextLine();
                 if (state == Status.SIGNED_OUT) {
                     handlePreLogin(input);
@@ -87,7 +86,7 @@ public class CLIClient implements Notifier{
                     handlePostLogin(input);
                 }
             }
-            System.out.println(EscapeSequences.beautify(
+            showMessage(EscapeSequences.beautify(
                     SYSTEM_STYLE,
                     "Thanks for playing!"));
         } catch (Exception e) {
@@ -101,6 +100,10 @@ public class CLIClient implements Notifier{
         System.out.println(msg);
     }
 
+    private void showPrompt(String msg) {
+        System.out.print(msg);
+    }
+
     private void showNetworkError(NetworkException e) {
         showMessage(EscapeSequences.beautify(
                 ERROR_STYLE,
@@ -108,14 +111,14 @@ public class CLIClient implements Notifier{
     }
 
     private void doUnknown(String input) {
-        System.out.printf(EscapeSequences.beautify(
+        showMessage((EscapeSequences.beautify(
                 ERROR_STYLE,
-                "'%s' is not a recognized command.\n"), input);
+                "'%s' is not a recognized command.")).formatted(input));
         doHelp();
     }
 
     private void doHelp() {
-        System.out.println(switch (state) {
+        showMessage(switch (state) {
             case SIGNED_IN -> SIGNED_IN_HELP;
             case PLAYING -> PLAYING_HELP;
             default -> SIGNED_OUT_HELP;
@@ -128,9 +131,9 @@ public class CLIClient implements Notifier{
 
     private void doLogin() {
         // show a login prompt
-        System.out.print("Username: ");
+        showPrompt("Username: ");
         String username = scanner.nextLine();
-        System.out.print("Password: ");
+        showPrompt("Password: ");
         String password = scanner.nextLine();
 
         // interact with the Facade to login
@@ -144,11 +147,11 @@ public class CLIClient implements Notifier{
 
     private void doRegister() {
         // show a register prompt
-        System.out.print("Username: ");
+        showPrompt("Username: ");
         String username = scanner.nextLine();
-        System.out.print("Password: ");
+        showPrompt("Password: ");
         String password = scanner.nextLine();
-        System.out.print("Email: ");
+        showPrompt("Email: ");
         String email = scanner.nextLine();
 
         // interact with Facade to register
@@ -162,7 +165,7 @@ public class CLIClient implements Notifier{
 
     private void doCreate() {
         // show a creation prompt
-        System.out.print("Game Name: ");
+        showPrompt("Game Name: ");
         String gameName = scanner.nextLine();
 
         // interact with the Facade to create a game
@@ -176,7 +179,7 @@ public class CLIClient implements Notifier{
     private void printOneGame(SingleGameResponse game) {
         String whiteName = game.whiteUsername();
         String blackName = game.blackUsername();
-        System.out.println(EscapeSequences.beautify(
+        showMessage(EscapeSequences.beautify(
                 EscapeSequences.SET_TEXT_BOLD,
                 game.gameName()) +
                 "\n    White: " +
@@ -186,27 +189,26 @@ public class CLIClient implements Notifier{
                 "\n    Black: " +
                 EscapeSequences.beautify(
                         EscapeSequences.SET_TEXT_COLOR_RED,
-                        (blackName != null) ? blackName : "-")
-        );
+                        (blackName != null) ? blackName : "-"));
     }
 
     private void doList() {
         try {
             Collection<SingleGameResponse> currentGames = facade.listGames(authToken);
             if (currentGames.isEmpty()) {
-                System.out.printf("%s Start a new one with %s\n",
+                showMessage(("%s Start a new one with %s").formatted(
                         EscapeSequences.beautify(
                                 EscapeSequences.SET_TEXT_BOLD,
                                 "No games yet."
                         ),
                         EscapeSequences.beautify(
                                 COMMAND_STYLE,
-                                "create"));
+                                "create")));
                 return;
             }
             int i = 1;
             for (SingleGameResponse game : currentGames) {
-                System.out.print(EscapeSequences.beautify(
+                showPrompt(EscapeSequences.beautify(
                         EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN,
                         i + " - "));
                 printOneGame(game);
@@ -221,34 +223,34 @@ public class CLIClient implements Notifier{
         String color = "none";
         try {
             // show a select and join game prompt
-            System.out.print("Game ID: ");
+            showPrompt("Game ID: ");
             int gameId = scanner.nextInt();
             scanner.nextLine(); // flush the \n character
             if (gameId <= 0) {
-                System.out.println(EscapeSequences.beautify(
+                showMessage(EscapeSequences.beautify(
                         ERROR_STYLE,
                         "Game ID must be greater than 0."));
                 return;
             }
 
-            System.out.print("Color: ");
+            showPrompt("Color: ");
             color = scanner.nextLine();
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
 
             // interact with the Facade to join the game
             facade.play(authToken, gameId, teamColor);
             state = Status.PLAYING;
-            handlePlaying("");
+            handlePlaying("redraw");
         } catch (InputMismatchException _) {
-            System.out.printf(EscapeSequences.beautify(
+            showMessage((EscapeSequences.beautify(
                     ERROR_STYLE,
-                    "Invalid ID: '%s'\n"), scanner.nextLine());
-            System.out.println("Game ID must be a number.");
+                    "Invalid ID: '%s'")).formatted(scanner.nextLine()));
+            showMessage("Game ID must be a number.");
         } catch (IllegalArgumentException _) {
-            System.out.printf(EscapeSequences.beautify(
+            showMessage((EscapeSequences.beautify(
                     ERROR_STYLE,
-                    "Invalid color: '%s'\n"), color);
-            System.out.println("Color must be either " +
+                    "Invalid color: '%s'")).formatted(color));
+            showMessage("Color must be either " +
                     EscapeSequences.beautify(EscapeSequences.SET_TEXT_BOLD,"'BLACK'") + " or " +
                     EscapeSequences.beautify(EscapeSequences.SET_TEXT_BOLD,"'WHITE'"));
         } catch (NetworkException e) {
@@ -259,15 +261,17 @@ public class CLIClient implements Notifier{
     private void doObserve() {
         try {
             // show a select game prompt
-            System.out.print("Game ID: ");
+            showPrompt("Game ID: ");
             int gameId = scanner.nextInt();
             scanner.nextLine(); // flush the \n character
-            System.out.print("Color: ");
 
             // interact with the Facade to watch the game
             facade.observe(authToken, gameId);
         } catch (InputMismatchException _) {
-            System.out.printf("Invalid ID: '%s'\nGame ID must be a number.\n", scanner.nextLine());
+            showMessage((EscapeSequences.beautify(
+                    ERROR_STYLE,
+                    "Invalid ID: '%s'")).formatted(scanner.nextLine()));
+            showMessage("Game ID must be a number.");
         } catch (NetworkException e) {
             showNetworkError(e);
         }
@@ -279,7 +283,7 @@ public class CLIClient implements Notifier{
             facade.logout(authToken);
         } catch (NetworkException e) {
             // display as a warning
-            System.out.print("Warning: ");
+            showPrompt("Warning: ");
             showNetworkError(e);
         } finally {
             // logout on the client regardless of network errors
@@ -311,7 +315,7 @@ public class CLIClient implements Notifier{
     }
 
     private void handlePlaying(String input) {
-        System.out.println(EscapeSequences.CLEAR_SCREEN);
+        showMessage(EscapeSequences.CLEAR_SCREEN);
         // just print a throwaway board for now
         ChessGame game = new ChessGame();
         var teamColor = ChessGame.TeamColor.WHITE;
