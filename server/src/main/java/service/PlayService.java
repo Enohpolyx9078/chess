@@ -170,6 +170,7 @@ public class PlayService {
         Collection<WsContext> room = addToRoom(command.getGameID(), ctx);
         ctx.send(new Gson().toJson(new LoadGameMessage(game.game())));
         AuthData auth = AUTH_DAO.getAuth(command.getAuthToken());
+        ctx.attribute("username", auth.username());
         String playerRole = getPlayerRole(game, auth.username());
         notifyOthers(
                 ctx,
@@ -219,7 +220,7 @@ public class PlayService {
 
     private void notifyOthers(WsMessageContext ctx,ServerMessage msg, Collection<WsContext> room) {
         room.forEach((player) -> {
-            if (player != ctx) {
+            if (player.attribute("username") != ctx.attribute("username")) {
                 checkAndSend(player, msg);
             }
         });
