@@ -40,7 +40,7 @@ public class ServerFacadeTests {
     @BeforeEach
     public void clear() throws DataAccessException {
         CLEAR_SERVICE.clearApplication();
-        facade = new ServerFacade("http://localhost:"+port);
+        facade = new ServerFacade("http://localhost:" + port, System.out::println);
     }
 
     @AfterAll
