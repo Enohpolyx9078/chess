@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class CLIClient implements Notifier{
+public class CLIClient implements Observer {
     private static final String SERVER_URL = "http://localhost:8080";
 
     private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;

@@ -1,5 +1,5 @@
 package client;
 
-public interface Notifier {
+public interface Observer {
     void showMessage(String msg);
 }

@@ -1,7 +1,7 @@
 package facade;
 
 import chess.ChessGame;
-import client.Notifier;
+import client.Observer;
 import com.google.gson.Gson;
 import model.ListGamesResponse;
 import model.SingleGameResponse;
@@ -16,11 +16,11 @@ import java.util.Map;
 public class ServerFacade {
     private final String url;
     private List<SingleGameResponse> currentGames;
-    private final Notifier notifier;
+    private final Observer observer;
 
-    public ServerFacade(String url, Notifier notifier) {
+    public ServerFacade(String url, Observer observer) {
         this.url = url;
-        this.notifier = notifier;
+        this.observer = observer;
     }
 
     public String register(String username, String password, String email) throws NetworkException {
