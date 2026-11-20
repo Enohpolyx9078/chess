@@ -234,6 +234,7 @@ public class PlayService {
         }
         room.remove(ctx);
         rooms.put(gameID, room);
+        ctx.attribute("gameID", null);
         return room;
     }
 
