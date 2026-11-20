@@ -10,12 +10,15 @@ import dataaccess.sql.SQLGameDAO;
 import dataaccess.sql.SQLUserDAO;
 import facade.NetworkException;
 import facade.ServerFacade;
+import jakarta.websocket.DeploymentException;
 import model.GameData;
 import model.SingleGameResponse;
 import org.junit.jupiter.api.*;
 import server.Server;
 import service.ClearService;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +41,7 @@ public class ServerFacadeTests {
     }
 
     @BeforeEach
-    public void clear() throws DataAccessException {
+    public void clear() throws DataAccessException, DeploymentException, IOException, URISyntaxException {
         CLEAR_SERVICE.clearApplication();
         facade = new ServerFacade("http://localhost:" + port, System.out::println);
     }

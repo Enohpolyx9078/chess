@@ -3,10 +3,13 @@ package client;
 import chess.ChessGame;
 import facade.NetworkException;
 import facade.ServerFacade;
+import jakarta.websocket.DeploymentException;
 import model.SingleGameResponse;
 import ui.BoardPrinter;
 import ui.EscapeSequences;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -61,6 +64,9 @@ public class CLIClient implements Observer {
     private String authToken;
     private Status state = Status.SIGNED_OUT;
     private static Scanner scanner;
+
+    public CLIClient() throws DeploymentException, IOException, URISyntaxException {
+    }
 
     public void run() {
         try {

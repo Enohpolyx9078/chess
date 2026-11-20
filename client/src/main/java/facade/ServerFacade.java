@@ -3,11 +3,13 @@ package facade;
 import chess.ChessGame;
 import client.Observer;
 import com.google.gson.Gson;
+import jakarta.websocket.DeploymentException;
 import model.ListGamesResponse;
 import model.SingleGameResponse;
 import ui.EscapeSequences;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.util.Collection;
 import java.util.List;
@@ -16,11 +18,11 @@ import java.util.Map;
 public class ServerFacade {
     private final String url;
     private List<SingleGameResponse> currentGames;
-    private final Observer observer;
+    private final WsConnector connector;
 
-    public ServerFacade(String url, Observer observer) {
+    public ServerFacade(String url, Observer observer) throws DeploymentException, IOException, URISyntaxException {
         this.url = url;
-        this.observer = observer;
+        this.connector = new WsConnector(url+"/ws", observer);
     }
 
     public String register(String username, String password, String email) throws NetworkException {
