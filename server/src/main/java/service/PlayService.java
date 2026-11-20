@@ -168,7 +168,6 @@ public class PlayService {
     }
 
     private void doLeave(UserGameCommand command, WsMessageContext ctx) throws DataAccessException {
-        ctx.closeSession();
         if (command.getGameID() != ctx.attribute("gameID")) {
             return;
         }
