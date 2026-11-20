@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WsConnector {
+public class WsConnector extends Endpoint {
     private final Session session;
 
     public WsConnector(String url, Observer observer) throws DeploymentException, IOException, URISyntaxException {
@@ -21,5 +21,10 @@ public class WsConnector {
 
     public void sendCommand(UserGameCommand command) throws IOException {
         this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
+
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+        //TODO
     }
 }

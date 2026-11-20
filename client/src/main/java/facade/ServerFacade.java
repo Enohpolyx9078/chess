@@ -7,8 +7,10 @@ import jakarta.websocket.DeploymentException;
 import model.ListGamesResponse;
 import model.SingleGameResponse;
 import ui.EscapeSequences;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.util.Collection;
@@ -22,7 +24,8 @@ public class ServerFacade {
 
     public ServerFacade(String url, Observer observer) throws DeploymentException, IOException, URISyntaxException {
         this.url = url;
-        this.connector = new WsConnector(url+"/ws", observer);
+        URI uri = new URI(url);
+        this.connector = new WsConnector("ws://"+uri.getHost()+":"+uri.getPort()+"/ws", observer);
     }
 
     public String register(String username, String password, String email) throws NetworkException {
@@ -105,7 +108,8 @@ public class ServerFacade {
                                 EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE,
                                 "list")));
             }
-            var body = Map.of("playerColor", color.name(), "gameID", getGameId(gameCode));
+            int gameID = getGameId(gameCode);
+            var body = Map.of("playerColor", color.name(), "gameID", gameID);
             HttpResponse<String> resp = NetworkSender.sendRequest(
                     url + "/game",
                     NetworkSender.Methods.PUT,
@@ -115,6 +119,10 @@ public class ServerFacade {
             if (isError(resp)) {
                 throw new NetworkException(respBody.get("message").toString());
             }
+            connector.sendCommand(new UserGameCommand(
+                    UserGameCommand.CommandType.CONNECT,
+                    authToken,
+                    gameID));
         } catch (IOException | InterruptedException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
         }
