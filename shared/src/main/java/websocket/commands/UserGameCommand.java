@@ -1,5 +1,10 @@
 package websocket.commands;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonObject;
+
 import java.util.Objects;
 
 /**
@@ -39,6 +44,23 @@ public class UserGameCommand {
 
     public Integer getGameID() {
         return gameID;
+    }
+
+    public static Gson createCommandSerializer() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(UserGameCommand.class,
+                (JsonDeserializer<UserGameCommand>) (el, _, _) -> {
+                    UserGameCommand command = null;
+                    if (el.isJsonObject()) {
+                        JsonObject current = el.getAsJsonObject();
+                        UserGameCommand.CommandType type = UserGameCommand.CommandType.valueOf(current.get("commandType").getAsString());
+                        command = (type == UserGameCommand.CommandType.MAKE_MOVE) ?
+                                new Gson().fromJson(el, MakeMoveCommand.class) :
+                                new Gson().fromJson(el, UserGameCommand.class);
+                    }
+                    return command;
+                });
+        return builder.create();
     }
 
     @Override

@@ -1,12 +1,14 @@
 package client;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import facade.NetworkException;
 import facade.ServerFacade;
 import jakarta.websocket.DeploymentException;
 import model.SingleGameResponse;
 import ui.BoardPrinter;
 import ui.EscapeSequences;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -60,6 +62,8 @@ public class CLIClient implements Observer {
                     EscapeSequences.beautify(COMMAND_STYLE, "help"));
 
     private final ServerFacade facade = new ServerFacade(SERVER_URL, this);
+    private final Gson serializer = UserGameCommand.createCommandSerializer();
+    private final GameManager manager = new GameManager();
 
     private String authToken;
     private Status state = Status.SIGNED_OUT;
@@ -103,7 +107,8 @@ public class CLIClient implements Observer {
     }
 
     public void notify(String msg) {
-        System.out.println("[NOTIFICATION] >>> " + msg);
+        System.out.print("[NOTIFICATION] >>> " + msg);
+        UserGameCommand command = serializer.fromJson(msg, UserGameCommand.class);
     }
 
      public void showMessage(String msg) {

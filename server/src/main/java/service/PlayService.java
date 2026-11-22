@@ -5,9 +5,6 @@ import chess.ChessMove;
 import chess.ChessPiece;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonObject;
 import dataaccess.*;
 import dataaccess.sql.SQLAuthDAO;
 import dataaccess.sql.SQLGameDAO;
@@ -32,11 +29,12 @@ public class PlayService {
     private static final GameDAO GAME_DAO = new SQLGameDAO();
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
     private final ConcurrentHashMap<Integer, Collection<WsContext>> rooms = new ConcurrentHashMap<>();
+    private final Gson commandSerializer = UserGameCommand.createCommandSerializer();
 
     public void register(WsConfig ws) {
         ws.onConnect(WsContext::enableAutomaticPings);
         ws.onMessage(ctx -> {
-            UserGameCommand command = COMMAND_SERIALIZER.fromJson(ctx.message(), UserGameCommand.class);
+            UserGameCommand command = commandSerializer.fromJson(ctx.message(), UserGameCommand.class);
 
             // check the command
             if (!AuthUtility.isAuthorized(command.getAuthToken())) {
@@ -256,24 +254,5 @@ public class PlayService {
 
     private void notifyAll(ServerMessage msg, Collection<WsContext> room) {
         room.forEach((player) -> checkAndSend(player, msg));
-    }
-
-    private static final Gson COMMAND_SERIALIZER = createCommandSerializer();
-
-    private static Gson createCommandSerializer() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(UserGameCommand.class,
-                (JsonDeserializer<UserGameCommand>) (el, _, _) -> {
-                    UserGameCommand command = null;
-                    if (el.isJsonObject()) {
-                        JsonObject current = el.getAsJsonObject();
-                        UserGameCommand.CommandType type = UserGameCommand.CommandType.valueOf(current.get("commandType").getAsString());
-                        command = (type == UserGameCommand.CommandType.MAKE_MOVE) ?
-                                new Gson().fromJson(el, MakeMoveCommand.class) :
-                                new Gson().fromJson(el, UserGameCommand.class);
-                    }
-                    return command;
-                });
-        return builder.create();
     }
 }
