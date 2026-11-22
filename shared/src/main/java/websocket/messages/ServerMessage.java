@@ -1,11 +1,7 @@
 package websocket.messages;
 
 import chess.ChessGame;
-import chess.ChessPiece;
-import chess.rules.Enforcer;
 import com.google.gson.*;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
 
 import java.util.Objects;
 
