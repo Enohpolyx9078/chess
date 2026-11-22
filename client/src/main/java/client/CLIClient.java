@@ -9,13 +9,13 @@ import jakarta.websocket.DeploymentException;
 import model.SingleGameResponse;
 import ui.BoardPrinter;
 import ui.EscapeSequences;
-import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.LinkOption;
 import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -115,12 +115,22 @@ public class CLIClient implements Observer {
         ServerMessage message = serializer.fromJson(msg, ServerMessage.class);
         switch (message.getServerMessageType()) {
             case LOAD_GAME -> loadGame((LoadGameMessage) message);
+            case NOTIFICATION -> loadNotification((NotificationMessage) message);
+            case ERROR -> loadError((ErrorMessage) message);
         }
+        handlePlaying("redraw");
+    }
+
+    private void loadError(ErrorMessage message) {
+        manager.setLatestMessage(EscapeSequences.beautify(ERROR_STYLE, message.getMsg()));
+    }
+
+    private void loadNotification(NotificationMessage message) {
+        manager.setLatestMessage(message.getMsg());
     }
 
     private void loadGame(LoadGameMessage message) {
         manager.setGame(message.getGame());
-        handlePlaying("redraw");
     }
 
     public void showMessage(String msg) {
@@ -344,8 +354,13 @@ public class CLIClient implements Observer {
 
     private void drawScreen() {
         showMessage(EscapeSequences.CLEAR_SCREEN);
-        if (manager.getGame() != null) {
-            ChessBoard board = manager.getGame().getBoard();
+        String message = manager.getLatestMessage();
+        ChessGame game = manager.getGame();
+        if (message != null) {
+            showMessage(message);
+        }
+        if (game != null) {
+            ChessBoard board = game.getBoard();
             if (manager.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 BoardPrinter.printBoardWhite(board);
             } else {

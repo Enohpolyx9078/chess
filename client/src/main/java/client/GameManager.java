@@ -5,6 +5,11 @@ import chess.ChessGame;
 public class GameManager {
     private ChessGame game;
     private ChessGame.TeamColor teamColor;
+    private String latestMessage;
+
+    public String getLatestMessage() {
+        return latestMessage;
+    }
 
     public ChessGame.TeamColor getTeamColor() {
         return teamColor;
@@ -12,6 +17,10 @@ public class GameManager {
 
     public ChessGame getGame() {
         return game;
+    }
+
+    public void setLatestMessage(String latestMessage) {
+        this.latestMessage = latestMessage;
     }
 
     public void setTeamColor(ChessGame.TeamColor color) {
