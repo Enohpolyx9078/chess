@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import facade.NetworkException;
@@ -9,9 +10,12 @@ import model.SingleGameResponse;
 import ui.BoardPrinter;
 import ui.EscapeSequences;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.LinkOption;
 import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -62,7 +66,7 @@ public class CLIClient implements Observer {
                     EscapeSequences.beautify(COMMAND_STYLE, "help"));
 
     private final ServerFacade facade = new ServerFacade(SERVER_URL, this);
-    private final Gson serializer = UserGameCommand.createCommandSerializer();
+    private final Gson serializer = ServerMessage.createMessageSerializer();
     private final GameManager manager = new GameManager();
 
     private String authToken;
@@ -108,10 +112,18 @@ public class CLIClient implements Observer {
 
     public void notify(String msg) {
         System.out.print("[NOTIFICATION] >>> " + msg);
-        UserGameCommand command = serializer.fromJson(msg, UserGameCommand.class);
+        ServerMessage message = serializer.fromJson(msg, ServerMessage.class);
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> loadGame((LoadGameMessage) message);
+        }
     }
 
-     public void showMessage(String msg) {
+    private void loadGame(LoadGameMessage message) {
+        manager.setGame(message.getGame());
+        handlePlaying("redraw");
+    }
+
+    public void showMessage(String msg) {
         System.out.println(msg);
     }
 
@@ -255,6 +267,7 @@ public class CLIClient implements Observer {
             // interact with the Facade to join the game
             facade.play(authToken, gameId, teamColor);
             state = Status.PLAYING;
+            manager.setTeamColor(teamColor);
             handlePlaying("redraw");
         } catch (InputMismatchException _) {
             showMessage((EscapeSequences.beautify(
@@ -329,18 +342,26 @@ public class CLIClient implements Observer {
         }
     }
 
-    private void handlePlaying(String input) {
+    private void drawScreen() {
         showMessage(EscapeSequences.CLEAR_SCREEN);
-        // just print a throwaway board for now
-        ChessGame game = new ChessGame();
-        var teamColor = ChessGame.TeamColor.WHITE;
-        if (teamColor == ChessGame.TeamColor.WHITE) {
-            BoardPrinter.printBoardWhite(game.getBoard());
-        } else {
-            BoardPrinter.printBoardBlack(game.getBoard());
+        if (manager.getGame() != null) {
+            ChessBoard board = manager.getGame().getBoard();
+            if (manager.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                BoardPrinter.printBoardWhite(board);
+            } else {
+                BoardPrinter.printBoardBlack(board);
+            }
         }
+        showPrompt((EscapeSequences.beautify(
+                EscapeSequences.SET_TEXT_BOLD,
+                "[%s] >>> "))
+                .formatted(state.name()));
+    }
+
+    private void handlePlaying(String input) {
         switch (input.toLowerCase().trim()) {
             case "help" -> doHelp();
+            case "redraw" -> drawScreen();
             default -> doUnknown(input);
         }
     }

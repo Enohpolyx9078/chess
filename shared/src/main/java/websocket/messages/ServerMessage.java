@@ -1,5 +1,12 @@
 package websocket.messages;
 
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.rules.Enforcer;
+import com.google.gson.*;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
+
 import java.util.Objects;
 
 /**
@@ -23,6 +30,29 @@ public class ServerMessage {
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public static Gson createMessageSerializer() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(ServerMessage.class,
+                (JsonDeserializer<ServerMessage>) (el, _, _) -> {
+                    ServerMessage message = null;
+                    if (el.isJsonObject()) {
+                        JsonObject current = el.getAsJsonObject();
+                        ServerMessage.ServerMessageType type = ServerMessage.ServerMessageType.valueOf(
+                                current.get("serverMessageType").getAsString());
+                        message = switch (type) {
+                            case LOAD_GAME -> {
+                                new ChessGame();
+                                yield ChessGame.createSerializer().fromJson(el, LoadGameMessage.class);
+                            }
+                            case ERROR -> new Gson().fromJson(el, ErrorMessage.class);
+                            case NOTIFICATION -> new Gson().fromJson(el, NotificationMessage.class);
+                        };
+                    }
+                    return message;
+                });
+        return builder.create();
     }
 
     @Override
