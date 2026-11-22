@@ -136,17 +136,12 @@ public class ServerFacade {
                                 EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE,
                                 "list")));
             }
-            var body = Map.of("gameID", getGameId(gameCode), "playerColor", "OBSERVE");
-            HttpResponse<String> resp = NetworkSender.sendRequest(
-                    url + "/game",
-                    NetworkSender.Methods.PUT,
-                    new String[]{"authorization", authToken},
-                    new Gson().toJson(body));
-            var respBody = new Gson().fromJson(resp.body(), Map.class);
-            if (isError(resp)) {
-                throw new NetworkException(respBody.get("message").toString());
-            }
-        } catch (IOException | InterruptedException _) {
+            int gameID = getGameId(gameCode);
+            connector.sendCommand(new UserGameCommand(
+                    UserGameCommand.CommandType.CONNECT,
+                    authToken,
+                    gameID));
+        } catch (IOException _) {
             throw new NetworkException("Request incomplete. Please check your internet connection.");
         }
     }

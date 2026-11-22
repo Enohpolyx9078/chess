@@ -65,6 +65,16 @@ public class CLIClient implements Observer {
                     EscapeSequences.beautify(COMMAND_STYLE, "highlight"),
                     EscapeSequences.beautify(COMMAND_STYLE, "help"));
 
+    private static final String OBSERVING_HELP = """
+            %s - redraws the board
+            %s - leave the game
+            %s - show available moves for a given piece
+            %s - displays this menu""".formatted(
+            EscapeSequences.beautify(COMMAND_STYLE, "redraw"),
+            EscapeSequences.beautify(COMMAND_STYLE, "leave"),
+            EscapeSequences.beautify(COMMAND_STYLE, "highlight"),
+            EscapeSequences.beautify(COMMAND_STYLE, "help"));
+
     private final ServerFacade facade = new ServerFacade(SERVER_URL, this);
     private final Gson serializer = ServerMessage.createMessageSerializer();
     private final GameManager manager = new GameManager();
@@ -96,6 +106,8 @@ public class CLIClient implements Observer {
                     handlePreLogin(input);
                 } else if (state == Status.PLAYING) {
                     handlePlaying(input);
+                } else if (state == Status.OBSERVING) {
+                    handleObserving(input);
                 } else {
                     handlePostLogin(input);
                 }
@@ -119,6 +131,10 @@ public class CLIClient implements Observer {
             case ERROR -> loadError((ErrorMessage) message);
         }
         handlePlaying("redraw");
+        showPrompt((EscapeSequences.beautify(
+                EscapeSequences.SET_TEXT_BOLD,
+                "[%s] >>> "))
+                .formatted(state.name()));
     }
 
     private void loadError(ErrorMessage message) {
@@ -158,6 +174,7 @@ public class CLIClient implements Observer {
         showMessage(switch (state) {
             case SIGNED_IN -> SIGNED_IN_HELP;
             case PLAYING -> PLAYING_HELP;
+            case OBSERVING -> OBSERVING_HELP;
             default -> SIGNED_OUT_HELP;
         });
     }
@@ -305,6 +322,7 @@ public class CLIClient implements Observer {
 
             // interact with the Facade to watch the game
             facade.observe(authToken, gameId);
+            state = Status.OBSERVING;
         } catch (InputMismatchException _) {
             showMessage((EscapeSequences.beautify(
                     ERROR_STYLE,
@@ -367,13 +385,17 @@ public class CLIClient implements Observer {
                 BoardPrinter.printBoardBlack(board);
             }
         }
-        showPrompt((EscapeSequences.beautify(
-                EscapeSequences.SET_TEXT_BOLD,
-                "[%s] >>> "))
-                .formatted(state.name()));
     }
 
     private void handlePlaying(String input) {
+        switch (input.toLowerCase().trim()) {
+            case "help" -> doHelp();
+            case "redraw" -> drawScreen();
+            default -> doUnknown(input);
+        }
+    }
+
+    private void handleObserving(String input) {
         switch (input.toLowerCase().trim()) {
             case "help" -> doHelp();
             case "redraw" -> drawScreen();
@@ -385,6 +407,7 @@ public class CLIClient implements Observer {
         SIGNED_OUT,
         SIGNED_IN,
         PLAYING,
+        OBSERVING,
         QUIT
     }
 }
