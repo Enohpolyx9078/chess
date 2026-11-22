@@ -295,6 +295,7 @@ public class CLIClient implements Observer {
             facade.play(authToken, gameId, teamColor);
             state = Status.PLAYING;
             manager.setTeamColor(teamColor);
+            manager.setGameCode(gameId);
             handlePlaying("redraw");
         } catch (InputMismatchException _) {
             showMessage((EscapeSequences.beautify(
@@ -322,6 +323,7 @@ public class CLIClient implements Observer {
 
             // interact with the Facade to watch the game
             facade.observe(authToken, gameId);
+            manager.setGameCode(gameId);
             state = Status.OBSERVING;
         } catch (InputMismatchException _) {
             showMessage((EscapeSequences.beautify(
@@ -387,10 +389,17 @@ public class CLIClient implements Observer {
         }
     }
 
+    private void doLeave() {
+        facade.leave(authToken, manager.getGameCode());
+        manager.reset();
+        state = Status.SIGNED_IN;
+    }
+
     private void handlePlaying(String input) {
         switch (input.toLowerCase().trim()) {
             case "help" -> doHelp();
             case "redraw" -> drawScreen();
+            case "leave" -> doLeave();
             default -> doUnknown(input);
         }
     }
@@ -399,6 +408,7 @@ public class CLIClient implements Observer {
         switch (input.toLowerCase().trim()) {
             case "help" -> doHelp();
             case "redraw" -> drawScreen();
+            case "leave" -> doLeave();
             default -> doUnknown(input);
         }
     }

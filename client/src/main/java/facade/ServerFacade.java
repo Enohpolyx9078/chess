@@ -162,6 +162,18 @@ public class ServerFacade {
         }
     }
 
+    public void leave(String authToken, int gameCode) {
+        int gameID = getGameId(gameCode);
+        try {
+            connector.sendCommand(new UserGameCommand(
+                    UserGameCommand.CommandType.LEAVE,
+                    authToken,
+                    gameID));
+        } catch (IOException e) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
+    }
+
     private int getGameId(int gameCode) {
         if (gameCode > currentGames.size() || gameCode <= 0) {
             return -1;
