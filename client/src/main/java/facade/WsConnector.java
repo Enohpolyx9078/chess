@@ -16,7 +16,7 @@ public class WsConnector extends Endpoint {
         URI uri = new URI(url);
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
-        this.session.addMessageHandler((MessageHandler.Whole<String>) observer::showMessage);
+        this.session.addMessageHandler(String.class, observer::notify);
     }
 
     public void sendCommand(UserGameCommand command) throws IOException {

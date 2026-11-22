@@ -102,6 +102,10 @@ public class CLIClient implements Observer {
         }
     }
 
+    public void notify(String msg) {
+        System.out.println("[NOTIFICATION] >>> " + msg);
+    }
+
      public void showMessage(String msg) {
         System.out.println(msg);
     }
