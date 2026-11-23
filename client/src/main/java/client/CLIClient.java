@@ -49,14 +49,18 @@ public class CLIClient implements Observer {
                                 "[%s] >>> "))
                         .formatted(state.name()));
                 String input = scanner.nextLine();
+                Status changed = null;
                 if (state == Status.SIGNED_OUT) {
-                    actionHandler.handlePreLogin(input);
+                    changed = actionHandler.handlePreLogin(input);
                 } else if (state == Status.PLAYING) {
-                    actionHandler.handlePlaying(input);
+                    changed = actionHandler.handlePlaying(input);
                 } else if (state == Status.OBSERVING) {
-                    actionHandler.handleObserving(input);
+                    changed = actionHandler.handleObserving(input);
                 } else {
-                    actionHandler.handlePostLogin(input);
+                    changed = actionHandler.handlePostLogin(input);
+                }
+                if (changed != null) {
+                    state = changed;
                 }
             }
             showMessage(EscapeSequences.beautify(
