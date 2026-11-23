@@ -22,9 +22,9 @@ import java.util.Scanner;
 
 public class CLIClient {
     private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
+    private static final String SERVER_URL = "http://localhost:8080";
 
     private final Gson serializer = ServerMessage.createMessageSerializer();
-    private final GameManager manager = new GameManager();
 
     private Status state = Status.SIGNED_OUT;
     private static Scanner scanner;
@@ -66,6 +66,23 @@ public class CLIClient {
         } finally {
             scanner.close();
         }
+    }
+
+    public void notify(String msg) {
+        System.out.print("[NOTIFICATION] >>> " + msg);
+        ServerMessage message = serializer.fromJson(msg, ServerMessage.class);
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> loadGame((LoadGameMessage) message);
+            case NOTIFICATION -> loadNotification((NotificationMessage) message);
+            case ERROR -> loadError((ErrorMessage) message);
+        }
+        if (state == CLIClient.Status.PLAYING) {
+            handlePlaying("redraw");
+        }
+        showPrompt((EscapeSequences.beautify(
+                EscapeSequences.SET_TEXT_BOLD,
+                "[%s] >>> "))
+                .formatted(state.name()));
     }
 
     private enum Status {

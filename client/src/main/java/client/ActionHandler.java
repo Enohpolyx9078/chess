@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import com.google.gson.Gson;
 import facade.NetworkException;
 import facade.ServerFacade;
 import jakarta.websocket.DeploymentException;
@@ -18,13 +19,13 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.InputMismatchException;
 
-public class ActionHandler implements Observer{
+public class ActionHandler {
     private static final String COMMAND_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE;
     private static final String ERROR_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_RED;
 
-    private static final String SERVER_URL = "http://localhost:8080";
-    private final ServerFacade facade = new ServerFacade(SERVER_URL, this);
+    private final GameManager manager = new GameManager();
 
+    private final ServerFacade facade;
     private String authToken;
 
     private static final String SIGNED_OUT_HELP = """
@@ -75,7 +76,8 @@ public class ActionHandler implements Observer{
             EscapeSequences.beautify(COMMAND_STYLE, "highlight"),
             EscapeSequences.beautify(COMMAND_STYLE, "help"));
 
-    public ActionHandler() throws DeploymentException, IOException, URISyntaxException {
+    public ActionHandler(String url, Observer observer) throws DeploymentException, IOException, URISyntaxException {
+        this.facade = new ServerFacade(url, observer);
     }
 
     public void handlePreLogin(String input) {
@@ -116,23 +118,6 @@ public class ActionHandler implements Observer{
             case "leave" -> doLeave();
             default -> doUnknown(input);
         }
-    }
-
-    public void notify(String msg) {
-        System.out.print("[NOTIFICATION] >>> " + msg);
-        ServerMessage message = serializer.fromJson(msg, ServerMessage.class);
-        switch (message.getServerMessageType()) {
-            case LOAD_GAME -> loadGame((LoadGameMessage) message);
-            case NOTIFICATION -> loadNotification((NotificationMessage) message);
-            case ERROR -> loadError((ErrorMessage) message);
-        }
-        if (state == CLIClient.Status.PLAYING) {
-            handlePlaying("redraw");
-        }
-        showPrompt((EscapeSequences.beautify(
-                EscapeSequences.SET_TEXT_BOLD,
-                "[%s] >>> "))
-                .formatted(state.name()));
     }
 
     private void loadError(ErrorMessage message) {
