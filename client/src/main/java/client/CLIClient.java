@@ -352,28 +352,6 @@ public class CLIClient implements Observer {
         }
     }
 
-    private void handlePreLogin(String input) {
-        switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
-            case "quit" -> doQuit();
-            case "login" -> doLogin();
-            case "register" -> doRegister();
-            default -> doUnknown(input);
-        }
-    }
-
-    private void handlePostLogin(String input) {
-        switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
-            case "create" -> doCreate();
-            case "list" -> doList();
-            case "play" -> doPlay();
-            case "observe" -> doObserve();
-            case "logout" -> doLogout();
-            default -> doUnknown(input);
-        }
-    }
-
     private void drawScreen() {
         showMessage(EscapeSequences.CLEAR_SCREEN);
         String message = manager.getLatestMessage();
@@ -395,24 +373,6 @@ public class CLIClient implements Observer {
         facade.leave(authToken, manager.getGameCode());
         manager.reset();
         state = Status.SIGNED_IN;
-    }
-
-    private void handlePlaying(String input) {
-        switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
-            case "redraw" -> drawScreen();
-            case "leave" -> doLeave();
-            default -> doUnknown(input);
-        }
-    }
-
-    private void handleObserving(String input) {
-        switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
-            case "redraw" -> drawScreen();
-            case "leave" -> doLeave();
-            default -> doUnknown(input);
-        }
     }
 
     private enum Status {
