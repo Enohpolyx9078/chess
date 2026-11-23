@@ -20,11 +20,12 @@ import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class CLIClient {
+public class CLIClient implements Observer {
     private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
     private static final String SERVER_URL = "http://localhost:8080";
 
     private final Gson serializer = ServerMessage.createMessageSerializer();
+    private final ActionHandler actionHandler = new ActionHandler(SERVER_URL, this);
 
     private Status state = Status.SIGNED_OUT;
     private static Scanner scanner;
@@ -49,13 +50,13 @@ public class CLIClient {
                         .formatted(state.name()));
                 String input = scanner.nextLine();
                 if (state == Status.SIGNED_OUT) {
-                    handlePreLogin(input);
+                    actionHandler.handlePreLogin(input);
                 } else if (state == Status.PLAYING) {
-                    handlePlaying(input);
+                    actionHandler.handlePlaying(input);
                 } else if (state == Status.OBSERVING) {
-                    handleObserving(input);
+                    actionHandler.handleObserving(input);
                 } else {
-                    handlePostLogin(input);
+                    actionHandler.handlePostLogin(input);
                 }
             }
             showMessage(EscapeSequences.beautify(
@@ -72,9 +73,9 @@ public class CLIClient {
         System.out.print("[NOTIFICATION] >>> " + msg);
         ServerMessage message = serializer.fromJson(msg, ServerMessage.class);
         switch (message.getServerMessageType()) {
-            case LOAD_GAME -> loadGame((LoadGameMessage) message);
-            case NOTIFICATION -> loadNotification((NotificationMessage) message);
-            case ERROR -> loadError((ErrorMessage) message);
+            case LOAD_GAME -> actionHandler.loadGame((LoadGameMessage) message);
+            case NOTIFICATION -> actionHandler.loadNotification((NotificationMessage) message);
+            case ERROR -> actionHandler.loadError((ErrorMessage) message);
         }
         if (state == CLIClient.Status.PLAYING) {
             handlePlaying("redraw");
@@ -85,7 +86,7 @@ public class CLIClient {
                 .formatted(state.name()));
     }
 
-    private enum Status {
+    public enum Status {
         SIGNED_OUT,
         SIGNED_IN,
         PLAYING,

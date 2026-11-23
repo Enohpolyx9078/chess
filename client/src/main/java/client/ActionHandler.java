@@ -82,7 +82,7 @@ public class ActionHandler {
 
     public void handlePreLogin(String input) {
         switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
+            case "help" -> doHelp(CLIClient.Status.SIGNED_OUT);
             case "quit" -> doQuit();
             case "login" -> doLogin();
             case "register" -> doRegister();
@@ -92,7 +92,7 @@ public class ActionHandler {
 
     public void handlePostLogin(String input) {
         switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
+            case "help" -> doHelp(CLIClient.Status.SIGNED_IN);
             case "create" -> doCreate();
             case "list" -> doList();
             case "play" -> doPlay();
@@ -104,7 +104,7 @@ public class ActionHandler {
 
     public void handlePlaying(String input) {
         switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
+            case "help" -> doHelp(CLIClient.Status.PLAYING);
             case "redraw" -> drawScreen();
             case "leave" -> doLeave();
             default -> doUnknown(input);
@@ -113,33 +113,35 @@ public class ActionHandler {
 
     public void handleObserving(String input) {
         switch (input.toLowerCase().trim()) {
-            case "help" -> doHelp();
+            case "help" -> doHelp(CLIClient.Status.OBSERVING);
             case "redraw" -> drawScreen();
             case "leave" -> doLeave();
             default -> doUnknown(input);
         }
     }
 
-    private void loadError(ErrorMessage message) {
+    public void loadError(ErrorMessage message) {
         manager.setLatestMessage(EscapeSequences.beautify(ERROR_STYLE, message.getMsg()));
     }
 
-    private void loadNotification(NotificationMessage message) {
+    public void loadNotification(NotificationMessage message) {
         manager.setLatestMessage(message.getMsg());
     }
 
-    private void loadGame(LoadGameMessage message) {
+    public void loadGame(LoadGameMessage message) {
         manager.setGame(message.getGame());
     }
 
     private void doUnknown(String input) {
         showMessage((EscapeSequences.beautify(
                 ERROR_STYLE,
-                "'%s' is not a recognized command.")).formatted(input));
-        doHelp();
+                "'%s' is not a recognized command. Type %s for known commands."))
+                .formatted(
+                        input,
+                        EscapeSequences.beautify(COMMAND_STYLE, "help")));
     }
 
-    private void doHelp() {
+    private void doHelp(CLIClient.Status state) {
         showMessage(switch (state) {
             case SIGNED_IN -> SIGNED_IN_HELP;
             case PLAYING -> PLAYING_HELP;
