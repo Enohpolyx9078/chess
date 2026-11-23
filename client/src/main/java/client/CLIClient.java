@@ -130,7 +130,9 @@ public class CLIClient implements Observer {
             case NOTIFICATION -> loadNotification((NotificationMessage) message);
             case ERROR -> loadError((ErrorMessage) message);
         }
-        handlePlaying("redraw");
+        if (state == Status.PLAYING) {
+            handlePlaying("redraw");
+        }
         showPrompt((EscapeSequences.beautify(
                 EscapeSequences.SET_TEXT_BOLD,
                 "[%s] >>> "))
