@@ -1,13 +1,7 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
 import com.google.gson.Gson;
-import facade.NetworkException;
-import facade.ServerFacade;
 import jakarta.websocket.DeploymentException;
-import model.SingleGameResponse;
-import ui.BoardPrinter;
 import ui.DisplayUtilities;
 import ui.EscapeSequences;
 import websocket.messages.ErrorMessage;
@@ -17,8 +11,6 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLIClient implements Observer {
