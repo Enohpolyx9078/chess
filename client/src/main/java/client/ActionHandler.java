@@ -104,10 +104,11 @@ public class ActionHandler {
     }
 
     public DisplayUtilities.Status handlePlaying(String input) {
+        drawScreen();
         return switch (input.toLowerCase().trim()) {
             case "help" -> doHelp(DisplayUtilities.Status.PLAYING);
-            case "redraw" -> drawScreen();
             case "leave" -> doLeave();
+            case "redraw" -> null;
             default -> doUnknown(input);
         };
     }
@@ -115,8 +116,8 @@ public class ActionHandler {
     public DisplayUtilities.Status handleObserving(String input) {
         return switch (input.toLowerCase().trim()) {
             case "help" -> doHelp(DisplayUtilities.Status.OBSERVING);
-            case "redraw" -> drawScreen();
             case "leave" -> doLeave();
+            case "redraw" -> null;
             default -> doUnknown(input);
         };
     }
@@ -328,7 +329,7 @@ public class ActionHandler {
         return DisplayUtilities.Status.SIGNED_OUT;
     }
 
-    private DisplayUtilities.Status drawScreen() {
+    private void drawScreen() {
         du.showMessage(EscapeSequences.CLEAR_SCREEN);
         String message = manager.getLatestMessage();
         ChessGame game = manager.getGame();
@@ -343,7 +344,6 @@ public class ActionHandler {
                 BoardPrinter.printBoardBlack(board);
             }
         }
-        return null;
     }
 
     private DisplayUtilities.Status doLeave() {
