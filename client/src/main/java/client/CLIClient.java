@@ -8,6 +8,7 @@ import facade.ServerFacade;
 import jakarta.websocket.DeploymentException;
 import model.SingleGameResponse;
 import ui.BoardPrinter;
+import ui.DisplayUtilities;
 import ui.EscapeSequences;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -21,13 +22,13 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLIClient implements Observer {
-    private static final String SYSTEM_STYLE = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
     private static final String SERVER_URL = "http://localhost:8080";
 
     private final Gson serializer = ServerMessage.createMessageSerializer();
     private final ActionHandler actionHandler = new ActionHandler(SERVER_URL, this);
+    private final DisplayUtilities du = new DisplayUtilities();
 
-    private Status state = Status.SIGNED_OUT;
+    private DisplayUtilities.Status state = DisplayUtilities.Status.SIGNED_OUT;
     private static Scanner scanner;
 
     public CLIClient() throws DeploymentException, IOException, URISyntaxException {
@@ -36,35 +37,33 @@ public class CLIClient implements Observer {
     public void run() {
         try {
             scanner = new Scanner(System.in);
-            showMessage(
+            du.showMessage(
                     EscapeSequences.beautify(
-                            SYSTEM_STYLE,
+                            du.systemStyle,
                             "♕ 240 Chess Client ♕"));
-            showMessage(EscapeSequences.beautify(
+            du.showMessage(EscapeSequences.beautify(
                     EscapeSequences.SET_TEXT_FAINT,
                     "Type Help to get started."));
-            while (!state.equals(Status.QUIT)) {
-                showPrompt((EscapeSequences.beautify(
+            while (!state.equals(DisplayUtilities.Status.QUIT)) {
+                du.showPrompt((EscapeSequences.beautify(
                                 EscapeSequences.SET_TEXT_BOLD,
                                 "[%s] >>> "))
                         .formatted(state.name()));
                 String input = scanner.nextLine();
-                Status changed = null;
-                if (state == Status.SIGNED_OUT) {
-                    changed = actionHandler.handlePreLogin(input);
-                } else if (state == Status.PLAYING) {
-                    changed = actionHandler.handlePlaying(input);
-                } else if (state == Status.OBSERVING) {
-                    changed = actionHandler.handleObserving(input);
-                } else {
-                    changed = actionHandler.handlePostLogin(input);
-                }
+
+                DisplayUtilities.Status changed;
+                changed = switch(state) {
+                    case SIGNED_IN -> actionHandler.handlePostLogin(input);
+                    case PLAYING -> actionHandler.handlePlaying(input);
+                    case OBSERVING -> actionHandler.handleObserving(input);
+                    default -> actionHandler.handlePreLogin(input);
+                };
                 if (changed != null) {
                     state = changed;
                 }
             }
-            showMessage(EscapeSequences.beautify(
-                    SYSTEM_STYLE,
+            du.showMessage(EscapeSequences.beautify(
+                    du.systemStyle,
                     "Thanks for playing!"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -81,20 +80,12 @@ public class CLIClient implements Observer {
             case NOTIFICATION -> actionHandler.loadNotification((NotificationMessage) message);
             case ERROR -> actionHandler.loadError((ErrorMessage) message);
         }
-        if (state == CLIClient.Status.PLAYING) {
-            handlePlaying("redraw");
+        if (state == DisplayUtilities.Status.PLAYING) {
+            actionHandler.handlePlaying("redraw");
         }
-        showPrompt((EscapeSequences.beautify(
+        du.showPrompt((EscapeSequences.beautify(
                 EscapeSequences.SET_TEXT_BOLD,
                 "[%s] >>> "))
                 .formatted(state.name()));
-    }
-
-    public enum Status {
-        SIGNED_OUT,
-        SIGNED_IN,
-        PLAYING,
-        OBSERVING,
-        QUIT
     }
 }
