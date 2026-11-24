@@ -139,9 +139,9 @@ public class ActionHandler {
     private DisplayUtilities.Status doUnknown(String input) {
         du.showMessage((EscapeSequences.beautify(
                 du.errorStyle,
-                "'%s' is not a recognized command. Type %s for known commands."))
+                "'%s' is not a recognized command.".formatted(input))));
+        du.showMessage("Type %s for known commands."
                 .formatted(
-                        input,
                         EscapeSequences.beautify(du.commandStyle, "help")));
         return null;
     }
