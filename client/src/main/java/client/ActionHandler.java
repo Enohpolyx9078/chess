@@ -440,7 +440,6 @@ public class ActionHandler {
         }
         if (game != null) {
             ChessBoard board = game.getBoard();
-            BoardPrinter.printHighlightBlack(new ChessPosition(2, 1), board);
             if (manager.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 BoardPrinter.printBoardWhite(board);
             } else {

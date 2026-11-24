@@ -56,19 +56,39 @@ public class BoardPrinter {
         }
         return false;
     }
+
+    private static String setBgYellow(ChessPiece currentPiece) {
+        final String tColor = currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE ?
+                EscapeSequences.SET_TEXT_COLOR_BLUE :
+                EscapeSequences.SET_TEXT_COLOR_RED;
+        return EscapeSequences.SET_BG_COLOR_YELLOW + tColor + EscapeSequences.SET_TEXT_BOLD;
+    }
+
+    private static boolean isStart(ChessPosition start, int rowIndex, int col) {
+        if (start == null) {
+            return false;
+        }
+        return (start.getRow() - 1) == rowIndex &&
+                (start.getColumn() - 1) == col;
+    }
+
     private static void printCharLine(ChessGame.TeamColor color, ChessPiece[] row, char label,
                                       boolean reverse, Collection<ChessPosition> targets,
-                                      int rowIndex) {
+                                      int rowIndex, ChessPosition start) {
         ChessGame.TeamColor currentColor = color;
         System.out.print(" " + label + " ");
         for (int i = 0; i < row.length; i++) {
             ChessPiece chessPiece = reverse ? row[row.length - (i + 1)] : row[i];
-            String beginColor = setBeginColor(
-                    currentColor,
-                    chessPiece,
-                    matchesTarget(reverse ? row.length - (rowIndex + 1) : rowIndex,
-                            i,
-                            targets));
+            int adjustedRowIndex = reverse ? rowIndex : row.length - (rowIndex + 1);
+            int adjustedColIndex = reverse ? i : row.length - (rowIndex + 1);
+            String beginColor = isStart(start, adjustedRowIndex, adjustedColIndex) ?
+                setBgYellow(chessPiece) :
+                setBeginColor(
+                        currentColor,
+                        chessPiece,
+                        matchesTarget(adjustedRowIndex,
+                                i,
+                                targets));
             System.out.print(beginColor + " ".repeat(WIDTH / 2) +
                     getIcon(chessPiece) +
                     " ".repeat(WIDTH / 2) + RESET);
@@ -90,8 +110,8 @@ public class BoardPrinter {
 
     static public void printRow(ChessPiece[] row, ChessGame.TeamColor startColor,
                                 char label, boolean reverse, Collection<ChessPosition> targets,
-                                int rowIndex) {
-        printCharLine(startColor, row, label, reverse, targets, rowIndex);
+                                int rowIndex, ChessPosition start) {
+        printCharLine(startColor, row, label, reverse, targets, rowIndex, start);
     }
 
     static public void printHighlightBlack(ChessPosition start, ChessBoard board) {
@@ -103,17 +123,32 @@ public class BoardPrinter {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
         printLetterLine(true);
         for (var i = 0; i < board.getSize(); i++) {
-            printRow(board.getRow(i), currentColor, COORDS[i], true, targets, i);
+            printRow(board.getRow(i), currentColor, COORDS[i], true, targets, i, start);
             currentColor = swapColor(currentColor);
         }
         printLetterLine(true);
+    }
+
+    static public void printHighlightWhite(ChessPosition start, ChessBoard board) {
+        ChessPiece piece = board.getPiece(start);
+        Collection<ChessMove> moves = piece.pieceMoves(board, start);
+        Collection<ChessPosition> targets = new ArrayList<>();
+        moves.forEach((m) -> targets.add(m.getEndPosition()));
+
+        ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        printLetterLine(false);
+        for (var i = board.getSize() - 1; i >= 0; i--) {
+            printRow(board.getRow(i), currentColor, COORDS[i], false, targets, i, start);
+            currentColor = swapColor(currentColor);
+        }
+        printLetterLine(false);
     }
 
     static public void printBoardBlack(ChessBoard board) {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
         printLetterLine(true);
         for (var i = 0; i < board.getSize(); i++) {
-            printRow(board.getRow(i), currentColor, COORDS[i], true, new ArrayList<>(), i);
+            printRow(board.getRow(i), currentColor, COORDS[i], true, new ArrayList<>(), i, null);
             currentColor = swapColor(currentColor);
         }
         printLetterLine(true);
@@ -123,7 +158,7 @@ public class BoardPrinter {
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
         printLetterLine(false);
         for (var i = board.getSize() - 1; i >= 0; i--) {
-            printRow(board.getRow(i), currentColor, COORDS[i], false, new ArrayList<>(), i);
+            printRow(board.getRow(i), currentColor, COORDS[i], false, new ArrayList<>(), i, null);
             currentColor = swapColor(currentColor);
         }
         printLetterLine(false);
