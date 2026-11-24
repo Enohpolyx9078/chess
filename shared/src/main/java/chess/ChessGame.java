@@ -120,6 +120,15 @@ public class ChessGame {
         return valid;
     }
 
+    public boolean isValidMove(ChessMove move) {
+        final Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        final ChessPiece selected = currentBoard.getPiece(move.getStartPosition());
+
+        return valid != null &&
+                valid.contains(move) &&
+                selected.getTeamColor() == getTeamTurn();
+    }
+
     /**
      * Makes a move in the chess game
      *
@@ -127,22 +136,20 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        final Collection<ChessMove> valid = validMoves(move.getStartPosition());
         final ChessPiece selected = currentBoard.getPiece(move.getStartPosition());
-        if (valid != null && valid.contains(move) && selected.getTeamColor() == getTeamTurn()) {
-            // set the end space to selected or promotion piece, if it's not null
-            final ChessPiece.PieceType type = move.getPromotionPiece();
-            currentBoard.addPiece(
-                    move.getEndPosition(),
-                    (type != null) ?
-                            new ChessPiece(selected.getTeamColor(), type) :
-                            selected
-            );
-            currentBoard.addPiece(move.getStartPosition(), null);
-            teamTurn = (teamTurn == TeamColor.BLACK) ? TeamColor.WHITE : TeamColor.BLACK;
-        } else {
+        if (!isValidMove(move)) {
             throw new InvalidMoveException();
         }
+        // set the end space to selected or promotion piece, if it's not null
+        final ChessPiece.PieceType type = move.getPromotionPiece();
+        currentBoard.addPiece(
+                move.getEndPosition(),
+                (type != null) ?
+                        new ChessPiece(selected.getTeamColor(), type) :
+                        selected
+        );
+        currentBoard.addPiece(move.getStartPosition(), null);
+        teamTurn = (teamTurn == TeamColor.BLACK) ? TeamColor.WHITE : TeamColor.BLACK;
     }
 
     public void resign() {
