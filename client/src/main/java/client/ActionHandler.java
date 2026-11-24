@@ -435,7 +435,7 @@ public class ActionHandler {
 
     private DisplayUtilities.Status doHighlight() {
         try {
-            du.showPrompt("Start Position: ");
+            du.showPrompt("Piece Position: ");
             String target = SCANNER.next("[a-hA-H][1-%d]"
                     .formatted(manager.getGame().getBoard().getSize()));
             SCANNER.nextLine();

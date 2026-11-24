@@ -79,15 +79,14 @@ public class BoardPrinter {
         System.out.print(" " + label + " ");
         for (int i = 0; i < row.length; i++) {
             ChessPiece chessPiece = reverse ? row[row.length - (i + 1)] : row[i];
-            int adjustedRowIndex = reverse ? rowIndex : row.length - (rowIndex + 1);
-            int adjustedColIndex = reverse ? i : row.length - (rowIndex + 1);
-            String beginColor = isStart(start, adjustedRowIndex, adjustedColIndex) ?
+            int adjustedColIndex = reverse ? row.length - (i + 1) : i;
+            String beginColor = isStart(start, rowIndex, adjustedColIndex) ?
                 setBgYellow(chessPiece) :
                 setBeginColor(
                         currentColor,
                         chessPiece,
-                        matchesTarget(adjustedRowIndex,
-                                i,
+                        matchesTarget(rowIndex,
+                                adjustedColIndex,
                                 targets));
             System.out.print(beginColor + " ".repeat(WIDTH / 2) +
                     getIcon(chessPiece) +
