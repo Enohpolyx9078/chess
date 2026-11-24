@@ -123,7 +123,7 @@ public class ActionHandler {
     }
 
     public void loadError(ErrorMessage message) {
-        manager.setLatestMessage(EscapeSequences.beautify(du.errorStyle, message.getMsg()));
+        manager.setLatestError(EscapeSequences.beautify(du.errorStyle, message.getMsg()));
     }
 
     public void loadNotification(NotificationMessage message) {
@@ -332,7 +332,11 @@ public class ActionHandler {
     private void drawScreen() {
         du.showMessage(EscapeSequences.CLEAR_SCREEN);
         String message = manager.getLatestMessage();
+        String error = manager.getLatestError();
         ChessGame game = manager.getGame();
+        if (error != null) {
+            du.showMessage(error);
+        }
         if (message != null) {
             du.showMessage(message);
         }

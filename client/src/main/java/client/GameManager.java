@@ -6,16 +6,22 @@ public class GameManager {
     private ChessGame game;
     private ChessGame.TeamColor teamColor;
     private String latestMessage;
+    private String latestError;
     private int gameCode;
 
     public void reset() {
         game = null;
         teamColor = null;
         latestMessage = null;
+        latestError = null;
     }
 
     public int getGameCode() {
         return gameCode;
+    }
+
+    public String getLatestError() {
+        return latestError;
     }
 
     public String getLatestMessage() {
@@ -32,6 +38,10 @@ public class GameManager {
 
     public void setGameCode(int gameCode) {
         this.gameCode = gameCode;
+    }
+
+    public void setLatestError(String latestError) {
+        this.latestError = latestError;
     }
 
     public void setLatestMessage(String latestMessage) {
