@@ -128,6 +128,10 @@ public class PlayService {
             notifyAll(new NotificationMessage(game.blackUsername() + " wins!"), room);
         } else if (updated.hasLost(ChessGame.TeamColor.BLACK)) {
             notifyAll(new NotificationMessage(game.whiteUsername() + " wins!"), room);
+        } else if (updated.isInCheck(ChessGame.TeamColor.WHITE)) {
+            notifyAll(new NotificationMessage(game.whiteUsername() + " is in check!"), room);
+        } else if (updated.isInCheck(ChessGame.TeamColor.BLACK)) {
+            notifyAll(new NotificationMessage(game.blackUsername() + " is in check!"), room);
         }
     }
 
