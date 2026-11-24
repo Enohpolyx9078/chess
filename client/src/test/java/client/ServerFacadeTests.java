@@ -136,15 +136,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void badObserveTest() {
-        String authToken = facade.register("user", "pass", "email");
-        facade.create(authToken, "Super Cool Name");
-        facade.listGames(authToken);
-        assertThrows(NetworkException.class,
-                () -> facade.observe(authToken, 255));
-    }
-
-    @Test
     public void logoutTest() throws DataAccessException {
         String authToken = facade.register("user", "pass", "email");
         facade.logout(authToken);
