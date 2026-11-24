@@ -1,8 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
+import chess.*;
 import facade.NetworkException;
 import facade.ServerFacade;
 import jakarta.websocket.DeploymentException;
@@ -353,23 +351,59 @@ public class ActionHandler {
         return DisplayUtilities.Status.SIGNED_IN;
     }
 
+    private boolean isPromotion(String start, String end, ChessBoard board) {
+        try {
+            ChessPiece piece = board.getPiece(new ChessPosition(start));
+            if (piece == null || piece.getPieceType() != ChessPiece.PieceType.PAWN) {
+                return false;
+            }
+            String endRow = end.split("")[1];
+            return Objects.equals(endRow, "1") || Objects.equals(endRow, "" + board.getSize());
+        } catch (IndexOutOfBoundsException _) {
+            return false;
+        }
+    }
+
     private DisplayUtilities.Status doMove() {
         try {
-            du.showPrompt("Start Position: ");
-            String start = SCANNER.next("[a-hA-H][1-8]");
-            du.showPrompt("End Position: ");
-            String end = SCANNER.next("[a-hA-H][1-8]");
+            ChessGame game = manager.getGame();
+            ChessBoard board = game.getBoard();
+            if (manager.getTeamColor() != game.getTeamTurn()) {
+                du.showMessage(EscapeSequences.beautify(
+                        du.errorStyle,
+                        "It is not your turn."
+                ));
+                return null;
+            }
 
-            //TODO if a pawn reached the end of the board, offer a promotion piece
-            // if the promotion is offered, it can't be null
-            String promotion = "";
+            du.showPrompt("Start Position: ");
+            String start = SCANNER.next("[a-hA-H][1-%d]".formatted(board.getSize()));
+            du.showPrompt("End Position: ");
+            String end = SCANNER.next("[a-hA-H][1-%d]".formatted(board.getSize()));
+            String promotion = null;
+            if (isPromotion(start, end, board)) {
+                du.showPrompt("Promotion: ");
+                promotion = SCANNER.nextLine();
+            }
 
             ChessMove move = new ChessMove(start, end, promotion);
+            //TODO validate the move client-side
+            // if the promotion is offered, it can't be null (the MovementValidator should handle this already)
+
             facade.move(move, authToken, manager.getGameCode());
         } catch (InputMismatchException _) {
             du.showMessage(EscapeSequences.beautify(
                     du.errorStyle,
-                    "Invalid position. Positions must be of the form 'a1'"));
+                    "Invalid position."));
+            du.showMessage("Positions must be of the form %s".formatted(
+                    EscapeSequences.beautify(du.commandStyle, "'a1'")
+            ));
+            du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
+                    EscapeSequences.beautify(du.commandStyle, "Q"),
+                    EscapeSequences.beautify(du.commandStyle, "R"),
+                    EscapeSequences.beautify(du.commandStyle, "N"),
+                    EscapeSequences.beautify(du.commandStyle, "B")
+            ));
         } catch (NetworkException e) {
             du.showNetworkError(e);
         }
