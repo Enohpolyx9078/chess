@@ -108,6 +108,7 @@ public class ActionHandler {
             case "redraw" -> null;
             case "resign" -> doResign();
             case "move" -> doMove();
+            case "highlight" -> doHighlight();
             default -> doUnknown(input);
         };
     }
@@ -117,6 +118,7 @@ public class ActionHandler {
             case "help" -> doHelp(DisplayUtilities.Status.OBSERVING);
             case "leave" -> doLeave();
             case "redraw" -> null;
+            case "highlight" -> doHighlight();
             default -> doUnknown(input);
         };
     }
@@ -367,6 +369,20 @@ public class ActionHandler {
                 "Invalid position."));
     }
 
+    private void showBadPosition(){
+        SCANNER.nextLine();
+        showInvalidMove();
+        du.showMessage("Positions must be of the form %s".formatted(
+                EscapeSequences.beautify(du.commandStyle, "'a1'")
+        ));
+        du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
+                EscapeSequences.beautify(du.commandStyle, "Q"),
+                EscapeSequences.beautify(du.commandStyle, "R"),
+                EscapeSequences.beautify(du.commandStyle, "N"),
+                EscapeSequences.beautify(du.commandStyle, "B")
+        ));
+    }
+
     private DisplayUtilities.Status doMove() {
         try {
             ChessGame game = manager.getGame();
@@ -410,40 +426,61 @@ public class ActionHandler {
 
             facade.move(move, authToken, manager.getGameCode());
         } catch (InputMismatchException _) {
-            SCANNER.nextLine();
-            showInvalidMove();
-            du.showMessage("Positions must be of the form %s".formatted(
-                    EscapeSequences.beautify(du.commandStyle, "'a1'")
-            ));
-            du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
-                    EscapeSequences.beautify(du.commandStyle, "Q"),
-                    EscapeSequences.beautify(du.commandStyle, "R"),
-                    EscapeSequences.beautify(du.commandStyle, "N"),
-                    EscapeSequences.beautify(du.commandStyle, "B")
-            ));
+            showBadPosition();
         } catch (NetworkException e) {
             du.showNetworkError(e);
         }
         return null;
     }
 
-    private void drawScreen() {
+    private DisplayUtilities.Status doHighlight() {
+        try {
+            du.showPrompt("Start Position: ");
+            String target = SCANNER.next("[a-hA-H][1-%d]"
+                    .formatted(manager.getGame().getBoard().getSize()));
+            SCANNER.nextLine();
+            ChessPosition position = new ChessPosition(target);
+            drawHighlight(position);
+        } catch (InputMismatchException _) {
+            showBadPosition();
+        }
+        return null;
+    }
+
+    private void drawNotifications() {
         du.showMessage(EscapeSequences.CLEAR_SCREEN);
         String message = manager.getLatestMessage();
         String error = manager.getLatestError();
-        ChessGame game = manager.getGame();
         if (error != null) {
             du.showMessage(EscapeSequences.beautify(du.errorStyle, error));
         }
         if (message != null) {
             du.showMessage(EscapeSequences.beautify(du.notificationStyle, message));
         }
+    }
+
+    private void drawScreen() {
+        drawNotifications();
+        ChessGame game = manager.getGame();
         if (game != null) {
             ChessBoard board = game.getBoard();
             if (manager.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 BoardPrinter.printBoardWhite(board);
             } else {
                 BoardPrinter.printBoardBlack(board);
+            }
+        }
+    }
+
+    private void drawHighlight(ChessPosition position) {
+        drawNotifications();
+        ChessGame game = manager.getGame();
+        if (game != null) {
+            ChessBoard board = game.getBoard();
+            if (manager.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                BoardPrinter.printHighlightWhite(position, board);
+            } else {
+                BoardPrinter.printHighlightBlack(position, board);
             }
         }
     }
