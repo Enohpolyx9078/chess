@@ -65,7 +65,6 @@ public class CLIClient implements Observer {
     }
 
     public void notify(String msg) {
-        System.out.print("[NOTIFICATION] >>> " + msg);
         ServerMessage message = serializer.fromJson(msg, ServerMessage.class);
         switch (message.getServerMessageType()) {
             case LOAD_GAME -> actionHandler.loadGame((LoadGameMessage) message);
