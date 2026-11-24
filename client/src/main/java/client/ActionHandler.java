@@ -14,10 +14,7 @@ import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.InputMismatchException;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class ActionHandler {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -382,8 +379,12 @@ public class ActionHandler {
             String end = SCANNER.next("[a-hA-H][1-%d]".formatted(board.getSize()));
             String promotion = null;
             if (isPromotion(start, end, board)) {
+                Collection<String> promotions = List.of("q", "r", "n", "b");
                 du.showPrompt("Promotion: ");
                 promotion = SCANNER.nextLine();
+                if (!promotions.contains(promotion.toLowerCase())) {
+                    throw new InputMismatchException();
+                }
             }
 
             ChessMove move = new ChessMove(start, end, promotion);
