@@ -8,6 +8,7 @@ import jakarta.websocket.DeploymentException;
 import model.ListGamesResponse;
 import model.SingleGameResponse;
 import ui.EscapeSequences;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
@@ -187,6 +188,19 @@ public class ServerFacade {
         }
     }
 
+    public void move(ChessMove move, String authToken, int gameCode) {
+        int gameID = getGameId(gameCode);
+        try {
+            connector.sendCommand(new MakeMoveCommand(
+                    UserGameCommand.CommandType.MAKE_MOVE,
+                    authToken,
+                    gameID,
+                    move));
+        } catch (IOException e) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
+    }
+
     private int getGameId(int gameCode) {
         if (gameCode > currentGames.size() || gameCode <= 0) {
             return -1;
@@ -196,10 +210,5 @@ public class ServerFacade {
 
     private static boolean isError(HttpResponse<String> resp) {
         return (resp.statusCode() < 200 || resp.statusCode() >= 300);
-    }
-
-    public void move(ChessMove move, String authToken, int gameCode) {
-        //TODO
-        System.out.println("Not implemented :(");
     }
 }
