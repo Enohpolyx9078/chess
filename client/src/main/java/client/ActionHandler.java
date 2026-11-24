@@ -114,6 +114,7 @@ public class ActionHandler {
     }
 
     public DisplayUtilities.Status handleObserving(String input) {
+        drawScreen();
         return switch (input.toLowerCase().trim()) {
             case "help" -> doHelp(DisplayUtilities.Status.OBSERVING);
             case "leave" -> doLeave();
@@ -303,6 +304,7 @@ public class ActionHandler {
             // interact with the Facade to watch the game
             facade.observe(authToken, gameId);
             manager.setGameCode(gameId);
+            manager.setTeamColor(ChessGame.TeamColor.WHITE);
             return DisplayUtilities.Status.OBSERVING;
         } catch (InputMismatchException _) {
             du.showMessage((EscapeSequences.beautify(

@@ -73,6 +73,8 @@ public class CLIClient implements Observer {
         }
         if (state == DisplayUtilities.Status.PLAYING) {
             actionHandler.handlePlaying("redraw");
+        } else if (state == DisplayUtilities.Status.OBSERVING) {
+            actionHandler.handleObserving("redraw");
         }
         du.showPrompt((EscapeSequences.beautify(
                 EscapeSequences.SET_TEXT_BOLD,
