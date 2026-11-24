@@ -361,6 +361,21 @@ public class ActionHandler {
         }
     }
 
+    private void showInvalidMove() {
+        du.showMessage(EscapeSequences.beautify(
+                du.errorStyle,
+                "Invalid position."));
+        du.showMessage("Positions must be of the form %s".formatted(
+                EscapeSequences.beautify(du.commandStyle, "'a1'")
+        ));
+        du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
+                EscapeSequences.beautify(du.commandStyle, "Q"),
+                EscapeSequences.beautify(du.commandStyle, "R"),
+                EscapeSequences.beautify(du.commandStyle, "N"),
+                EscapeSequences.beautify(du.commandStyle, "B")
+        ));
+    }
+
     private DisplayUtilities.Status doMove() {
         try {
             ChessGame game = manager.getGame();
@@ -388,23 +403,14 @@ public class ActionHandler {
             }
 
             ChessMove move = new ChessMove(start, end, promotion);
-            //TODO validate the move client-side
-            // if the promotion is offered, it can't be null (the MovementValidator should handle this already)
+            if (!game.isValidMove(move)) {
+                showInvalidMove();
+                return null;
+            }
 
             facade.move(move, authToken, manager.getGameCode());
         } catch (InputMismatchException _) {
-            du.showMessage(EscapeSequences.beautify(
-                    du.errorStyle,
-                    "Invalid position."));
-            du.showMessage("Positions must be of the form %s".formatted(
-                    EscapeSequences.beautify(du.commandStyle, "'a1'")
-            ));
-            du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
-                    EscapeSequences.beautify(du.commandStyle, "Q"),
-                    EscapeSequences.beautify(du.commandStyle, "R"),
-                    EscapeSequences.beautify(du.commandStyle, "N"),
-                    EscapeSequences.beautify(du.commandStyle, "B")
-            ));
+            showInvalidMove();
         } catch (NetworkException e) {
             du.showNetworkError(e);
         }
