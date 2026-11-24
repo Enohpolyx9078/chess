@@ -478,11 +478,10 @@ public class ActionHandler {
         drawNotifications();
         ChessGame game = manager.getGame();
         if (game != null) {
-            ChessBoard board = game.getBoard();
             if (manager.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                BoardPrinter.printHighlightWhite(position, board);
+                BoardPrinter.printHighlightWhite(position, game);
             } else {
-                BoardPrinter.printHighlightBlack(position, board);
+                BoardPrinter.printHighlightBlack(position, game);
             }
         }
     }

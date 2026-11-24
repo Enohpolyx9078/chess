@@ -58,9 +58,12 @@ public class BoardPrinter {
     }
 
     private static String setBgYellow(ChessPiece currentPiece) {
-        final String tColor = currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE ?
-                EscapeSequences.SET_TEXT_COLOR_BLUE :
-                EscapeSequences.SET_TEXT_COLOR_RED;
+        String tColor = "";
+        if (currentPiece != null) {
+            tColor = currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE ?
+                    EscapeSequences.SET_TEXT_COLOR_BLUE :
+                    EscapeSequences.SET_TEXT_COLOR_RED;
+        }
         return EscapeSequences.SET_BG_COLOR_YELLOW + tColor + EscapeSequences.SET_TEXT_BOLD;
     }
 
@@ -113,13 +116,23 @@ public class BoardPrinter {
         printCharLine(startColor, row, label, reverse, targets, rowIndex, start);
     }
 
-    static public void printHighlightBlack(ChessPosition start, ChessBoard board) {
+    static private Collection<ChessPosition> buildTargets(ChessPosition start, ChessGame game) {
+        ChessBoard board = game.getBoard();
         ChessPiece piece = board.getPiece(start);
-        Collection<ChessMove> moves = piece.pieceMoves(board, start);
+        if (piece == null) {
+            return new ArrayList<>();
+        }
+        Collection<ChessMove> moves = game.validMoves(start);
         Collection<ChessPosition> targets = new ArrayList<>();
         moves.forEach((m) -> targets.add(m.getEndPosition()));
+        return targets;
+    }
 
+    static public void printHighlightBlack(ChessPosition start, ChessGame game) {
+        Collection<ChessPosition> targets = buildTargets(start, game);
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        ChessBoard board = game.getBoard();
+
         printLetterLine(true);
         for (var i = 0; i < board.getSize(); i++) {
             printRow(board.getRow(i), currentColor, COORDS[i], true, targets, i, start);
@@ -128,13 +141,11 @@ public class BoardPrinter {
         printLetterLine(true);
     }
 
-    static public void printHighlightWhite(ChessPosition start, ChessBoard board) {
-        ChessPiece piece = board.getPiece(start);
-        Collection<ChessMove> moves = piece.pieceMoves(board, start);
-        Collection<ChessPosition> targets = new ArrayList<>();
-        moves.forEach((m) -> targets.add(m.getEndPosition()));
-
+    static public void printHighlightWhite(ChessPosition start, ChessGame game) {
+        Collection<ChessPosition> targets = buildTargets(start, game);
         ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        ChessBoard board = game.getBoard();
+
         printLetterLine(false);
         for (var i = board.getSize() - 1; i >= 0; i--) {
             printRow(board.getRow(i), currentColor, COORDS[i], false, targets, i, start);
