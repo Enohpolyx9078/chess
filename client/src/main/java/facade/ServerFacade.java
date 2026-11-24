@@ -174,6 +174,18 @@ public class ServerFacade {
         }
     }
 
+    public void resign(String authToken, int gameCode) {
+        int gameID = getGameId(gameCode);
+        try {
+            connector.sendCommand(new UserGameCommand(
+                    UserGameCommand.CommandType.RESIGN,
+                    authToken,
+                    gameID));
+        } catch (IOException e) {
+            throw new NetworkException("Request incomplete. Please check your internet connection.");
+        }
+    }
+
     private int getGameId(int gameCode) {
         if (gameCode > currentGames.size() || gameCode <= 0) {
             return -1;

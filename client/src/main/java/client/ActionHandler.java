@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ActionHandler {
@@ -109,6 +110,7 @@ public class ActionHandler {
             case "help" -> doHelp(DisplayUtilities.Status.PLAYING);
             case "leave" -> doLeave();
             case "redraw" -> null;
+            case "resign" -> doResign();
             default -> doUnknown(input);
         };
     }
@@ -329,6 +331,26 @@ public class ActionHandler {
         return DisplayUtilities.Status.SIGNED_OUT;
     }
 
+    private DisplayUtilities.Status doResign() {
+        du.showPrompt("Really Resign? (Y/n): ");
+        if (!Objects.equals(SCANNER.nextLine(), "Y")) {
+            return null;
+        }
+        try {
+            facade.resign(authToken, manager.getGameCode());
+        } catch (NetworkException e) {
+            du.showNetworkError(e);
+        }
+        return null;
+    }
+
+    private DisplayUtilities.Status doLeave() {
+        facade.leave(authToken, manager.getGameCode());
+        manager.reset();
+        du.showMessage(EscapeSequences.beautify(du.systemStyle, "You have left the game."));
+        return DisplayUtilities.Status.SIGNED_IN;
+    }
+
     private void drawScreen() {
         du.showMessage(EscapeSequences.CLEAR_SCREEN);
         String message = manager.getLatestMessage();
@@ -348,11 +370,5 @@ public class ActionHandler {
                 BoardPrinter.printBoardBlack(board);
             }
         }
-    }
-
-    private DisplayUtilities.Status doLeave() {
-        facade.leave(authToken, manager.getGameCode());
-        manager.reset();
-        return DisplayUtilities.Status.SIGNED_IN;
     }
 }
