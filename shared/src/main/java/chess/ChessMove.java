@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -19,6 +21,18 @@ public class ChessMove {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
+    }
+
+    public ChessMove(String startPosition, String endPosition, String promotionPiece) {
+        Map<String, ChessPiece.PieceType> pieces = Map.of(
+                "q", ChessPiece.PieceType.QUEEN,
+                "r", ChessPiece.PieceType.ROOK,
+                "n", ChessPiece.PieceType.KNIGHT,
+                "b", ChessPiece.PieceType.BISHOP
+        );
+        this.startPosition = new ChessPosition(startPosition);
+        this.endPosition = new ChessPosition(endPosition);
+        this.promotionPiece = pieces.get(promotionPiece.toLowerCase());
     }
 
     // Copy constructor

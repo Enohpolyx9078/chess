@@ -1,6 +1,7 @@
 package facade;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import client.Observer;
 import com.google.gson.Gson;
 import jakarta.websocket.DeploymentException;
@@ -195,5 +196,10 @@ public class ServerFacade {
 
     private static boolean isError(HttpResponse<String> resp) {
         return (resp.statusCode() < 200 || resp.statusCode() >= 300);
+    }
+
+    public void move(ChessMove move, String authToken, int gameCode) {
+        //TODO
+        System.out.println("Not implemented :(");
     }
 }

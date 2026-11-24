@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -16,6 +17,22 @@ public class ChessPosition {
     public ChessPosition(int row, int col) {
         this.row = row;
         this.col = col;
+    }
+
+    public ChessPosition(String position) {
+        Map<String, Integer> cols = Map.of(
+                "a", 1,
+                "b", 2,
+                "c", 3,
+                "d", 4,
+                "e", 5,
+                "f", 6,
+                "g", 7,
+                "h", 8
+        );
+        String[] coordinates = position.split("");
+        this.row = Integer.parseInt(coordinates[1]);
+        this.col = cols.get(coordinates[0]);
     }
 
     /**

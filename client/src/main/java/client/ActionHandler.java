@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
 import facade.NetworkException;
 import facade.ServerFacade;
 import jakarta.websocket.DeploymentException;
@@ -111,6 +112,7 @@ public class ActionHandler {
             case "leave" -> doLeave();
             case "redraw" -> null;
             case "resign" -> doResign();
+            case "move" -> doMove();
             default -> doUnknown(input);
         };
     }
@@ -349,6 +351,27 @@ public class ActionHandler {
         manager.reset();
         du.showMessage(EscapeSequences.beautify(du.systemStyle, "You have left the game."));
         return DisplayUtilities.Status.SIGNED_IN;
+    }
+
+    private DisplayUtilities.Status doMove() {
+        try {
+            du.showPrompt("Start Position: ");
+            String start = SCANNER.next("%c%d");
+            du.showPrompt("End Position: ");
+            String end = SCANNER.next("%c%d");
+            //TODO if a pawn reached the end of the board, offer a promotion piece
+            // if the promotion is offered, it can't be null
+            String promotion = "";
+            ChessMove move = new ChessMove(start, end, promotion);
+            facade.move(move, authToken, manager.getGameCode());
+        } catch (InputMismatchException _) {
+            du.showMessage(EscapeSequences.beautify(
+                    du.errorStyle,
+                    "Positions must be of the form 'a1'"));
+        } catch (NetworkException e) {
+            du.showNetworkError(e);
+        }
+        return null;
     }
 
     private void drawScreen() {
