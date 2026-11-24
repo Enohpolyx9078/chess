@@ -32,7 +32,9 @@ public class ChessMove {
         );
         this.startPosition = new ChessPosition(startPosition);
         this.endPosition = new ChessPosition(endPosition);
-        this.promotionPiece = pieces.get(promotionPiece.toLowerCase());
+        this.promotionPiece = promotionPiece == null ?
+                null :
+                pieces.get(promotionPiece.toLowerCase());
     }
 
     // Copy constructor
