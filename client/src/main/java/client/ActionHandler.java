@@ -378,6 +378,13 @@ public class ActionHandler {
                 ));
                 return null;
             }
+            if (game.isGameOver()) {
+                du.showMessage(EscapeSequences.beautify(
+                        du.errorStyle,
+                        "Game is over."
+                ));
+                return null;
+            }
 
             du.showPrompt("Start Position: ");
             String start = SCANNER.next("[a-hA-H][1-%d]".formatted(board.getSize()));
