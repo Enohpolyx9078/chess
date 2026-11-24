@@ -6,6 +6,7 @@ public final class DisplayUtilities {
     public final String commandStyle = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_BLUE;
     public final String errorStyle = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_RED;
     public final String systemStyle = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_GREEN;
+    public final String notificationStyle = EscapeSequences.SET_TEXT_BOLD + EscapeSequences.SET_TEXT_COLOR_YELLOW;
 
     public void showMessage(String msg) {
         System.out.println(msg);

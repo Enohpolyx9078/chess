@@ -125,7 +125,7 @@ public class ActionHandler {
     }
 
     public void loadError(ErrorMessage message) {
-        manager.setLatestError(EscapeSequences.beautify(du.errorStyle, message.getMsg()));
+        manager.setLatestError(message.getMsg());
     }
 
     public void loadNotification(NotificationMessage message) {
@@ -357,10 +357,10 @@ public class ActionHandler {
         String error = manager.getLatestError();
         ChessGame game = manager.getGame();
         if (error != null) {
-            du.showMessage(error);
+            du.showMessage(EscapeSequences.beautify(du.errorStyle, error));
         }
         if (message != null) {
-            du.showMessage(message);
+            du.showMessage(EscapeSequences.beautify(du.notificationStyle, message));
         }
         if (game != null) {
             ChessBoard board = game.getBoard();
