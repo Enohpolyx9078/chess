@@ -356,18 +356,20 @@ public class ActionHandler {
     private DisplayUtilities.Status doMove() {
         try {
             du.showPrompt("Start Position: ");
-            String start = SCANNER.next("%c%d");
+            String start = SCANNER.next("[a-hA-H][1-8]");
             du.showPrompt("End Position: ");
-            String end = SCANNER.next("%c%d");
+            String end = SCANNER.next("[a-hA-H][1-8]");
+
             //TODO if a pawn reached the end of the board, offer a promotion piece
             // if the promotion is offered, it can't be null
             String promotion = "";
+
             ChessMove move = new ChessMove(start, end, promotion);
             facade.move(move, authToken, manager.getGameCode());
         } catch (InputMismatchException _) {
             du.showMessage(EscapeSequences.beautify(
                     du.errorStyle,
-                    "Positions must be of the form 'a1'"));
+                    "Invalid position. Positions must be of the form 'a1'"));
         } catch (NetworkException e) {
             du.showNetworkError(e);
         }
