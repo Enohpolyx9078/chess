@@ -365,15 +365,6 @@ public class ActionHandler {
         du.showMessage(EscapeSequences.beautify(
                 du.errorStyle,
                 "Invalid position."));
-        du.showMessage("Positions must be of the form %s".formatted(
-                EscapeSequences.beautify(du.commandStyle, "'a1'")
-        ));
-        du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
-                EscapeSequences.beautify(du.commandStyle, "Q"),
-                EscapeSequences.beautify(du.commandStyle, "R"),
-                EscapeSequences.beautify(du.commandStyle, "N"),
-                EscapeSequences.beautify(du.commandStyle, "B")
-        ));
     }
 
     private DisplayUtilities.Status doMove() {
@@ -390,8 +381,10 @@ public class ActionHandler {
 
             du.showPrompt("Start Position: ");
             String start = SCANNER.next("[a-hA-H][1-%d]".formatted(board.getSize()));
+            SCANNER.nextLine();
             du.showPrompt("End Position: ");
             String end = SCANNER.next("[a-hA-H][1-%d]".formatted(board.getSize()));
+            SCANNER.nextLine();
             String promotion = null;
             if (isPromotion(start, end, board)) {
                 Collection<String> promotions = List.of("q", "r", "n", "b");
@@ -410,7 +403,17 @@ public class ActionHandler {
 
             facade.move(move, authToken, manager.getGameCode());
         } catch (InputMismatchException _) {
+            SCANNER.nextLine();
             showInvalidMove();
+            du.showMessage("Positions must be of the form %s".formatted(
+                    EscapeSequences.beautify(du.commandStyle, "'a1'")
+            ));
+            du.showMessage("Promotions must be one of %s, %s, %s, %s".formatted(
+                    EscapeSequences.beautify(du.commandStyle, "Q"),
+                    EscapeSequences.beautify(du.commandStyle, "R"),
+                    EscapeSequences.beautify(du.commandStyle, "N"),
+                    EscapeSequences.beautify(du.commandStyle, "B")
+            ));
         } catch (NetworkException e) {
             du.showNetworkError(e);
         }
